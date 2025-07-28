@@ -45,7 +45,7 @@ public class AuthController(IAuthService authService) : ControllerBase
 
     [HttpPost("create-invite-token")]
     [AuthorizeRole(Role.Admin, Role.Owner)]
-    public async Task<ActionResult<InviteToken>> CreateInviteToken(InviteTokenDto request)
+    public async Task<ActionResult<InviteTokenResponseDto>> CreateInviteToken(InviteTokenDto request)
     {
         // Get the user's id from claims
         var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
