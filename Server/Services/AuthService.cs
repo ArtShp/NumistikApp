@@ -13,7 +13,7 @@ namespace Server.Services;
 
 public class AuthService(MyDbContext context, IConfiguration configuration) : IAuthService
 {
-    public async Task<TokenResponseDto?> LoginAsync(UserDto request)
+    public async Task<RefreshTokenDto.Response?> LoginAsync(UserLoginDto.Request request)
     {
         var user = await context.Users.FirstOrDefaultAsync(u => u.Username == request.Username);
 
@@ -28,16 +28,16 @@ public class AuthService(MyDbContext context, IConfiguration configuration) : IA
         return await CreateTokenResponse(user);
     }
 
-    private async Task<TokenResponseDto> CreateTokenResponse(User user)
+    private async Task<RefreshTokenDto.Response> CreateTokenResponse(User user)
     {
-        return new TokenResponseDto
+        return new RefreshTokenDto.Response
         {
             AccessToken = CreateToken(user),
             RefreshToken = await GenerateAndSaveRefreshTokenAsync(user)
         };
     }
 
-    public async Task<UserRegistrationResponseDto?> RegisterAsync(UserRegistrationDto request)
+    public async Task<UserRegistrationDto.Response?> RegisterAsync(UserRegistrationDto.Request request)
     {
         async Task<User> CreateUserWithRoleAsync(Role assignedRole)
         {
@@ -90,7 +90,7 @@ public class AuthService(MyDbContext context, IConfiguration configuration) : IA
                 var user = await CreateUserWithRoleAsync(Role.Owner);
                 await CreateOwnerAccessTokenAsync(inviteToken, user.Id);
 
-                return new UserRegistrationResponseDto
+                return new UserRegistrationDto.Response
                 {
                     Role = user.Role
                 };
@@ -119,14 +119,14 @@ public class AuthService(MyDbContext context, IConfiguration configuration) : IA
             context.InviteTokens.Update(inviteTokenEntity);
             await context.SaveChangesAsync();
 
-            return new UserRegistrationResponseDto
+            return new UserRegistrationDto.Response
             {
                 Role = user.Role
             };
         }
     }
 
-    public async Task<TokenResponseDto?> RefreshTokensAsync(RefreshTokenRequestDto request)
+    public async Task<RefreshTokenDto.Response?> RefreshTokensAsync(RefreshTokenDto.Request request)
     {
         var user = await ValidateRefreshTokenAsync(request.Username, request.RefreshToken);
 
@@ -194,7 +194,7 @@ public class AuthService(MyDbContext context, IConfiguration configuration) : IA
         return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
     }
 
-    public async Task<InviteTokenResponseDto?> CreateInviteTokenAsync(Guid createdById, Role assignedRole)
+    public async Task<InviteTokenDto.Response?> CreateInviteTokenAsync(Guid createdById, Role assignedRole)
     {
         var token = new InviteToken
         {
@@ -208,7 +208,7 @@ public class AuthService(MyDbContext context, IConfiguration configuration) : IA
 
         await context.SaveChangesAsync();
 
-        return new InviteTokenResponseDto
+        return new InviteTokenDto.Response
         {
             Token = token.Token,
             AssignedRole = assignedRole,

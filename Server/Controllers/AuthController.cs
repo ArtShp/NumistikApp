@@ -11,7 +11,7 @@ namespace Server.Controllers;
 public class AuthController(IAuthService authService) : ControllerBase
 {
     [HttpPost("register")]
-    public async Task<ActionResult<UserRegistrationDto>> Register(UserRegistrationDto request)
+    public async Task<ActionResult<UserRegistrationDto.Request>> Register(UserRegistrationDto.Request request)
     {
         var userRole = await authService.RegisterAsync(request);
 
@@ -22,7 +22,7 @@ public class AuthController(IAuthService authService) : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult<TokenResponseDto>> Login(UserDto request)
+    public async Task<ActionResult<RefreshTokenDto.Response>> Login(UserLoginDto.Request request)
     {
         var result = await authService.LoginAsync(request);
 
@@ -33,7 +33,7 @@ public class AuthController(IAuthService authService) : ControllerBase
     }
 
     [HttpPost("refresh-token")]
-    public async Task<ActionResult<TokenResponseDto>> RefreshToken(RefreshTokenRequestDto request)
+    public async Task<ActionResult<RefreshTokenDto.Response>> RefreshToken(RefreshTokenDto.Request request)
     {
         var result = await authService.RefreshTokensAsync(request);
 
@@ -45,7 +45,7 @@ public class AuthController(IAuthService authService) : ControllerBase
 
     [HttpPost("create-invite-token")]
     [AuthorizeRole(Role.Admin, Role.Owner)]
-    public async Task<ActionResult<InviteTokenResponseDto>> CreateInviteToken(InviteTokenDto request)
+    public async Task<ActionResult<InviteTokenDto.Response>> CreateInviteToken(InviteTokenDto.Request request)
     {
         // Get the user's id from claims
         Guid? authenticatedUserId = GetAuthorizedUserId();

@@ -5,8 +5,8 @@ namespace Server.Services;
 
 public interface IAuthService
 {
-    Task<UserRegistrationResponseDto?> RegisterAsync(UserRegistrationDto request);
-    Task<TokenResponseDto?> LoginAsync(UserDto request);
-    Task<TokenResponseDto?> RefreshTokensAsync(RefreshTokenRequestDto request);
-    Task<InviteTokenResponseDto?> CreateInviteTokenAsync(Guid createdById, Role assignedRole);
+    Task<UserRegistrationDto.Response?> RegisterAsync(UserRegistrationDto.Request request);
+    Task<RefreshTokenDto.Response?> LoginAsync(UserLoginDto.Request request);
+    Task<RefreshTokenDto.Response?> RefreshTokensAsync(RefreshTokenDto.Request request);
+    Task<InviteTokenDto.Response?> CreateInviteTokenAsync(Guid createdById, Role assignedRole);
 }
