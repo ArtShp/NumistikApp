@@ -48,12 +48,10 @@ public class AuthController(IAuthService authService) : ControllerBase
     public async Task<ActionResult<InviteTokenResponseDto>> CreateInviteToken(InviteTokenDto request)
     {
         // Get the user's id from claims
-        var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-        if (userIdClaim == null)
-            return Unauthorized("User is not authenticated.");
+        Guid? authenticatedUserId = GetAuthorizedUserId();
 
-        if (!Guid.TryParse(userIdClaim.Value, out var authenticatedUserId))
-            return Unauthorized("Invalid user id.");
+        if (authenticatedUserId is null)
+            return Unauthorized("User is not authenticated.");
 
         // Get the user's role from claims
         var roleClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
@@ -63,11 +61,21 @@ public class AuthController(IAuthService authService) : ControllerBase
         if (request.AssignedRole >= userRole)
             return StatusCode(403, $"You don't have enough rights to create invite tokens for role {request.AssignedRole}.");
 
-        var result = await authService.CreateInviteTokenAsync(authenticatedUserId, request.AssignedRole);
+        var result = await authService.CreateInviteTokenAsync(authenticatedUserId.Value, request.AssignedRole);
 
         if (result is null)
             return BadRequest("Failed to create invite token.");
 
         return Ok(result);
+    }
+
+    private Guid? GetAuthorizedUserId()
+    {
+        var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+
+        if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var userId))
+            return null;
+
+        return userId;
     }
 }
