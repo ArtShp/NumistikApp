@@ -38,7 +38,7 @@ public class AuthController(IAuthService authService) : ControllerBase
         var result = await authService.RefreshTokensAsync(request);
 
         if (result is null || result.AccessToken is null || result.RefreshToken is null)
-            return Unauthorized("Invalid refresh token or user id.");
+            return Unauthorized("Invalid refresh token or username.");
 
         return Ok(result);
     }
