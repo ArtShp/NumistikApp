@@ -128,16 +128,16 @@ public class AuthService(MyDbContext context, IConfiguration configuration) : IA
 
     public async Task<TokenResponseDto?> RefreshTokensAsync(RefreshTokenRequestDto request)
     {
-        var user = await ValidateRefreshTokenAsync(request.UserId, request.RefreshToken);
+        var user = await ValidateRefreshTokenAsync(request.Username, request.RefreshToken);
 
         if (user is null) return null;
 
         return await CreateTokenResponse(user);
     }
 
-    private async Task<User?> ValidateRefreshTokenAsync(Guid userId, string refreshToken)
+    private async Task<User?> ValidateRefreshTokenAsync(string username, string refreshToken)
     {
-        var user = await context.Users.FindAsync(userId);
+        var user = await context.Users.FirstOrDefaultAsync(u => u.Username == username);
 
         if (user is null || user.RefreshToken != refreshToken
             || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
