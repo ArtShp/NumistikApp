@@ -11,7 +11,7 @@ namespace Server.Controllers;
 public class AuthController(IAuthService authService) : ControllerBase
 {
     [HttpPost("register")]
-    public async Task<ActionResult<UserRegistrationDto.Request>> Register(UserRegistrationDto.Request request)
+    public async Task<ActionResult<UserRegistrationDto.Response>> Register(UserRegistrationDto.Request request)
     {
         var userRole = await authService.RegisterAsync(request);
 
