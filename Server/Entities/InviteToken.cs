@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Server.Entities;
 
@@ -9,13 +10,19 @@ public class InviteToken
 
     public Guid Token { get; set; }
 
-    public required User CreatedBy { get; set; }
+    [ForeignKey(nameof(CreatedBy))]
+    public Guid CreatedById { get; set; }
+
+    public User CreatedBy { get; set; } = null!;
 
     public DateTime CreatedAt { get; set; }
 
     public DateTime ExpiresAt { get; set; }
 
     public Role AssignedRole { get; set; }
+
+    [ForeignKey(nameof(UsedBy))]
+    public Guid? UsedById { get; set; }
 
     public User? UsedBy { get; set; }
 
