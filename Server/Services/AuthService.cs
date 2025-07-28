@@ -139,7 +139,9 @@ public class AuthService(MyDbContext context, IConfiguration configuration) : IA
     {
         var user = await context.Users.FirstOrDefaultAsync(u => u.Username == username);
 
-        if (user is null || user.RefreshToken != refreshToken
+        if (user is null
+            || new PasswordHasher<User>().VerifyHashedPassword(user, user.RefreshTokenHash!, refreshToken)
+                == PasswordVerificationResult.Failed
             || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
         {
             return null;
@@ -161,7 +163,8 @@ public class AuthService(MyDbContext context, IConfiguration configuration) : IA
     {
         var refreshToken = GenerateRefreshToken();
 
-        user.RefreshToken = refreshToken;
+        user.RefreshTokenHash = new PasswordHasher<User>()
+            .HashPassword(user, refreshToken);
         user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
 
         await context.SaveChangesAsync();

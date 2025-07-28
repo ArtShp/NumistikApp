@@ -13,7 +13,7 @@ public class User
 
     public Role Role { get; set; } = Role.User;
 
-    public string? RefreshToken { get; set; }
+    public string? RefreshTokenHash { get; set; }
 
     public DateTime? RefreshTokenExpiryTime { get; set; }
 }
