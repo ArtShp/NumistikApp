@@ -37,7 +37,7 @@ public class AuthService(MyDbContext context, IConfiguration configuration) : IA
         };
     }
 
-    public async Task<User?> RegisterAsync(UserRegistrationDto request)
+    public async Task<UserRegistrationResponseDto?> RegisterAsync(UserRegistrationDto request)
     {
         async Task<User> CreateUserWithRoleAsync(Role assignedRole)
         {
@@ -90,7 +90,10 @@ public class AuthService(MyDbContext context, IConfiguration configuration) : IA
                 var user = await CreateUserWithRoleAsync(Role.Owner);
                 await CreateOwnerAccessTokenAsync(inviteToken, user.Id);
 
-                return user;
+                return new UserRegistrationResponseDto
+                {
+                    Role = user.Role
+                };
             }
             else
             {
@@ -116,7 +119,10 @@ public class AuthService(MyDbContext context, IConfiguration configuration) : IA
             context.InviteTokens.Update(inviteTokenEntity);
             await context.SaveChangesAsync();
 
-            return user;
+            return new UserRegistrationResponseDto
+            {
+                Role = user.Role
+            };
         }
     }
 

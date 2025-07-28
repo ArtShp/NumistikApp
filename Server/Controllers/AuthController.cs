@@ -11,14 +11,14 @@ namespace Server.Controllers;
 public class AuthController(IAuthService authService) : ControllerBase
 {
     [HttpPost("register")]
-    public async Task<ActionResult<User>> Register(UserRegistrationDto request)
+    public async Task<ActionResult<UserRegistrationDto>> Register(UserRegistrationDto request)
     {
-        var user = await authService.RegisterAsync(request);
+        var userRole = await authService.RegisterAsync(request);
 
-        if (user is null)
+        if (userRole is null)
             return BadRequest("Some error while registration of the user.");
 
-        return StatusCode(201, user);
+        return StatusCode(201, userRole);
     }
 
     [HttpPost("login")]
