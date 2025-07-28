@@ -37,25 +37,87 @@ public class AuthService(MyDbContext context, IConfiguration configuration) : IA
         };
     }
 
-    public async Task<User?> RegisterAsync(UserDto request)
+    public async Task<User?> RegisterAsync(UserRegistrationDto request)
     {
-        if (await context.Users.AnyAsync(u => u.Username == request.Username))
+        async Task<User> CreateUserWithRoleAsync(Role assignedRole)
         {
-            return null;
+            var user = new User();
+            var hashedPassword = new PasswordHasher<User>()
+                .HashPassword(user, request.Password);
+
+            user.Username = request.Username;
+            user.PasswordHash = hashedPassword;
+            user.Role = assignedRole;
+
+            context.Users.Add(user);
+            await context.SaveChangesAsync();
+
+            return user;
         }
 
-        var user = new User();
-        var hashedPassword = new PasswordHasher<User>()
-            .HashPassword(user, request.Password);
+        async Task CreateOwnerAccessTokenAsync(Guid token, Guid userId)
+        {
+            var time = DateTime.UtcNow;
 
-        user.Username = request.Username;
-        user.PasswordHash = hashedPassword;
-        user.Role = Role.User;
+            var inviteToken = new InviteToken
+            {
+                Token = token,
+                CreatedById = userId,
+                CreatedAt = time,
+                ExpiresAt = time,
+                UsedAt = time,
+                UsedById = userId,
+                AssignedRole = Role.Owner
+            };
 
-        context.Users.Add(user);
-        await context.SaveChangesAsync();
+            context.InviteTokens.Add(inviteToken);
 
-        return user;
+            await context.SaveChangesAsync();
+        }
+
+        if (request.InviteToken is null)
+        {
+            if (!await context.Users.AnyAsync())
+            {
+                if (string.IsNullOrEmpty(configuration["AppSettings:OwnerInviteToken"]))
+                    return null;
+
+                if (!Guid.TryParse(configuration["AppSettings:OwnerInviteToken"]!, out var inviteToken))
+                    return null;
+
+                request.InviteToken = inviteToken;
+
+                var user = await CreateUserWithRoleAsync(Role.Owner);
+                await CreateOwnerAccessTokenAsync(inviteToken, user.Id);
+
+                return user;
+            }
+            else
+            {
+                return null;
+            }
+        }
+        else
+        {
+            var inviteTokenEntity = await context.InviteTokens
+            .FirstOrDefaultAsync(t => t.Token == request.InviteToken);
+
+            if (inviteTokenEntity is null || inviteTokenEntity.UsedAt is not null || inviteTokenEntity.ExpiresAt < DateTime.UtcNow)
+                return null;
+
+            if (await context.Users.AnyAsync(u => u.Username == request.Username))
+                return null;
+
+            var user = await CreateUserWithRoleAsync(inviteTokenEntity.AssignedRole);
+
+            inviteTokenEntity.UsedAt = DateTime.UtcNow;
+            inviteTokenEntity.UsedById = user.Id;
+
+            context.InviteTokens.Update(inviteTokenEntity);
+            await context.SaveChangesAsync();
+
+            return user;
+        }
     }
 
     public async Task<TokenResponseDto?> RefreshTokensAsync(RefreshTokenRequestDto request)
