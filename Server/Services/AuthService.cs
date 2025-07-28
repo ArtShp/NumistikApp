@@ -126,7 +126,7 @@ public class AuthService(MyDbContext context, IConfiguration configuration) : IA
         return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
     }
 
-    public async Task<InviteToken?> CreateInviteTokenAsync(Guid createdById, Role assignedRole)
+    public async Task<InviteTokenResponseDto?> CreateInviteTokenAsync(Guid createdById, Role assignedRole)
     {
         var token = new InviteToken
         {
@@ -140,6 +140,11 @@ public class AuthService(MyDbContext context, IConfiguration configuration) : IA
 
         await context.SaveChangesAsync();
 
-        return token;
+        return new InviteTokenResponseDto
+        {
+            Token = token.Token,
+            AssignedRole = assignedRole,
+            ExpirationDate = token.ExpiresAt
+        };
     }
 }

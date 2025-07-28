@@ -8,5 +8,5 @@ public interface IAuthService
     Task<User?> RegisterAsync(UserDto request);
     Task<TokenResponseDto?> LoginAsync(UserDto request);
     Task<TokenResponseDto?> RefreshTokensAsync(RefreshTokenRequestDto request);
-    Task<InviteToken?> CreateInviteTokenAsync(Guid createdById, Role assignedRole);
+    Task<InviteTokenResponseDto?> CreateInviteTokenAsync(Guid createdById, Role assignedRole);
 }
