@@ -8,6 +8,7 @@ public class InviteToken
 {
     public int Id { get; set; }
 
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Token { get; set; }
 
     [ForeignKey(nameof(CreatedBy))]

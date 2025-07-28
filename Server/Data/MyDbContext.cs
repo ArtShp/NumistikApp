@@ -7,4 +7,13 @@ public partial class MyDbContext(DbContextOptions<MyDbContext> options) : DbCont
 {
     public DbSet<User> Users { get; set; }
     public DbSet<InviteToken> InviteTokens { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<InviteToken>()
+            .Property(t => t.Token)
+            .HasDefaultValueSql("gen_random_uuid()");
+    }
 }
