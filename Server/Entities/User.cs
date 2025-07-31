@@ -16,4 +16,6 @@ public class User
     public string? RefreshTokenHash { get; set; }
 
     public DateTime? RefreshTokenExpiryTime { get; set; }
+
+    public ICollection<UserCollection> UserCollections { get; set; } = [];
 }
