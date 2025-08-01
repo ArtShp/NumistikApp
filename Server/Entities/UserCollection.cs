@@ -4,7 +4,7 @@ namespace Server.Entities;
 
 public class UserCollection
 {
-    public Guid Id { get; set; }
+    public int Id { get; set; }
 
     [ForeignKey(nameof(User))]
     public Guid UserId { get; set; }

@@ -13,8 +13,8 @@ using Server.Entities;
 namespace Server.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20250728095448_AddInviteTokenToContext")]
-    partial class AddInviteTokenToContext
+    [Migration("20250801062552_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,8 +24,27 @@ namespace Server.Migrations
                 .HasAnnotation("ProductVersion", "9.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "collection_role", new[] { "admin", "editor", "owner", "viewer" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "role", new[] { "admin", "owner", "user" });
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("Server.Entities.Collection", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Collections");
+                });
 
             modelBuilder.Entity("Server.Entities.InviteToken", b =>
                 {
@@ -48,7 +67,9 @@ namespace Server.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("Token")
-                        .HasColumnType("uuid");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<DateTime?>("UsedAt")
                         .HasColumnType("timestamp with time zone");
@@ -78,11 +99,11 @@ namespace Server.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("RefreshToken")
-                        .HasColumnType("text");
-
                     b.Property<DateTime?>("RefreshTokenExpiryTime")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("RefreshTokenHash")
+                        .HasColumnType("text");
 
                     b.Property<Role>("Role")
                         .HasColumnType("role");
@@ -97,6 +118,32 @@ namespace Server.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Server.Entities.UserCollection", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<Guid>("CollectionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<CollectionRole>("Role")
+                        .HasColumnType("collection_role");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CollectionId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserCollections");
                 });
 
             modelBuilder.Entity("Server.Entities.InviteToken", b =>
@@ -114,6 +161,35 @@ namespace Server.Migrations
                     b.Navigation("CreatedBy");
 
                     b.Navigation("UsedBy");
+                });
+
+            modelBuilder.Entity("Server.Entities.UserCollection", b =>
+                {
+                    b.HasOne("Server.Entities.Collection", "Collection")
+                        .WithMany("UserCollections")
+                        .HasForeignKey("CollectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Server.Entities.User", "User")
+                        .WithMany("UserCollections")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Collection");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Server.Entities.Collection", b =>
+                {
+                    b.Navigation("UserCollections");
+                });
+
+            modelBuilder.Entity("Server.Entities.User", b =>
+                {
+                    b.Navigation("UserCollections");
                 });
 #pragma warning restore 612, 618
         }
