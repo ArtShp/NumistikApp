@@ -10,6 +10,24 @@ namespace Server.Controllers;
 [ApiController]
 public class CollectionController(CollectionService collectionService) : ControllerBase
 {
+    [HttpGet("{id}")]
+    [AuthorizeAllUsers]
+    public async Task<ActionResult<CollectionDto.Response>> GetCollection([FromRoute(Name = "id")] Guid collectionId)
+    {
+        // Get the user's id from claims
+        Guid? authenticatedUserId = GetAuthorizedUserId();
+
+        if (authenticatedUserId is null)
+            return Unauthorized("User is not authenticated.");
+
+        var collection = await collectionService.GetCollectionAsync(authenticatedUserId.Value, collectionId);
+
+        if (collection is null)
+            return NotFound("Collection not found.");
+
+        return Ok(collection);
+    }
+
     [HttpPost("create")]
     [AuthorizeAllUsers]
     public async Task<ActionResult<CollectionCreationDto.Response?>> CreateCollection(CollectionCreationDto.Request request)
