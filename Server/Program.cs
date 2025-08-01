@@ -45,6 +45,7 @@ public class Program
             });
 
         builder.Services.AddScoped<IAuthService, AuthService>();
+        builder.Services.AddScoped<CollectionService>();
 
         var app = builder.Build();
 
