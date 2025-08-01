@@ -10,6 +10,7 @@ public partial class MyDbContext(DbContextOptions<MyDbContext> options) : DbCont
     public DbSet<Collection> Collections { get; set; }
     public DbSet<UserCollection> UserCollections { get; set; }
     public DbSet<Continent> Continents { get; set; }
+    public DbSet<Currency> Currencies { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
