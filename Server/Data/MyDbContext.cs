@@ -9,6 +9,7 @@ public partial class MyDbContext(DbContextOptions<MyDbContext> options) : DbCont
     public DbSet<InviteToken> InviteTokens { get; set; }
     public DbSet<Collection> Collections { get; set; }
     public DbSet<UserCollection> UserCollections { get; set; }
+    public DbSet<Continent> Continents { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
