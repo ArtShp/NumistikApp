@@ -13,6 +13,8 @@ public partial class MyDbContext(DbContextOptions<MyDbContext> options) : DbCont
     public DbSet<Currency> Currencies { get; set; }
     public DbSet<Country> Countries { get; set; }
     public DbSet<CatalogItem> CatalogItems { get; set; }
+    public DbSet<CollectionItem> CollectionItems { get; set; }
+    public DbSet<CollectionItemSpecialStatus> CollectionItemSpecialStatuses { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
