@@ -24,7 +24,7 @@ public class Program
         builder.Services.AddDbContext<MyDbContext>(options =>
             options.UseNpgsql(
                 builder.Configuration.GetConnectionString("Postgres"), 
-                o => o.MapEnum<Role>()
+                o => o.MapEnum<UserAppRole>()
                       .MapEnum<CollectionRole>()
                       .MapEnum<CatalogItemType>()
                       .MapEnum<CollectionItemStatus>()

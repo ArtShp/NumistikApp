@@ -39,7 +39,7 @@ public class AuthService(MyDbContext context, IConfiguration configuration) : IA
 
     public async Task<UserRegistrationDto.Response?> RegisterAsync(UserRegistrationDto.Request request)
     {
-        async Task<User> CreateUserWithRoleAsync(Role assignedRole)
+        async Task<User> CreateUserWithRoleAsync(UserAppRole assignedRole)
         {
             var user = new User();
             var hashedPassword = new PasswordHasher<User>()
@@ -67,7 +67,7 @@ public class AuthService(MyDbContext context, IConfiguration configuration) : IA
                 ExpiresAt = time,
                 UsedAt = time,
                 UsedById = userId,
-                AssignedRole = Role.Owner
+                AssignedRole = UserAppRole.Owner
             };
 
             context.InviteTokens.Add(inviteToken);
@@ -87,7 +87,7 @@ public class AuthService(MyDbContext context, IConfiguration configuration) : IA
 
                 request.InviteToken = inviteToken;
 
-                var user = await CreateUserWithRoleAsync(Role.Owner);
+                var user = await CreateUserWithRoleAsync(UserAppRole.Owner);
                 await CreateOwnerAccessTokenAsync(inviteToken, user.Id);
 
                 return new UserRegistrationDto.Response
@@ -197,7 +197,7 @@ public class AuthService(MyDbContext context, IConfiguration configuration) : IA
         return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
     }
 
-    public async Task<InviteTokenDto.Response?> CreateInviteTokenAsync(Guid createdById, Role assignedRole)
+    public async Task<InviteTokenDto.Response?> CreateInviteTokenAsync(Guid createdById, UserAppRole assignedRole)
     {
         var token = new InviteToken
         {

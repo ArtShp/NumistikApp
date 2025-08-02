@@ -51,7 +51,7 @@ namespace Server.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<Role>("AssignedRole")
+                    b.Property<UserAppRole>("AssignedRole")
                         .HasColumnType("role");
 
                     b.Property<DateTime>("CreatedAt")
@@ -102,7 +102,7 @@ namespace Server.Migrations
                     b.Property<string>("RefreshTokenHash")
                         .HasColumnType("text");
 
-                    b.Property<Role>("Role")
+                    b.Property<UserAppRole>("Role")
                         .HasColumnType("role");
 
                     b.Property<string>("Username")

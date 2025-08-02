@@ -17,6 +17,6 @@ public static class UserRegistrationDto
 
     public class Response
     {
-        public required Role Role { get; set; }
+        public required UserAppRole Role { get; set; }
     }
 }

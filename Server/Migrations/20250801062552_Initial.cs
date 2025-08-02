@@ -37,7 +37,7 @@ namespace Server.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Username = table.Column<string>(type: "text", nullable: false),
                     PasswordHash = table.Column<string>(type: "text", nullable: false),
-                    Role = table.Column<Role>(type: "role", nullable: false),
+                    Role = table.Column<UserAppRole>(type: "role", nullable: false),
                     RefreshTokenHash = table.Column<string>(type: "text", nullable: true),
                     RefreshTokenExpiryTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
@@ -56,7 +56,7 @@ namespace Server.Migrations
                     CreatedById = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ExpiresAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    AssignedRole = table.Column<Role>(type: "role", nullable: false),
+                    AssignedRole = table.Column<UserAppRole>(type: "role", nullable: false),
                     UsedById = table.Column<Guid>(type: "uuid", nullable: true),
                     UsedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },

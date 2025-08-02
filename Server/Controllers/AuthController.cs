@@ -55,7 +55,7 @@ public class AuthController(IAuthService authService) : ControllerBase
 
         // Get the user's role from claims
         var roleClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
-        if (roleClaim == null || !Enum.TryParse<Role>(roleClaim.Value, out var userRole))
+        if (roleClaim == null || !Enum.TryParse<UserAppRole>(roleClaim.Value, out var userRole))
             return StatusCode(403, "User role is missing or invalid.");
 
         if (request.AssignedRole >= userRole)

@@ -20,7 +20,7 @@ public class InviteToken
 
     public DateTime ExpiresAt { get; set; }
 
-    public Role AssignedRole { get; set; }
+    public UserAppRole AssignedRole { get; set; }
 
     [ForeignKey(nameof(UsedBy))]
     public Guid? UsedById { get; set; }
