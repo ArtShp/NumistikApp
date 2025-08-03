@@ -3,15 +3,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Server.Entities;
 
-[Index(nameof(ShortName), IsUnique = true)]
-[Index(nameof(LongName), IsUnique = true)]
+[Index(nameof(Name), IsUnique = true)]
 public class Country
 {
     public int Id { get; set; }
 
-    public string ShortName { get; set; } = string.Empty;
-
-    public string LongName { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
 
     public string Code { get; set; } = string.Empty;
 
