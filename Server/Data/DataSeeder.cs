@@ -9,6 +9,7 @@ public static class DataSeeder
     public static void SeedAll(MyDbContext dbContext)
     {
         SeedItems(dbContext.Continents, "Continents");
+        SeedItems(dbContext.CollectionItemSpecialStatuses, "CollectionItemSpecialStatuses");
 
         dbContext.SaveChanges();
     }
