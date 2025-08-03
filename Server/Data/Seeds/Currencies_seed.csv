@@ -1,0 +1,18 @@
+Id,Code,MajorName,MinorName,Symbol
+1,USD,US Dollar,Cent,$
+2,CAD,Canadian Dollar,Cent,$
+3,MXN,Mexican Peso,Centavo,$
+4,BRL,Brazilian Real,Centavo,R$
+5,ARS,Argentine Peso,Centavo,$
+6,GBP,Pound Sterling,Penny,£
+7,EUR,Euro,Cent,€
+8,CNY,Yuan,Jiao,¥
+9,JPY,Yen,Sen,¥
+10,KRW,South Korean Won,Jeon,₩
+11,INR,Indian Rupee,Paisa,₹
+12,AUD,Australian Dollar,Cent,$
+13,NZD,New Zealand Dollar,Cent,$
+14,ZAR,South African Rand,Cent,R
+15,NGN,Nigerian Naira,Kobo,₦
+16,EGP,Egyptian Pound,Piaster,E£
+17,RUB,Russian Ruble,Kopek,₽
