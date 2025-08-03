@@ -66,6 +66,12 @@ public class Program
 
         app.MapControllers();
 
+        using (var scope = app.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<MyDbContext>();
+            DataSeeder.SeedAll(db);
+        }
+
         app.Run();
     }
 }
