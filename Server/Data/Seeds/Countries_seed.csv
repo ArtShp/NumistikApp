@@ -1,0 +1,21 @@
+Id,Name,Code,ContinentId,CurrencyId
+1,United States,US,3,1
+2,Canada,CA,3,2
+3,Mexico,MX,3,3
+4,Brazil,BR,4,4
+5,Argentina,AR,4,5
+6,United Kingdom,GB,6,6
+7,Germany,DE,6,7
+8,France,FR,6,7
+9,Italy,IT,6,7
+10,Spain,ES,6,7
+11,China,CN,1,8
+12,Japan,JP,1,9
+13,South Korea,KR,1,10
+14,India,IN,1,11
+15,Australia,AU,7,12
+16,New Zealand,NZ,7,13
+17,South Africa,ZA,2,14
+18,Nigeria,NG,2,15
+19,Egypt,EG,2,16
+20,Russia,RU,6,17

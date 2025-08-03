@@ -15,10 +15,12 @@ public class Country
     [ForeignKey(nameof(Continent))]
     public int ContinentId { get; set; }
 
+    [CsvHelper.Configuration.Attributes.Ignore]
     public Continent Continent { get; set; } = null!;
 
     [ForeignKey(nameof(Currency))]
     public int CurrencyId { get; set; }
 
+    [CsvHelper.Configuration.Attributes.Ignore]
     public Currency Currency { get; set; } = null!;
 }
