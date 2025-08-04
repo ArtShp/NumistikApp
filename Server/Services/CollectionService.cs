@@ -68,4 +68,46 @@ public class CollectionService(MyDbContext context)
             Id = collection.Id
         };
     }
+
+    public async Task<bool> AssignCollectionRoleAsync(Guid userId, CollectionAssignDto.Request request)
+    {
+        var userCollection = await context.UserCollections
+            .FirstOrDefaultAsync(uc => uc.UserId == userId && uc.CollectionId == request.CollectionId);
+
+        if (userCollection is null) return false;
+
+        if (userCollection.Role <= request.Role || userCollection.Role < CollectionRole.Admin)
+            return false;
+
+        var targetUserCollection = await context.UserCollections
+            .FirstOrDefaultAsync(uc => uc.UserId == request.UserId && uc.CollectionId == request.CollectionId);
+
+        if (targetUserCollection is null)
+        {
+            if (await context.Users.FirstOrDefaultAsync(u => u.Id == request.UserId) is null)
+                return false;
+
+            // assign
+            targetUserCollection = new UserCollection
+            {
+                UserId = request.UserId,
+                CollectionId = request.CollectionId,
+                Role = request.Role
+            };
+            context.UserCollections.Add(targetUserCollection);
+
+            await context.SaveChangesAsync();
+        }
+        else if (targetUserCollection.Role != request.Role)
+        {
+            // update
+            targetUserCollection.Role = request.Role;
+            context.UserCollections.Update(targetUserCollection);
+
+            await context.SaveChangesAsync();
+        }
+        // no update needed
+
+        return true;
+    }
 }

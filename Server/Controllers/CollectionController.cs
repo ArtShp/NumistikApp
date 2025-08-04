@@ -61,6 +61,24 @@ public class CollectionController(CollectionService collectionService) : Control
         return StatusCode(201, collection);
     }
 
+    [HttpPost("assign-role")]
+    [AuthorizeAllUsers]
+    public async Task<ActionResult<CollectionDto.Response>> AssignCollectionRole(CollectionAssignDto.Request request)
+    {
+        // Get the user's id from claims
+        Guid? authenticatedUserId = GetAuthorizedUserId();
+
+        if (authenticatedUserId is null)
+            return Unauthorized("User is not authenticated.");
+
+        bool collection = await collectionService.AssignCollectionRoleAsync(authenticatedUserId.Value, request);
+
+        if (!collection)
+            return NotFound("Collection not found.");
+
+        return Ok();
+    }
+
     private Guid? GetAuthorizedUserId()
     {
         var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
