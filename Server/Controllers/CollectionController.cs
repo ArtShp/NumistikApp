@@ -28,6 +28,21 @@ public class CollectionController(CollectionService collectionService) : Control
         return Ok(collection);
     }
 
+    [HttpGet]
+    [AuthorizeAllUsers]
+    public async Task<ActionResult<CollectionDto.Response>> GetAllCollections()
+    {
+        // Get the user's id from claims
+        Guid? authenticatedUserId = GetAuthorizedUserId();
+
+        if (authenticatedUserId is null)
+            return Unauthorized("User is not authenticated.");
+
+        var collections = await collectionService.GetAllCollectionsAsync(authenticatedUserId.Value);
+
+        return Ok(collections);
+    }
+
     [HttpPost("create")]
     [AuthorizeAllUsers]
     public async Task<ActionResult<CollectionCreationDto.Response?>> CreateCollection(CollectionCreationDto.Request request)

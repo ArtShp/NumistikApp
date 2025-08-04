@@ -21,10 +21,25 @@ public class CollectionService(MyDbContext context)
 
         return new CollectionDto.Response
         {
+            Id = collection.Id,
             Name = collection.Name,
             Description = collection.Description,
             CollectionRole = userCollection.Role
         };
+    }
+
+    public async Task<List<CollectionDto.Response>> GetAllCollectionsAsync(Guid userId)
+    {
+        return await context.UserCollections
+            .Where(uc => uc.UserId == userId)
+            .Select(uc => new CollectionDto.Response
+            {
+                Id = uc.Collection.Id,
+                Name = uc.Collection.Name,
+                Description = uc.Collection.Description,
+                CollectionRole = uc.Role
+            })
+            .ToListAsync();
     }
 
     public async Task<CollectionCreationDto.Response?> CreateCollectionAsync(Guid userId, CollectionCreationDto.Request request)
