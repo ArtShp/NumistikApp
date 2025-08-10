@@ -17,14 +17,14 @@ public class CatalogItem
 
     public bool IsMinor { get; set; }
 
-    public string Name { get; set; } = string.Empty;
+    public string? Name { get; set; }
 
-    public string Description { get; set; } = string.Empty;
+    public string? Description { get; set; }
 }
 
 public enum CatalogItemType
 {
-    Banknote,
-    Coin,
-    Other
+    Banknote = 1,
+    Coin = 2,
+    Other = 3
 }
