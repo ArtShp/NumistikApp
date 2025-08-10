@@ -34,7 +34,7 @@ public class CurrencyService(MyDbContext context)
 
     public async Task<bool> UpdateCurrencyAsync(CurrencyUpdateDto.Request request)
     {
-        var foundCurrency = await context.Currencies.FirstOrDefaultAsync(c => c.Id == request.Id);
+        var foundCurrency = await context.Currencies.FindAsync(request.Id);
 
         if (foundCurrency is null) return false;
 
