@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Server.Entities;
 
 [Index(nameof(Name), IsUnique = true)]
-public class Country
+public class Country : IHasIntId
 {
     public int Id { get; set; }
 

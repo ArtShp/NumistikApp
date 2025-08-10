@@ -3,7 +3,7 @@
 namespace Server.Entities;
 
 [Index(nameof(Name), IsUnique = true)]
-public class Continent
+public class Continent : IHasIntId
 {
     public int Id { get; set; }
 

@@ -20,6 +20,8 @@ public partial class MyDbContext(DbContextOptions<MyDbContext> options) : DbCont
     {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.UseIdentityByDefaultColumns();
+
         modelBuilder.Entity<InviteToken>()
             .Property(t => t.Token)
             .HasDefaultValueSql("gen_random_uuid()");

@@ -3,7 +3,7 @@
 namespace Server.Entities;
 
 [Index(nameof(Code), IsUnique = true)]
-public class Currency
+public class Currency : IHasIntId
 {
     public int Id { get; set; }
 

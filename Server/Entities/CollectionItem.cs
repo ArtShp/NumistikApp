@@ -36,7 +36,7 @@ public class CollectionItem
 }
 
 [Index(nameof(Name), IsUnique = true)]
-public class CollectionItemSpecialStatus
+public class CollectionItemSpecialStatus : IHasIntId
 {
     public int Id { get; set; }
 
