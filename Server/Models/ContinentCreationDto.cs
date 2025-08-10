@@ -1,0 +1,17 @@
+﻿namespace Server.Models;
+
+public static class ContinentCreationDto
+{
+    public class Request
+    {
+        [ContinentName]
+        public required string Name { get; set; }
+    }
+
+    public class Response
+    {
+        public required int Id { get; set; }
+
+        public required string Name { get; set; }
+    }
+}

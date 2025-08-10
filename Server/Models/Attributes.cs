@@ -19,3 +19,12 @@ public class PasswordAttribute : RegularExpressionAttribute
         ErrorMessage = "Password must be minimum 8 characters, at least 1 letter and 1 number.";
     }
 }
+
+public class ContinentNameAttribute : RegularExpressionAttribute
+{
+    public ContinentNameAttribute()
+        : base(@"^([a-zA-Z]+ )*[a-zA-Z]+$")
+    {
+        ErrorMessage = "Name must contain only letters and spaces.";
+    }
+}
