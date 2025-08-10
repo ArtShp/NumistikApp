@@ -20,9 +20,9 @@ public class PasswordAttribute : RegularExpressionAttribute
     }
 }
 
-public class ContinentNameAttribute : RegularExpressionAttribute
+public class NameWithSpacesNoNumbersAttribute : RegularExpressionAttribute
 {
-    public ContinentNameAttribute()
+    public NameWithSpacesNoNumbersAttribute()
         : base(@"^([a-zA-Z]+ )*[a-zA-Z]+$")
     {
         ErrorMessage = "Name must contain only letters and spaces.";

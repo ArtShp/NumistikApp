@@ -6,7 +6,7 @@ public static class ContinentUpdateDto
     {
         public required int Id { get; set; }
 
-        [ContinentName]
+        [NameWithSpacesNoNumbers]
         public required string Name { get; set; }
     }
 }

@@ -4,7 +4,7 @@ public static class ContinentCreationDto
 {
     public class Request
     {
-        [ContinentName]
+        [NameWithSpacesNoNumbers]
         public required string Name { get; set; }
     }
 
