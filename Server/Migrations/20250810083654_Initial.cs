@@ -97,8 +97,7 @@ namespace Server.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    ShortName = table.Column<string>(type: "text", nullable: false),
-                    LongName = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
                     Code = table.Column<string>(type: "text", nullable: false),
                     ContinentId = table.Column<int>(type: "integer", nullable: false),
                     CurrencyId = table.Column<int>(type: "integer", nullable: false)
@@ -282,15 +281,9 @@ namespace Server.Migrations
                 column: "CurrencyId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Countries_LongName",
+                name: "IX_Countries_Name",
                 table: "Countries",
-                column: "LongName",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Countries_ShortName",
-                table: "Countries",
-                column: "ShortName",
+                column: "Name",
                 unique: true);
 
             migrationBuilder.CreateIndex(

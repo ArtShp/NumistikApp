@@ -13,8 +13,8 @@ using Server.Entities;
 namespace Server.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20250803152227_CountryDeleteAdditionalName")]
-    partial class CountryDeleteAdditionalName
+    [Migration("20250810083654_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
