@@ -1,0 +1,19 @@
+﻿namespace Server.Models;
+
+public static class CountryUpdateDto
+{
+    public class Request
+    {
+        public required int Id { get; set; }
+
+        [NameWithSpacesNoNumbers]
+        public string? Name { get; set; }
+
+        [CountryCode]
+        public string? Code { get; set; }
+
+        public int? ContinentId { get; set; }
+
+        public int? CurrencyId { get; set; }
+    }
+}

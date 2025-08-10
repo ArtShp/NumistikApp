@@ -46,3 +46,12 @@ public class CurrencySymbolAttribute : RegularExpressionAttribute
         ErrorMessage = "Currency code must contain only capital letters.";
     }
 }
+
+public class CountryCodeAttribute : RegularExpressionAttribute
+{
+    public CountryCodeAttribute()
+        : base(@"^[A-Z]+$")
+    {
+        ErrorMessage = "Country code must contain only capital letters.";
+    }
+}
