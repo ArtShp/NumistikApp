@@ -28,3 +28,21 @@ public class NameWithSpacesNoNumbersAttribute : RegularExpressionAttribute
         ErrorMessage = "Name must contain only letters and spaces.";
     }
 }
+
+public class CurrencyCodeAttribute : RegularExpressionAttribute
+{
+    public CurrencyCodeAttribute()
+        : base(@"^[A-Z]+$")
+    {
+        ErrorMessage = "Currency code must contain only capital letters.";
+    }
+}
+
+public class CurrencySymbolAttribute : RegularExpressionAttribute
+{
+    public CurrencySymbolAttribute()
+        : base(@"^.+$")
+    {
+        ErrorMessage = "Currency code must contain only capital letters.";
+    }
+}
