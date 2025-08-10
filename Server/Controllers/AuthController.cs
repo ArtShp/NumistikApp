@@ -2,13 +2,12 @@
 using Server.Entities;
 using Server.Models;
 using Server.Services;
-using System.Security.Claims;
 
 namespace Server.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class AuthController(IAuthService authService) : ControllerBase
+public class AuthController(IAuthService authService) : MyControllerBase
 {
     [HttpPost("register")]
     public async Task<ActionResult<UserRegistrationDto.Response>> Register(UserRegistrationDto.Request request)
@@ -54,8 +53,8 @@ public class AuthController(IAuthService authService) : ControllerBase
             return Unauthorized("User is not authenticated.");
 
         // Get the user's role from claims
-        var roleClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
-        if (roleClaim == null || !Enum.TryParse<UserAppRole>(roleClaim.Value, out var userRole))
+        UserAppRole? userRole = GetAuthorizedUserRole();
+        if (userRole == null)
             return StatusCode(403, "User role is missing or invalid.");
 
         if (request.AssignedRole >= userRole)
@@ -67,15 +66,5 @@ public class AuthController(IAuthService authService) : ControllerBase
             return BadRequest("Failed to create invite token.");
 
         return Ok(result);
-    }
-
-    private Guid? GetAuthorizedUserId()
-    {
-        var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-
-        if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var userId))
-            return null;
-
-        return userId;
     }
 }

@@ -2,13 +2,12 @@
 using Server.Entities;
 using Server.Models;
 using Server.Services;
-using System.Security.Claims;
 
 namespace Server.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class ContinentController(ContinentService continentService) : ControllerBase
+public class ContinentController(ContinentService continentService) : MyControllerBase
 {
     [HttpPost("create")]
     [AuthorizeAllUsers]
@@ -44,15 +43,5 @@ public class ContinentController(ContinentService continentService) : Controller
             return BadRequest("Error updating continent.");
 
         return Ok();
-    }
-
-    private Guid? GetAuthorizedUserId()
-    {
-        var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-
-        if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var userId))
-            return null;
-
-        return userId;
     }
 }
