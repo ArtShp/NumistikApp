@@ -51,6 +51,7 @@ public class Program
         builder.Services.AddScoped<IAuthService, AuthService>();
         builder.Services.AddScoped<CollectionService>();
         builder.Services.AddScoped<ContinentService>();
+        builder.Services.AddScoped<CollectionItemSpecialStatusService>();
 
         var app = builder.Build();
 
