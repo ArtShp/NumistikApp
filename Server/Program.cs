@@ -54,6 +54,7 @@ public class Program
         builder.Services.AddScoped<CollectionItemSpecialStatusService>();
         builder.Services.AddScoped<CurrencyService>();
         builder.Services.AddScoped<CountryService>();
+        builder.Services.AddScoped<CatalogItemService>();
 
         var app = builder.Build();
 

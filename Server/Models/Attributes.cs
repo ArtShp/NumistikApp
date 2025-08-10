@@ -55,3 +55,12 @@ public class CountryCodeAttribute : RegularExpressionAttribute
         ErrorMessage = "Country code must contain only capital letters.";
     }
 }
+
+public class CatalogItemValueAttribute : RegularExpressionAttribute
+{
+    public CatalogItemValueAttribute()
+        : base(@"^\d+(\.\d+)?$")
+    {
+        ErrorMessage = "Catalog item value must be an integer or a floating point number.";
+    }
+}
