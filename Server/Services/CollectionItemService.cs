@@ -1,6 +1,6 @@
 ﻿using Server.Data;
 using Server.Entities;
-using Server.Models;
+using Server.Models.CollectionItem;
 
 namespace Server.Services;
 

@@ -1,6 +1,8 @@
-﻿namespace Server.Models;
+﻿using Server.Models.Extensions;
 
-public static class CollectionItemSpecialStatusCreationDto
+namespace Server.Models.Continent;
+
+public static class ContinentCreationDto
 {
     public class Request
     {

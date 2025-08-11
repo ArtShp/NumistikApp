@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Server.Models;
+namespace Server.Models.Extensions;
 
 public class AllowedImageFormatAttribute : ValidationAttribute
 {

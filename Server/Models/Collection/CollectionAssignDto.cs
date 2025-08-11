@@ -1,6 +1,6 @@
 ﻿using Server.Entities;
 
-namespace Server.Models;
+namespace Server.Models.Collection;
 
 public static class CollectionAssignDto
 {

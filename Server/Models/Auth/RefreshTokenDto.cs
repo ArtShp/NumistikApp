@@ -1,4 +1,6 @@
-﻿namespace Server.Models;
+﻿using Server.Models.Extensions;
+
+namespace Server.Models.Auth;
 
 public static class RefreshTokenDto
 {

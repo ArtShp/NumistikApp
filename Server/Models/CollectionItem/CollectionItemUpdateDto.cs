@@ -1,6 +1,7 @@
 ﻿using Server.Entities;
+using Server.Models.Extensions;
 
-namespace Server.Models;
+namespace Server.Models.CollectionItem;
 
 public static class CollectionItemUpdateDto
 {

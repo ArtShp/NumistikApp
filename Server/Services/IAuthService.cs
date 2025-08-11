@@ -1,5 +1,5 @@
 ﻿using Server.Entities;
-using Server.Models;
+using Server.Models.Auth;
 
 namespace Server.Services;
 

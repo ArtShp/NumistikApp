@@ -1,6 +1,6 @@
 ﻿using Server.Entities;
 
-namespace Server.Models;
+namespace Server.Models.Auth;
 
 public static class InviteTokenDto
 {
