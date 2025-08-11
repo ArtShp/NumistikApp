@@ -9,6 +9,54 @@ namespace Server.Controllers;
 [ApiController]
 public class CollectionItemController(CollectionItemService collectionItemService) : MyControllerBase
 {
+    [HttpGet]
+    [AuthorizeAllUsers]
+    public ActionResult<IQueryable<CollectionItemDto.Response>> GetCollectionItems()
+    {
+        // Get the user's id from claims
+        Guid? authenticatedUserId = GetAuthorizedUserId();
+
+        if (authenticatedUserId is null)
+            return Unauthorized("User is not authenticated.");
+
+        // Get the user's role from claims
+        UserAppRole? authenticatedUserRole = GetAuthorizedUserRole();
+
+        if (authenticatedUserRole is null)
+            return Unauthorized("User role is not recognized.");
+
+        var collectionItems = collectionItemService.GetCollectionItems(authenticatedUserId.Value, authenticatedUserRole.Value);
+
+        if (collectionItems is null || !collectionItems.Any())
+            return NotFound("No collection items found.");
+
+        return Ok(collectionItems);
+    }
+
+    [HttpGet("{id:int}")]
+    [AuthorizeAllUsers]
+    public async Task<ActionResult<CollectionItemDto.Response?>> GetCollectionItemAsync(int id)
+    {
+        // Get the user's id from claims
+        Guid? authenticatedUserId = GetAuthorizedUserId();
+
+        if (authenticatedUserId is null)
+            return Unauthorized("User is not authenticated.");
+
+        // Get the user's role from claims
+        UserAppRole? authenticatedUserRole = GetAuthorizedUserRole();
+
+        if (authenticatedUserRole is null)
+            return Unauthorized("User role is not recognized.");
+
+        var collectionItem = await collectionItemService.GetCollectionItemAsync(authenticatedUserId.Value, authenticatedUserRole.Value, id);
+
+        if (collectionItem is null)
+            return NotFound("Collection item not found.");
+
+        return Ok(collectionItem);
+    }
+
     [HttpPost("create")]
     [AuthorizeAllUsers]
     public async Task<ActionResult<CollectionItemCreationDto.Response?>> CreateCollectionItemAsync(CollectionItemCreationDto.Request request)
