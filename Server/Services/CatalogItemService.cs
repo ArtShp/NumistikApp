@@ -6,6 +6,41 @@ namespace Server.Services;
 
 public class CatalogItemService(MyDbContext context)
 {
+    public IQueryable<CatalogItemDto.Response> GetCatalogItems()
+    {
+        return context.CatalogItems.Select(ci =>
+            new CatalogItemDto.Response
+            {
+                Id = ci.Id,
+                Type = ci.Type,
+                Value = ci.Value,
+                CountryId = ci.CountryId,
+                IsMinor = ci.IsMinor,
+                Name = ci.Name,
+                Description = ci.Description
+            }
+        );
+    }
+
+    public async Task<CatalogItemDto.Response?> GetCatalogItemAsync(int catalogItemId)
+    {
+        var catalogItem = await context.CatalogItems
+            .FindAsync(catalogItemId);
+
+        if (catalogItem is null) return null;
+
+        return new CatalogItemDto.Response
+        {
+            Id = catalogItem.Id,
+            Type = catalogItem.Type,
+            Value = catalogItem.Value,
+            CountryId = catalogItem.CountryId,
+            IsMinor = catalogItem.IsMinor,
+            Name = catalogItem.Name,
+            Description = catalogItem.Description
+        };
+    }
+
     public async Task<CatalogItemCreationDto.Response?> CreateCatalogItemAsync(CatalogItemCreationDto.Request request)
     {
         var country = await context.Countries.FindAsync(request.CountryId);

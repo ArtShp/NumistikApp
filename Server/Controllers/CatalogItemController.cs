@@ -9,6 +9,39 @@ namespace Server.Controllers;
 [ApiController]
 public class CatalogItemController(CatalogItemService catalogItemService) : MyControllerBase
 {
+    [HttpGet]
+    [AuthorizeAllUsers]
+    public ActionResult<IQueryable<CatalogItemDto.Response>> GetCatalogItems()
+    {
+        // Get the user's id from claims
+        Guid? authenticatedUserId = GetAuthorizedUserId();
+
+        if (authenticatedUserId is null)
+            return Unauthorized("User is not authenticated.");
+        
+        var catalogItems = catalogItemService.GetCatalogItems();
+
+        return Ok(catalogItems);
+    }
+
+    [HttpGet("{id:int}")]
+    [AuthorizeAllUsers]
+    public async Task<ActionResult<CatalogItemDto.Response?>> GetCatalogItemAsync(int id)
+    {
+        // Get the user's id from claims
+        Guid? authenticatedUserId = GetAuthorizedUserId();
+
+        if (authenticatedUserId is null)
+            return Unauthorized("User is not authenticated.");
+
+        var catalogItem = await catalogItemService.GetCatalogItemAsync(id);
+
+        if (catalogItem is null)
+            return NotFound("Catalog item not found.");
+
+        return Ok(catalogItem);
+    }
+
     [HttpPost("create")]
     [AuthorizeAllUsers]
     public async Task<ActionResult<CatalogItemCreationDto.Response?>> CreateCatalogItemAsync(CatalogItemCreationDto.Request request)
