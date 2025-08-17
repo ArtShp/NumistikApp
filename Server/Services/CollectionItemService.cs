@@ -4,7 +4,7 @@ using Server.Models.CollectionItem;
 
 namespace Server.Services;
 
-public class CollectionItemService(MyDbContext context)
+public class CollectionItemService(MyDbContext context, IWebHostEnvironment env)
 {
     public IQueryable<CollectionItemDto.Response> GetCollectionItems(Guid userId, UserAppRole userAppRole)
     {
@@ -25,8 +25,8 @@ public class CollectionItemService(MyDbContext context)
             CollectionId = ci.CollectionId,
             SerialNumber = ci.SerialNumber,
             Description = ci.Description,
-            ObverseImageUrl = GetImageAsync(ci.ObverseImageUrl).Result,
-            ReverseImageUrl = GetImageAsync(ci.ReverseImageUrl).Result
+            ObverseImageUrl = ci.ObverseImageUrl,
+            ReverseImageUrl = ci.ReverseImageUrl
         });
     }
 
@@ -54,8 +54,8 @@ public class CollectionItemService(MyDbContext context)
             CollectionId = collectionItem.CollectionId,
             SerialNumber = collectionItem.SerialNumber,
             Description = collectionItem.Description,
-            ObverseImageUrl = await GetImageAsync(collectionItem.ObverseImageUrl),
-            ReverseImageUrl = await GetImageAsync(collectionItem.ReverseImageUrl)
+            ObverseImageUrl = collectionItem.ObverseImageUrl,
+            ReverseImageUrl = collectionItem.ReverseImageUrl
         };
     }
 
@@ -158,13 +158,24 @@ public class CollectionItemService(MyDbContext context)
         return true;
     }
 
-    private static async Task<string?> SaveImageAsync(IFormFile? file)
+    public string? GetImagePath(string? filename)
+    {
+        if (filename is null) return null;
+
+        var filepath = Path.Combine(env.ContentRootPath, "static", "images", filename);
+
+        if (!File.Exists(filepath)) return null;
+
+        return filepath;
+    }
+
+    private async Task<string?> SaveImageAsync(IFormFile? file)
     {
         if (file is null) return null;
 
         var filename = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
 
-        var uploadsDir = Path.Combine("wwwroot", "uploads");
+        var uploadsDir = Path.Combine(env.ContentRootPath, "static", "images");
         Directory.CreateDirectory(uploadsDir);
 
         var filepath = Path.Combine(uploadsDir, filename);
@@ -174,19 +185,6 @@ public class CollectionItemService(MyDbContext context)
             await file.CopyToAsync(stream);
         }
 
-        return $"/uploads/{filename}";
-    }
-
-    private static async Task<IFormFile?> GetImageAsync(string? imageUrl)
-    {
-        if (imageUrl is null) return null;
-
-        var filepath = Path.Combine("wwwroot", imageUrl.TrimStart('/'));
-
-        if (!File.Exists(filepath)) return null;
-
-        var fileStream = new FileStream(filepath, FileMode.Open, FileAccess.Read);
-
-        return new FormFile(fileStream, 0, fileStream.Length, "file", Path.GetFileName(filepath));
+        return filename;
     }
 }

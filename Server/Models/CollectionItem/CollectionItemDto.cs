@@ -22,8 +22,8 @@ public static class CollectionItemDto
 
         public required string? Description { get; set; }
 
-        public required IFormFile? ObverseImageUrl { get; set; }
+        public required string? ObverseImageUrl { get; set; }
 
-        public required IFormFile? ReverseImageUrl { get; set; }
+        public required string? ReverseImageUrl { get; set; }
     }
 }

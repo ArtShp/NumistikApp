@@ -92,4 +92,16 @@ public class CollectionItemController(CollectionItemService collectionItemServic
 
         return Ok(); 
     }
+
+    [HttpGet("image/{filename}")]
+    [AuthorizeAllUsers]
+    public IResult GetImageAsync(string filename)
+    {
+        var filePath = collectionItemService.GetImagePath(filename);
+
+        if (filePath is null)
+            return TypedResults.NotFound("No file found with the provided file name.");
+
+        return TypedResults.PhysicalFile(filePath, fileDownloadName: filename);
+    }
 }
