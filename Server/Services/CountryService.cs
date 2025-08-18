@@ -7,6 +7,37 @@ namespace Server.Services;
 
 public class CountryService(MyDbContext context)
 {
+    public IQueryable<CountryDto.Response> GetCountries()
+    {
+        return context.Countries.Select(ci =>
+            new CountryDto.Response
+            {
+                Id = ci.Id,
+                Name = ci.Name,
+                Code = ci.Code,
+                ContinentId = ci.ContinentId,
+                CurrencyId = ci.CurrencyId
+            }
+        );
+    }
+
+    public async Task<CountryDto.Response?> GetCountryAsync(int countryId)
+    {
+        var country = await context.Countries
+            .FindAsync(countryId);
+
+        if (country is null) return null;
+
+        return new CountryDto.Response
+        {
+            Id = country.Id,
+            Name = country.Name,
+            Code = country.Code,
+            ContinentId = country.ContinentId,
+            CurrencyId = country.CurrencyId
+        };
+    }
+
     public async Task<CountryCreationDto.Response?> CreateCountryAsync(CountryCreationDto.Request request)
     {
         var foundCountry = await context.Countries.FirstOrDefaultAsync(c => 

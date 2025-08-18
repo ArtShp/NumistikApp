@@ -9,6 +9,39 @@ namespace Server.Controllers;
 [ApiController]
 public class CountryController(CountryService countryService) : MyControllerBase
 {
+    [HttpGet]
+    [AuthorizeAllUsers]
+    public ActionResult<IQueryable<CountryDto.Response>> GetCountries()
+    {
+        // Get the user's id from claims
+        Guid? authenticatedUserId = GetAuthorizedUserId();
+
+        if (authenticatedUserId is null)
+            return Unauthorized("User is not authenticated.");
+
+        var countries = countryService.GetCountries();
+
+        return Ok(countries);
+    }
+
+    [HttpGet("{id:int}")]
+    [AuthorizeAllUsers]
+    public async Task<ActionResult<CountryDto.Response?>> GetCountryAsync(int id)
+    {
+        // Get the user's id from claims
+        Guid? authenticatedUserId = GetAuthorizedUserId();
+
+        if (authenticatedUserId is null)
+            return Unauthorized("User is not authenticated.");
+
+        var country = await countryService.GetCountryAsync(id);
+
+        if (country is null)
+            return NotFound("Country not found.");
+
+        return Ok(country);
+    }
+
     [HttpPost("create")]
     [AuthorizeAllUsers]
     public async Task<ActionResult<CountryCreationDto.Response?>> CreateCountryAsync(CountryCreationDto.Request request)
