@@ -7,6 +7,19 @@ namespace Server.Services;
 
 public class CollectionService(MyDbContext context)
 {
+    public IQueryable<CollectionDto.Response> GetAllCollections(Guid userId)
+    {
+        return context.UserCollections
+            .Where(uc => uc.UserId == userId)
+            .Select(uc => new CollectionDto.Response
+            {
+                Id = uc.Collection.Id,
+                Name = uc.Collection.Name,
+                Description = uc.Collection.Description,
+                CollectionRole = uc.Role
+            });
+    }
+
     public async Task<CollectionDto.Response?> GetCollectionAsync(Guid userId, Guid collectionId)
     {
         var userCollection = await context.UserCollections
@@ -15,7 +28,7 @@ public class CollectionService(MyDbContext context)
         if (userCollection is null) return null;
 
         var collection = await context.Collections
-            .FirstOrDefaultAsync(c => c.Id == collectionId);
+            .FindAsync(collectionId);
 
         if (collection is null) return null;
 
@@ -26,20 +39,6 @@ public class CollectionService(MyDbContext context)
             Description = collection.Description,
             CollectionRole = userCollection.Role
         };
-    }
-
-    public async Task<List<CollectionDto.Response>> GetAllCollectionsAsync(Guid userId)
-    {
-        return await context.UserCollections
-            .Where(uc => uc.UserId == userId)
-            .Select(uc => new CollectionDto.Response
-            {
-                Id = uc.Collection.Id,
-                Name = uc.Collection.Name,
-                Description = uc.Collection.Description,
-                CollectionRole = uc.Role
-            })
-            .ToListAsync();
     }
 
     public async Task<CollectionCreationDto.Response?> CreateCollectionAsync(Guid userId, CollectionCreationDto.Request request)
