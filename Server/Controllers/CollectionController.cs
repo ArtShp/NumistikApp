@@ -60,9 +60,9 @@ public class CollectionController(CollectionService collectionService) : MyContr
         return StatusCode(201, collection);
     }
 
-    [HttpPost("assign-role")]
+    [HttpPost("role")]
     [AuthorizeAllUsers]
-    public async Task<ActionResult<CollectionDto.Response>> AssignCollectionRole(CollectionAssignDto.Request request)
+    public async Task<ActionResult<CollectionDto.Response>> UpdateCollectionRole(CollectionUpdateRoleDto.Request request)
     {
         // Get the user's id from claims
         Guid? authenticatedUserId = GetAuthorizedUserId();
@@ -70,9 +70,9 @@ public class CollectionController(CollectionService collectionService) : MyContr
         if (authenticatedUserId is null)
             return Unauthorized("User is not authenticated.");
 
-        bool collection = await collectionService.AssignCollectionRoleAsync(authenticatedUserId.Value, request);
+        bool success = await collectionService.UpdateCollectionRoleAsync(authenticatedUserId.Value, request);
 
-        if (!collection)
+        if (!success)
             return NotFound("Collection not found.");
 
         return Ok();

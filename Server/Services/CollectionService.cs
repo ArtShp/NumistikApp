@@ -68,7 +68,7 @@ public class CollectionService(MyDbContext context)
         };
     }
 
-    public async Task<bool> AssignCollectionRoleAsync(Guid userId, CollectionAssignDto.Request request)
+    public async Task<bool> UpdateCollectionRoleAsync(Guid userId, CollectionUpdateRoleDto.Request request)
     {
         var userCollection = await context.UserCollections
             .FirstOrDefaultAsync(uc => uc.UserId == userId && uc.CollectionId == request.CollectionId);
@@ -83,7 +83,7 @@ public class CollectionService(MyDbContext context)
 
         if (targetUserCollection is null)
         {
-            if (await context.Users.FirstOrDefaultAsync(u => u.Id == request.UserId) is null)
+            if (await context.Users.FindAsync(request.UserId) is null)
                 return false;
 
             // assign

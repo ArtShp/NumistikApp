@@ -2,7 +2,7 @@
 
 namespace Server.Models.Collection;
 
-public static class CollectionAssignDto
+public static class CollectionUpdateRoleDto
 {
     public class Request
     {
