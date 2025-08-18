@@ -9,6 +9,39 @@ namespace Server.Controllers;
 [ApiController]
 public class CurrencyController(CurrencyService currencyService) : MyControllerBase
 {
+    [HttpGet]
+    [AuthorizeAllUsers]
+    public ActionResult<IQueryable<CurrencyDto.Response>> GetCurrencies()
+    {
+        // Get the user's id from claims
+        Guid? authenticatedUserId = GetAuthorizedUserId();
+
+        if (authenticatedUserId is null)
+            return Unauthorized("User is not authenticated.");
+
+        var currencies = currencyService.GetCurrencies();
+
+        return Ok(currencies);
+    }
+
+    [HttpGet("{id:int}")]
+    [AuthorizeAllUsers]
+    public async Task<ActionResult<CurrencyDto.Response?>> GetCurrencyAsync(int id)
+    {
+        // Get the user's id from claims
+        Guid? authenticatedUserId = GetAuthorizedUserId();
+
+        if (authenticatedUserId is null)
+            return Unauthorized("User is not authenticated.");
+
+        var currency = await currencyService.GetCurrencyAsync(id);
+
+        if (currency is null)
+            return NotFound("Currency not found.");
+
+        return Ok(currency);
+    }
+
     [HttpPost("create")]
     [AuthorizeAllUsers]
     public async Task<ActionResult<CurrencyCreationDto.Response?>> CreateCurrencyAsync(CurrencyCreationDto.Request request)
