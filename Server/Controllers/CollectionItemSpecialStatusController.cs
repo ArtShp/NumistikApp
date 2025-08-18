@@ -9,6 +9,39 @@ namespace Server.Controllers;
 [ApiController]
 public class CollectionItemSpecialStatusController(CollectionItemSpecialStatusService specialStatusService) : MyControllerBase
 {
+    [HttpGet]
+    [AuthorizeAllUsers]
+    public ActionResult<IQueryable<CollectionItemSpecialStatusDto.Response>> GetCollectionItemSpecialStatuses()
+    {
+        // Get the user's id from claims
+        Guid? authenticatedUserId = GetAuthorizedUserId();
+
+        if (authenticatedUserId is null)
+            return Unauthorized("User is not authenticated.");
+
+        var specialStatuses = specialStatusService.GetCollectionItemSpecialStatuses();
+
+        return Ok(specialStatuses);
+    }
+
+    [HttpGet("{id:int}")]
+    [AuthorizeAllUsers]
+    public async Task<ActionResult<CollectionItemSpecialStatusDto.Response?>> GetCollectionItemSpecialStatusAsync(int id)
+    {
+        // Get the user's id from claims
+        Guid? authenticatedUserId = GetAuthorizedUserId();
+
+        if (authenticatedUserId is null)
+            return Unauthorized("User is not authenticated.");
+
+        var specialStatus = await specialStatusService.GetCollectionItemSpecialStatusAsync(id);
+
+        if (specialStatus is null)
+            return NotFound("Collection item special status not found.");
+
+        return Ok(specialStatus);
+    }
+
     [HttpPost("create")]
     [AuthorizeAllUsers]
     public async Task<ActionResult<CollectionItemSpecialStatusCreationDto.Response?>> CreateCollectionItemSpecialStatusAsync(CollectionItemSpecialStatusCreationDto.Request request)
