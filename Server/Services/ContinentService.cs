@@ -7,6 +7,31 @@ namespace Server.Services;
 
 public class ContinentService(MyDbContext context)
 {
+    public IQueryable<ContinentDto.Response> GetContinents()
+    {
+        return context.Continents.Select(ci =>
+            new ContinentDto.Response
+            {
+                Id = ci.Id,
+                Name = ci.Name
+            }
+        );
+    }
+
+    public async Task<ContinentDto.Response?> GetContinentAsync(int continentId)
+    {
+        var continent = await context.Continents
+            .FindAsync(continentId);
+
+        if (continent is null) return null;
+
+        return new ContinentDto.Response
+        {
+            Id = continent.Id,
+            Name = continent.Name
+        };
+    }
+
     public async Task<ContinentCreationDto.Response?> CreateContinentAsync(ContinentCreationDto.Request request)
     {
         var foundContinent = await context.Continents.FirstOrDefaultAsync(c => c.Name == request.Name);

@@ -9,6 +9,39 @@ namespace Server.Controllers;
 [ApiController]
 public class ContinentController(ContinentService continentService) : MyControllerBase
 {
+    [HttpGet]
+    [AuthorizeAllUsers]
+    public ActionResult<IQueryable<ContinentDto.Response>> GetContinents()
+    {
+        // Get the user's id from claims
+        Guid? authenticatedUserId = GetAuthorizedUserId();
+
+        if (authenticatedUserId is null)
+            return Unauthorized("User is not authenticated.");
+
+        var continents = continentService.GetContinents();
+
+        return Ok(continents);
+    }
+
+    [HttpGet("{id:int}")]
+    [AuthorizeAllUsers]
+    public async Task<ActionResult<ContinentDto.Response?>> GetContinentAsync(int id)
+    {
+        // Get the user's id from claims
+        Guid? authenticatedUserId = GetAuthorizedUserId();
+
+        if (authenticatedUserId is null)
+            return Unauthorized("User is not authenticated.");
+
+        var continent = await continentService.GetContinentAsync(id);
+
+        if (continent is null)
+            return NotFound("Continent not found.");
+
+        return Ok(continent);
+    }
+
     [HttpPost("create")]
     [AuthorizeAllUsers]
     public async Task<ActionResult<ContinentCreationDto.Response?>> CreateContinentAsync(ContinentCreationDto.Request request)
