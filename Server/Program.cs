@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using Server.Data;
@@ -24,7 +25,11 @@ public class Program
         builder.Services.AddDbContext<MyDbContext>(options =>
             options.UseNpgsql(
                 builder.Configuration.GetConnectionString("Postgres"), 
-                o => o.MapEnum<Role>()
+                o => o.MapEnum<UserAppRole>()
+                      .MapEnum<CollectionRole>()
+                      .MapEnum<CatalogItemType>()
+                      .MapEnum<CollectionItemStatus>()
+                      .MapEnum<CollectionItemQuality>()
             )
         );
 
@@ -45,6 +50,13 @@ public class Program
             });
 
         builder.Services.AddScoped<IAuthService, AuthService>();
+        builder.Services.AddScoped<CollectionService>();
+        builder.Services.AddScoped<ContinentService>();
+        builder.Services.AddScoped<CollectionItemSpecialStatusService>();
+        builder.Services.AddScoped<CurrencyService>();
+        builder.Services.AddScoped<CountryService>();
+        builder.Services.AddScoped<CatalogItemService>();
+        builder.Services.AddScoped<CollectionItemService>();
 
         var app = builder.Build();
 
@@ -59,7 +71,20 @@ public class Program
 
         app.UseAuthorization();
 
+        app.UseStaticFiles(new StaticFileOptions
+        {
+            FileProvider = new PhysicalFileProvider(
+                Path.Combine(builder.Environment.ContentRootPath, "static")),
+            RequestPath = "/static"
+        });
+
         app.MapControllers();
+
+        using (var scope = app.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<MyDbContext>();
+            DataSeeder.SeedAll(db);
+        }
 
         app.Run();
     }
