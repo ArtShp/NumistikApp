@@ -53,7 +53,6 @@ public class Program
         builder.Services.AddScoped<CollectionService>();
         builder.Services.AddScoped<ContinentService>();
         builder.Services.AddScoped<CollectionItemSpecialStatusService>();
-        builder.Services.AddScoped<CurrencyService>();
         builder.Services.AddScoped<CountryService>();
         builder.Services.AddScoped<CatalogItemService>();
         builder.Services.AddScoped<CollectionItemService>();

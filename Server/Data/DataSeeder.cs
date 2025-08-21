@@ -18,7 +18,6 @@ public static class DataSeeder
     {
         SeedItems(dbContext, dbContext.Continents, "Continents");
         SeedItems(dbContext, dbContext.CollectionItemSpecialStatuses, "CollectionItemSpecialStatuses");
-        SeedItems(dbContext, dbContext.Currencies, "Currencies");
         SeedItems(dbContext, dbContext.Countries, "Countries");
     }
 

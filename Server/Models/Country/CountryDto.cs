@@ -11,7 +11,5 @@ public static class CountryDto
         public required string Code { get; set; }
 
         public required int ContinentId { get; set; }
-
-        public required int CurrencyId { get; set; }
     }
 }

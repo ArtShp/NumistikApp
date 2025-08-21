@@ -15,7 +15,5 @@ public static class CountryUpdateDto
         public string? Code { get; set; }
 
         public int? ContinentId { get; set; }
-
-        public int? CurrencyId { get; set; }
     }
 }

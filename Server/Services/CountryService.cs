@@ -15,8 +15,7 @@ public class CountryService(MyDbContext context)
                 Id = ci.Id,
                 Name = ci.Name,
                 Code = ci.Code,
-                ContinentId = ci.ContinentId,
-                CurrencyId = ci.CurrencyId
+                ContinentId = ci.ContinentId
             }
         );
     }
@@ -33,8 +32,7 @@ public class CountryService(MyDbContext context)
             Id = country.Id,
             Name = country.Name,
             Code = country.Code,
-            ContinentId = country.ContinentId,
-            CurrencyId = country.CurrencyId
+            ContinentId = country.ContinentId
         };
     }
 
@@ -50,16 +48,11 @@ public class CountryService(MyDbContext context)
 
         if (continent is null) return null;
 
-        var currency = await context.Currencies.FindAsync(request.CurrencyId);
-
-        if (currency is null) return null;
-
         var country = new Country
         {
             Name = request.Name,
             Code = request.Code,
-            Continent = continent,
-            Currency = currency
+            Continent = continent
         };
 
         context.Countries.Add(country);
@@ -87,13 +80,6 @@ public class CountryService(MyDbContext context)
             if (continent is null) return false;
             
             foundCountry.Continent = continent;
-        }
-        if (request.CurrencyId.HasValue)
-        {
-            var currency = await context.Currencies.FindAsync(request.CurrencyId.Value);
-            if (currency is null) return false;
-
-            foundCountry.Currency = currency;
         }
 
         context.Countries.Update(foundCountry);
