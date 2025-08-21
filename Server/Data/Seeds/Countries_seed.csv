@@ -1,21 +1,21 @@
-Id,Name,Code,ContinentId
-1,United States,US,3
-2,Canada,CA,3
-3,Mexico,MX,3
-4,Brazil,BR,4
-5,Argentina,AR,4
-6,United Kingdom,GB,6
-7,Germany,DE,6
-8,France,FR,6
-9,Italy,IT,6
-10,Spain,ES,6
-11,China,CN,1
-12,Japan,JP,1
-13,South Korea,KR,1
-14,India,IN,1
-15,Australia,AU,7
-16,New Zealand,NZ,7
-17,South Africa,ZA,2
-18,Nigeria,NG,2
-19,Egypt,EG,2
-20,Russia,RU,6
+Id,Name,ContinentId
+1,United States,3
+2,Canada,3
+3,Mexico,3
+4,Brazil,4
+5,Argentina,4
+6,United Kingdom,6
+7,Germany,6
+8,France,6
+9,Italy,6
+10,Spain,6
+11,China,1
+12,Japan,1
+13,South Korea,1
+14,India,1
+15,Australia,7
+16,New Zealand,7
+17,South Africa,2
+18,Nigeria,2
+19,Egypt,2
+20,Russia,6

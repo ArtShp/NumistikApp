@@ -9,9 +9,6 @@ public static class CountryCreationDto
         [NameWithSpacesNoNumbers]
         public required string Name { get; set; }
 
-        [CountryCode]
-        public required string Code { get; set; }
-
         public required int ContinentId { get; set; }
     }
 
@@ -20,7 +17,5 @@ public static class CountryCreationDto
         public required int Id { get; set; }
 
         public required string Name { get; set; }
-
-        public required string Code { get; set; }
     }
 }
