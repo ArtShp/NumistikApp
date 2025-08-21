@@ -8,7 +8,9 @@ public static class CollectionItemDto
     {
         public required int Id { get; set; }
 
-        public required int CatalogItemId { get; set; }
+        public required CollectionItemType Type { get; set; }
+
+        public required int CountryId { get; set; }
 
         public required CollectionItemStatus CollectionStatus { get; set; }
 
@@ -17,6 +19,12 @@ public static class CollectionItemDto
         public required CollectionItemQuality? Quality { get; set; }
 
         public required Guid CollectionId { get; set; }
+
+        public required string Value { get; set; }
+
+        public required string Currency { get; set; }
+
+        public required string? AdditionalInfo { get; set; }
 
         public required string? SerialNumber { get; set; }
 

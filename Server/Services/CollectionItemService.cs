@@ -18,11 +18,15 @@ public class CollectionItemService(MyDbContext context, IWebHostEnvironment env)
         return query.Select(ci => new CollectionItemDto.Response
         {
             Id = ci.Id,
-            CatalogItemId = ci.CatalogItemId,
+            Type = ci.Type,
+            CountryId = ci.CountryId,
             CollectionStatus = ci.CollectionStatus,
             SpecialStatusId = ci.SpecialStatusId,
             Quality = ci.Quality,
             CollectionId = ci.CollectionId,
+            Value = ci.Value,
+            Currency = ci.Currency,
+            AdditionalInfo = ci.AdditionalInfo,
             SerialNumber = ci.SerialNumber,
             Description = ci.Description,
             ObverseImageUrl = ci.ObverseImageUrl,
@@ -47,11 +51,15 @@ public class CollectionItemService(MyDbContext context, IWebHostEnvironment env)
         return new CollectionItemDto.Response
         {
             Id = collectionItem.Id,
-            CatalogItemId = collectionItem.CatalogItemId,
+            Type = collectionItem.Type,
+            CountryId = collectionItem.CountryId,
             CollectionStatus = collectionItem.CollectionStatus,
             SpecialStatusId = collectionItem.SpecialStatusId,
             Quality = collectionItem.Quality,
             CollectionId = collectionItem.CollectionId,
+            Value = collectionItem.Value,
+            Currency = collectionItem.Currency,
+            AdditionalInfo = collectionItem.AdditionalInfo,
             SerialNumber = collectionItem.SerialNumber,
             Description = collectionItem.Description,
             ObverseImageUrl = collectionItem.ObverseImageUrl,
@@ -61,10 +69,9 @@ public class CollectionItemService(MyDbContext context, IWebHostEnvironment env)
 
     public async Task<CollectionItemCreationDto.Response?> CreateCollectionItemAsync(CollectionItemCreationDto.Request request)
     {
-        var catalogItem = await context.CatalogItems
-            .FindAsync(request.CatalogItemId);
-        if (catalogItem is null) return null;
-
+        var country = await context.Countries
+            .FindAsync(request.CountryId);
+        if (country is null) return null;
 
         var specialStatus = await context.CollectionItemSpecialStatuses
             .FindAsync(request.SpecialStatusId);
@@ -77,11 +84,15 @@ public class CollectionItemService(MyDbContext context, IWebHostEnvironment env)
 
         var collectionItem = new CollectionItem
         {
-            CatalogItem = catalogItem,
+            Type = request.Type,
+            Country = country,
             CollectionStatus = request.CollectionStatus,
             SpecialStatus = specialStatus,
             Quality = request.Quality,
             Collection = collection,
+            Value = request.Value,
+            Currency = request.Currency,
+            AdditionalInfo = request.AdditionalInfo,
             SerialNumber = request.SerialNumber,
             Description = request.Description,
             ObverseImageUrl = await SaveImageAsync(request.ObverseImage),
@@ -103,13 +114,17 @@ public class CollectionItemService(MyDbContext context, IWebHostEnvironment env)
 
         if (foundCollectionItem is null) return false;
 
-        if (request.CatalogItemId.HasValue)
+        if (request.Type.HasValue)
         {
-            var catalogItem = await context.CatalogItems
-                .FindAsync(request.CatalogItemId.Value);
-            if (catalogItem is null) return false;
+            foundCollectionItem.Type = request.Type.Value;
+        }
+        if (request.CountryId.HasValue)
+        {
+            var country = await context.Countries
+                .FindAsync(request.CountryId.Value);
+            if (country is null) return false;
 
-            foundCollectionItem.CatalogItem = catalogItem;
+            foundCollectionItem.Country = country;
         }
         if (request.CollectionStatus.HasValue)
         {
@@ -134,6 +149,18 @@ public class CollectionItemService(MyDbContext context, IWebHostEnvironment env)
             if (collection is null) return false;
 
             foundCollectionItem.Collection = collection;
+        }
+        if (request.Value is not null)
+        {
+            foundCollectionItem.Value = request.Value;
+        }
+        if (request.Currency is not null)
+        {
+            foundCollectionItem.Currency = request.Currency;
+        }
+        if (request.AdditionalInfo is not null)
+        {
+            foundCollectionItem.AdditionalInfo = request.AdditionalInfo;
         }
         if (request.SerialNumber is not null)
         {

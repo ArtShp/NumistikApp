@@ -9,7 +9,9 @@ public static class CollectionItemUpdateDto
     {
         public required int Id { get; set; }
 
-        public int? CatalogItemId { get; set; }
+        public CollectionItemType? Type { get; set; }
+
+        public int? CountryId { get; set; }
 
         public CollectionItemStatus? CollectionStatus { get; set; }
 
@@ -18,6 +20,13 @@ public static class CollectionItemUpdateDto
         public CollectionItemQuality? Quality { get; set; }
 
         public Guid? CollectionId { get; set; }
+
+        [CatalogItemValue]
+        public string? Value { get; set; }
+
+        public string? Currency { get; set; }
+
+        public string? AdditionalInfo { get; set; }
 
         public string? SerialNumber { get; set; }
 

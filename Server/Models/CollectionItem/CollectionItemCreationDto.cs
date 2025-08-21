@@ -7,7 +7,9 @@ public static class CollectionItemCreationDto
 {
     public class Request
     {
-        public required int CatalogItemId { get; set; }
+        public required CollectionItemType Type { get; set; }
+
+        public required int CountryId { get; set; }
 
         public required CollectionItemStatus CollectionStatus { get; set; }
 
@@ -16,6 +18,13 @@ public static class CollectionItemCreationDto
         public CollectionItemQuality? Quality { get; set; }
 
         public required Guid CollectionId { get; set; }
+
+        [CatalogItemValue]
+        public required string Value { get; set; }
+
+        public required string Currency { get; set; }
+
+        public string? AdditionalInfo { get; set; }
 
         public string? SerialNumber { get; set; }
 

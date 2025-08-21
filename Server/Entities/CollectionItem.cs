@@ -7,10 +7,12 @@ public class CollectionItem
 {
     public int Id { get; set; }
 
-    [ForeignKey(nameof(CatalogItem))]
-    public int CatalogItemId { get; set; }
+    public CollectionItemType Type { get; set; }
 
-    public CatalogItem CatalogItem { get; set; } = null!;
+    [ForeignKey(nameof(Country))]
+    public int CountryId { get; set; }
+
+    public Country Country { get; set; } = null!;
 
     public CollectionItemStatus CollectionStatus { get; set; }
 
@@ -25,6 +27,12 @@ public class CollectionItem
     public Guid CollectionId { get; set; }
 
     public Collection Collection { get; set; } = null!;
+
+    public string Value { get; set; } = string.Empty;
+
+    public string Currency { get; set; } = string.Empty;
+
+    public string? AdditionalInfo { get; set; }
 
     public string? SerialNumber { get; set; }
 
@@ -41,6 +49,13 @@ public class CollectionItemSpecialStatus : IHasIntId
     public int Id { get; set; }
 
     public string Name { get; set; } = string.Empty;
+}
+
+public enum CollectionItemType
+{
+    Banknote = 1,
+    Coin = 2,
+    Other = 3
 }
 
 public enum CollectionItemStatus

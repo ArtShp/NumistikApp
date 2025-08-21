@@ -51,7 +51,7 @@ namespace Server.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.Property<CatalogItemType>("Type")
+                    b.Property<CollectionItemType>("Type")
                         .HasColumnType("catalog_item_type");
 
                     b.Property<string>("Value")

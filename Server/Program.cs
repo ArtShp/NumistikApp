@@ -27,7 +27,7 @@ public class Program
                 builder.Configuration.GetConnectionString("Postgres"), 
                 o => o.MapEnum<UserAppRole>()
                       .MapEnum<CollectionRole>()
-                      .MapEnum<CatalogItemType>()
+                      .MapEnum<CollectionItemType>()
                       .MapEnum<CollectionItemStatus>()
                       .MapEnum<CollectionItemQuality>()
             )
@@ -54,7 +54,6 @@ public class Program
         builder.Services.AddScoped<ContinentService>();
         builder.Services.AddScoped<CollectionItemSpecialStatusService>();
         builder.Services.AddScoped<CountryService>();
-        builder.Services.AddScoped<CatalogItemService>();
         builder.Services.AddScoped<CollectionItemService>();
 
         var app = builder.Build();

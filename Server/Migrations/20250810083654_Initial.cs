@@ -182,7 +182,7 @@ namespace Server.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Type = table.Column<CatalogItemType>(type: "catalog_item_type", nullable: false),
+                    Type = table.Column<CollectionItemType>(type: "catalog_item_type", nullable: false),
                     Value = table.Column<string>(type: "text", nullable: false),
                     CountryId = table.Column<int>(type: "integer", nullable: false),
                     IsMinor = table.Column<bool>(type: "boolean", nullable: false),
