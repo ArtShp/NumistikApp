@@ -21,46 +21,12 @@ namespace Server.Migrations
                 .HasAnnotation("ProductVersion", "9.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "catalog_item_type", new[] { "banknote", "coin", "other" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "collection_item_quality", new[] { "extremely_fine", "fine", "good", "poor", "uncirculated", "very_fine", "very_good" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "collection_item_status", new[] { "for_sale_or_exchange", "in_collection", "lost", "sold_or_exchanged" });
+            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "collection_item_type", new[] { "banknote", "coin", "other" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "collection_role", new[] { "admin", "editor", "owner", "viewer" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "user_app_role", new[] { "admin", "owner", "user" });
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("Server.Entities.CatalogItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CountryId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsMinor")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.Property<CollectionItemType>("Type")
-                        .HasColumnType("catalog_item_type");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CountryId");
-
-                    b.ToTable("CatalogItems");
-                });
 
             modelBuilder.Entity("Server.Entities.Collection", b =>
                 {
@@ -88,14 +54,21 @@ namespace Server.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CatalogItemId")
-                        .HasColumnType("integer");
+                    b.Property<string>("AdditionalInfo")
+                        .HasColumnType("text");
 
                     b.Property<Guid>("CollectionId")
                         .HasColumnType("uuid");
 
                     b.Property<CollectionItemStatus>("CollectionStatus")
                         .HasColumnType("collection_item_status");
+
+                    b.Property<int>("CountryId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
@@ -115,11 +88,18 @@ namespace Server.Migrations
                     b.Property<int?>("SpecialStatusId")
                         .HasColumnType("integer");
 
+                    b.Property<CollectionItemType>("Type")
+                        .HasColumnType("collection_item_type");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("CatalogItemId");
-
                     b.HasIndex("CollectionId");
+
+                    b.HasIndex("CountryId");
 
                     b.HasIndex("SpecialStatusId");
 
@@ -174,14 +154,7 @@ namespace Server.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<int>("ContinentId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("CurrencyId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Name")
@@ -190,49 +163,12 @@ namespace Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Code")
-                        .IsUnique();
-
                     b.HasIndex("ContinentId");
-
-                    b.HasIndex("CurrencyId");
 
                     b.HasIndex("Name")
                         .IsUnique();
 
                     b.ToTable("Countries");
-                });
-
-            modelBuilder.Entity("Server.Entities.Currency", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("MajorName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("MinorName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Symbol")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Code")
-                        .IsUnique();
-
-                    b.ToTable("Currencies");
                 });
 
             modelBuilder.Entity("Server.Entities.InviteToken", b =>
@@ -335,28 +271,17 @@ namespace Server.Migrations
                     b.ToTable("UserCollections");
                 });
 
-            modelBuilder.Entity("Server.Entities.CatalogItem", b =>
-                {
-                    b.HasOne("Server.Entities.Country", "Country")
-                        .WithMany()
-                        .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Country");
-                });
-
             modelBuilder.Entity("Server.Entities.CollectionItem", b =>
                 {
-                    b.HasOne("Server.Entities.CatalogItem", "CatalogItem")
-                        .WithMany()
-                        .HasForeignKey("CatalogItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Server.Entities.Collection", "Collection")
                         .WithMany()
                         .HasForeignKey("CollectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Server.Entities.Country", "Country")
+                        .WithMany()
+                        .HasForeignKey("CountryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -364,9 +289,9 @@ namespace Server.Migrations
                         .WithMany()
                         .HasForeignKey("SpecialStatusId");
 
-                    b.Navigation("CatalogItem");
-
                     b.Navigation("Collection");
+
+                    b.Navigation("Country");
 
                     b.Navigation("SpecialStatus");
                 });
@@ -379,15 +304,7 @@ namespace Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Server.Entities.Currency", "Currency")
-                        .WithMany()
-                        .HasForeignKey("CurrencyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Continent");
-
-                    b.Navigation("Currency");
                 });
 
             modelBuilder.Entity("Server.Entities.InviteToken", b =>

@@ -14,9 +14,9 @@ namespace Server.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterDatabase()
-                .Annotation("Npgsql:Enum:catalog_item_type", "banknote,coin,other")
                 .Annotation("Npgsql:Enum:collection_item_quality", "extremely_fine,fine,good,poor,uncirculated,very_fine,very_good")
                 .Annotation("Npgsql:Enum:collection_item_status", "for_sale_or_exchange,in_collection,lost,sold_or_exchanged")
+                .Annotation("Npgsql:Enum:collection_item_type", "banknote,coin,other")
                 .Annotation("Npgsql:Enum:collection_role", "admin,editor,owner,viewer")
                 .Annotation("Npgsql:Enum:user_app_role", "admin,owner,user");
 
@@ -60,22 +60,6 @@ namespace Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Currencies",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    MajorName = table.Column<string>(type: "text", nullable: false),
-                    MinorName = table.Column<string>(type: "text", nullable: false),
-                    Code = table.Column<string>(type: "text", nullable: false),
-                    Symbol = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Currencies", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -98,9 +82,7 @@ namespace Server.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    Code = table.Column<string>(type: "text", nullable: false),
-                    ContinentId = table.Column<int>(type: "integer", nullable: false),
-                    CurrencyId = table.Column<int>(type: "integer", nullable: false)
+                    ContinentId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -109,12 +91,6 @@ namespace Server.Migrations
                         name: "FK_Countries_Continents_ContinentId",
                         column: x => x.ContinentId,
                         principalTable: "Continents",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Countries_Currencies_CurrencyId",
-                        column: x => x.CurrencyId,
-                        principalTable: "Currencies",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -177,40 +153,20 @@ namespace Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CatalogItems",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Type = table.Column<CollectionItemType>(type: "catalog_item_type", nullable: false),
-                    Value = table.Column<string>(type: "text", nullable: false),
-                    CountryId = table.Column<int>(type: "integer", nullable: false),
-                    IsMinor = table.Column<bool>(type: "boolean", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CatalogItems", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_CatalogItems_Countries_CountryId",
-                        column: x => x.CountryId,
-                        principalTable: "Countries",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "CollectionItems",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CatalogItemId = table.Column<int>(type: "integer", nullable: false),
+                    Type = table.Column<CollectionItemType>(type: "collection_item_type", nullable: false),
+                    CountryId = table.Column<int>(type: "integer", nullable: false),
                     CollectionStatus = table.Column<CollectionItemStatus>(type: "collection_item_status", nullable: false),
                     SpecialStatusId = table.Column<int>(type: "integer", nullable: true),
                     Quality = table.Column<CollectionItemQuality>(type: "collection_item_quality", nullable: true),
                     CollectionId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Value = table.Column<string>(type: "text", nullable: false),
+                    Currency = table.Column<string>(type: "text", nullable: false),
+                    AdditionalInfo = table.Column<string>(type: "text", nullable: true),
                     SerialNumber = table.Column<string>(type: "text", nullable: true),
                     Description = table.Column<string>(type: "text", nullable: true),
                     ObverseImageUrl = table.Column<string>(type: "text", nullable: true),
@@ -219,12 +175,6 @@ namespace Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CollectionItems", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_CollectionItems_CatalogItems_CatalogItemId",
-                        column: x => x.CatalogItemId,
-                        principalTable: "CatalogItems",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_CollectionItems_CollectionItemSpecialStatuses_SpecialStatus~",
                         column: x => x.SpecialStatusId,
@@ -236,22 +186,23 @@ namespace Server.Migrations
                         principalTable: "Collections",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CollectionItems_Countries_CountryId",
+                        column: x => x.CountryId,
+                        principalTable: "Countries",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CatalogItems_CountryId",
-                table: "CatalogItems",
-                column: "CountryId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CollectionItems_CatalogItemId",
-                table: "CollectionItems",
-                column: "CatalogItemId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CollectionItems_CollectionId",
                 table: "CollectionItems",
                 column: "CollectionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CollectionItems_CountryId",
+                table: "CollectionItems",
+                column: "CountryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CollectionItems_SpecialStatusId",
@@ -276,20 +227,9 @@ namespace Server.Migrations
                 column: "ContinentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Countries_CurrencyId",
-                table: "Countries",
-                column: "CurrencyId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Countries_Name",
                 table: "Countries",
                 column: "Name",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Currencies_Code",
-                table: "Currencies",
-                column: "Code",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -338,10 +278,10 @@ namespace Server.Migrations
                 name: "UserCollections");
 
             migrationBuilder.DropTable(
-                name: "CatalogItems");
+                name: "CollectionItemSpecialStatuses");
 
             migrationBuilder.DropTable(
-                name: "CollectionItemSpecialStatuses");
+                name: "Countries");
 
             migrationBuilder.DropTable(
                 name: "Collections");
@@ -350,13 +290,7 @@ namespace Server.Migrations
                 name: "Users");
 
             migrationBuilder.DropTable(
-                name: "Countries");
-
-            migrationBuilder.DropTable(
                 name: "Continents");
-
-            migrationBuilder.DropTable(
-                name: "Currencies");
         }
     }
 }
