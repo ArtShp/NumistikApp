@@ -27,9 +27,6 @@ public class CollectionItemController(CollectionItemService collectionItemServic
 
         var collectionItems = collectionItemService.GetCollectionItems(authenticatedUserId.Value, authenticatedUserRole.Value);
 
-        if (collectionItems is null || !collectionItems.Any())
-            return NotFound("No collection items found.");
-
         return Ok(collectionItems);
     }
 
