@@ -18,6 +18,8 @@ public static class DataSeeder
     {
         SeedItems(dbContext, dbContext.Continents, "Continents");
         SeedItems(dbContext, dbContext.CollectionItemTypes, "CollectionItemTypes");
+        SeedItems(dbContext, dbContext.CollectionItemStatuses, "CollectionItemStatuses");
+        SeedItems(dbContext, dbContext.CollectionItemQualities, "CollectionItemQualities");
         SeedItems(dbContext, dbContext.CollectionItemSpecialStatuses, "CollectionItemSpecialStatuses");
         SeedItems(dbContext, dbContext.Countries, "Countries");
     }

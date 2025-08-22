@@ -20,9 +20,9 @@ public class CollectionItemService(MyDbContext context, IWebHostEnvironment env)
             Id = ci.Id,
             TypeId = ci.TypeId,
             CountryId = ci.CountryId,
-            CollectionStatus = ci.CollectionStatus,
+            CollectionStatusId = ci.CollectionStatusId,
             SpecialStatusId = ci.SpecialStatusId,
-            Quality = ci.Quality,
+            QualityId = ci.QualityId,
             CollectionId = ci.CollectionId,
             Value = ci.Value,
             Currency = ci.Currency,
@@ -53,9 +53,9 @@ public class CollectionItemService(MyDbContext context, IWebHostEnvironment env)
             Id = collectionItem.Id,
             TypeId = collectionItem.TypeId,
             CountryId = collectionItem.CountryId,
-            CollectionStatus = collectionItem.CollectionStatus,
+            CollectionStatusId = collectionItem.CollectionStatusId,
             SpecialStatusId = collectionItem.SpecialStatusId,
-            Quality = collectionItem.Quality,
+            QualityId = collectionItem.QualityId,
             CollectionId = collectionItem.CollectionId,
             Value = collectionItem.Value,
             Currency = collectionItem.Currency,
@@ -77,9 +77,18 @@ public class CollectionItemService(MyDbContext context, IWebHostEnvironment env)
             .FindAsync(request.CountryId);
         if (country is null) return null;
 
+        var status = await context.CollectionItemStatuses
+            .FindAsync(request.CollectionStatusId);
+        if (status is null) return null;
+
         var specialStatus = await context.CollectionItemSpecialStatuses
             .FindAsync(request.SpecialStatusId);
         if (specialStatus is null && request.SpecialStatusId.HasValue)
+            return null;
+
+        var quality = await context.CollectionItemQualities
+            .FindAsync(request.QualityId);
+        if (quality is null && request.QualityId.HasValue)
             return null;
 
         var collection = await context.Collections
@@ -90,9 +99,9 @@ public class CollectionItemService(MyDbContext context, IWebHostEnvironment env)
         {
             Type = type,
             Country = country,
-            CollectionStatus = request.CollectionStatus,
+            CollectionStatus = status,
             SpecialStatus = specialStatus,
-            Quality = request.Quality,
+            Quality = quality,
             Collection = collection,
             Value = request.Value,
             Currency = request.Currency,
@@ -134,9 +143,13 @@ public class CollectionItemService(MyDbContext context, IWebHostEnvironment env)
 
             foundCollectionItem.Country = country;
         }
-        if (request.CollectionStatus.HasValue)
+        if (request.CollectionStatusId.HasValue)
         {
-            foundCollectionItem.CollectionStatus = request.CollectionStatus.Value;
+            var status = await context.CollectionItemStatuses
+                .FindAsync(request.CollectionStatusId.Value);
+            if (status is null) return false;
+
+            foundCollectionItem.CollectionStatus = status;
         }
         if (request.SpecialStatusId.HasValue)
         {
@@ -146,9 +159,13 @@ public class CollectionItemService(MyDbContext context, IWebHostEnvironment env)
 
             foundCollectionItem.SpecialStatus = specialStatus;
         }
-        if (request.Quality.HasValue)
+        if (request.QualityId.HasValue)
         {
-            foundCollectionItem.Quality = request.Quality.Value;
+            var quality = await context.CollectionItemQualities
+                .FindAsync(request.QualityId.Value);
+            if (quality is null) return false;
+
+            foundCollectionItem.Quality = quality;
         }
         if (request.CollectionId.HasValue)
         {

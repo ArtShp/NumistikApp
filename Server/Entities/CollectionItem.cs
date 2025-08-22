@@ -17,12 +17,18 @@ public class CollectionItem
 
     public Country Country { get; set; } = null!;
 
-    public CollectionItemStatus CollectionStatus { get; set; }
+    [ForeignKey(nameof(CollectionStatus))]
+    public int CollectionStatusId { get; set; }
+
+    public CollectionItemStatus CollectionStatus { get; set; } = null!;
 
     [ForeignKey(nameof(SpecialStatus))]
     public int? SpecialStatusId { get; set; }
 
     public CollectionItemSpecialStatus? SpecialStatus { get; set; }
+
+    [ForeignKey(nameof(Quality))]
+    public int? QualityId { get; set; }
 
     public CollectionItemQuality? Quality { get; set; }
 
@@ -62,21 +68,18 @@ public class CollectionItemType : IHasIntId
     public string Name { get; set; } = string.Empty;
 }
 
-public enum CollectionItemStatus
+[Index(nameof(Name), IsUnique = true)]
+public class CollectionItemStatus : IHasIntId
 {
-    InCollection = 1,
-    ForSaleOrExchange = 2,
-    SoldOrExchanged = 3,
-    Lost = 4,
+    public int Id { get; set; }
+
+    public string Name { get; set; } = string.Empty;
 }
 
-public enum CollectionItemQuality
+[Index(nameof(Name), IsUnique = true)]
+public class CollectionItemQuality : IHasIntId
 {
-    Uncirculated = 1,
-    ExtremelyFine = 2,
-    VeryFine = 3,
-    Fine = 4,
-    VeryGood = 5,
-    Good = 6,
-    Poor = 7
+    public int Id { get; set; }
+
+    public string Name { get; set; } = string.Empty;
 }

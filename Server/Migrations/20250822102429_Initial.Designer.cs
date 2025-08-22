@@ -13,7 +13,7 @@ using Server.Entities;
 namespace Server.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20250822094352_Initial")]
+    [Migration("20250822102429_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -24,8 +24,6 @@ namespace Server.Migrations
                 .HasAnnotation("ProductVersion", "9.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "collection_item_quality", new[] { "extremely_fine", "fine", "good", "poor", "uncirculated", "very_fine", "very_good" });
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "collection_item_status", new[] { "for_sale_or_exchange", "in_collection", "lost", "sold_or_exchanged" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "collection_role", new[] { "admin", "editor", "owner", "viewer" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "user_app_role", new[] { "admin", "owner", "user" });
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -62,8 +60,8 @@ namespace Server.Migrations
                     b.Property<Guid>("CollectionId")
                         .HasColumnType("uuid");
 
-                    b.Property<CollectionItemStatus>("CollectionStatus")
-                        .HasColumnType("collection_item_status");
+                    b.Property<int>("CollectionStatusId")
+                        .HasColumnType("integer");
 
                     b.Property<int>("CountryId")
                         .HasColumnType("integer");
@@ -78,8 +76,8 @@ namespace Server.Migrations
                     b.Property<string>("ObverseImageUrl")
                         .HasColumnType("text");
 
-                    b.Property<CollectionItemQuality?>("Quality")
-                        .HasColumnType("collection_item_quality");
+                    b.Property<int?>("QualityId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("ReverseImageUrl")
                         .HasColumnType("text");
@@ -101,13 +99,37 @@ namespace Server.Migrations
 
                     b.HasIndex("CollectionId");
 
+                    b.HasIndex("CollectionStatusId");
+
                     b.HasIndex("CountryId");
+
+                    b.HasIndex("QualityId");
 
                     b.HasIndex("SpecialStatusId");
 
                     b.HasIndex("TypeId");
 
                     b.ToTable("CollectionItems");
+                });
+
+            modelBuilder.Entity("Server.Entities.CollectionItemQuality", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("CollectionItemQualities");
                 });
 
             modelBuilder.Entity("Server.Entities.CollectionItemSpecialStatus", b =>
@@ -128,6 +150,26 @@ namespace Server.Migrations
                         .IsUnique();
 
                     b.ToTable("CollectionItemSpecialStatuses");
+                });
+
+            modelBuilder.Entity("Server.Entities.CollectionItemStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("CollectionItemStatuses");
                 });
 
             modelBuilder.Entity("Server.Entities.CollectionItemType", b =>
@@ -303,11 +345,21 @@ namespace Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Server.Entities.CollectionItemStatus", "CollectionStatus")
+                        .WithMany()
+                        .HasForeignKey("CollectionStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Server.Entities.Country", "Country")
                         .WithMany()
                         .HasForeignKey("CountryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Server.Entities.CollectionItemQuality", "Quality")
+                        .WithMany()
+                        .HasForeignKey("QualityId");
 
                     b.HasOne("Server.Entities.CollectionItemSpecialStatus", "SpecialStatus")
                         .WithMany()
@@ -321,7 +373,11 @@ namespace Server.Migrations
 
                     b.Navigation("Collection");
 
+                    b.Navigation("CollectionStatus");
+
                     b.Navigation("Country");
+
+                    b.Navigation("Quality");
 
                     b.Navigation("SpecialStatus");
 

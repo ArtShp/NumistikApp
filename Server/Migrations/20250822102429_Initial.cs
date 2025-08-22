@@ -14,10 +14,21 @@ namespace Server.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterDatabase()
-                .Annotation("Npgsql:Enum:collection_item_quality", "extremely_fine,fine,good,poor,uncirculated,very_fine,very_good")
-                .Annotation("Npgsql:Enum:collection_item_status", "for_sale_or_exchange,in_collection,lost,sold_or_exchanged")
                 .Annotation("Npgsql:Enum:collection_role", "admin,editor,owner,viewer")
                 .Annotation("Npgsql:Enum:user_app_role", "admin,owner,user");
+
+            migrationBuilder.CreateTable(
+                name: "CollectionItemQualities",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CollectionItemQualities", x => x.Id);
+                });
 
             migrationBuilder.CreateTable(
                 name: "CollectionItemSpecialStatuses",
@@ -30,6 +41,19 @@ namespace Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CollectionItemSpecialStatuses", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CollectionItemStatuses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CollectionItemStatuses", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -172,9 +196,9 @@ namespace Server.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     TypeId = table.Column<int>(type: "integer", nullable: false),
                     CountryId = table.Column<int>(type: "integer", nullable: false),
-                    CollectionStatus = table.Column<CollectionItemStatus>(type: "collection_item_status", nullable: false),
+                    CollectionStatusId = table.Column<int>(type: "integer", nullable: false),
                     SpecialStatusId = table.Column<int>(type: "integer", nullable: true),
-                    Quality = table.Column<CollectionItemQuality>(type: "collection_item_quality", nullable: true),
+                    QualityId = table.Column<int>(type: "integer", nullable: true),
                     CollectionId = table.Column<Guid>(type: "uuid", nullable: false),
                     Value = table.Column<string>(type: "text", nullable: false),
                     Currency = table.Column<string>(type: "text", nullable: false),
@@ -188,10 +212,21 @@ namespace Server.Migrations
                 {
                     table.PrimaryKey("PK_CollectionItems", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_CollectionItems_CollectionItemQualities_QualityId",
+                        column: x => x.QualityId,
+                        principalTable: "CollectionItemQualities",
+                        principalColumn: "Id");
+                    table.ForeignKey(
                         name: "FK_CollectionItems_CollectionItemSpecialStatuses_SpecialStatus~",
                         column: x => x.SpecialStatusId,
                         principalTable: "CollectionItemSpecialStatuses",
                         principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_CollectionItems_CollectionItemStatuses_CollectionStatusId",
+                        column: x => x.CollectionStatusId,
+                        principalTable: "CollectionItemStatuses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_CollectionItems_CollectionItemTypes_TypeId",
                         column: x => x.TypeId,
@@ -213,14 +248,30 @@ namespace Server.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_CollectionItemQualities_Name",
+                table: "CollectionItemQualities",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CollectionItems_CollectionId",
                 table: "CollectionItems",
                 column: "CollectionId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CollectionItems_CollectionStatusId",
+                table: "CollectionItems",
+                column: "CollectionStatusId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CollectionItems_CountryId",
                 table: "CollectionItems",
                 column: "CountryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CollectionItems_QualityId",
+                table: "CollectionItems",
+                column: "QualityId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CollectionItems_SpecialStatusId",
@@ -235,6 +286,12 @@ namespace Server.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_CollectionItemSpecialStatuses_Name",
                 table: "CollectionItemSpecialStatuses",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CollectionItemStatuses_Name",
+                table: "CollectionItemStatuses",
                 column: "Name",
                 unique: true);
 
@@ -307,7 +364,13 @@ namespace Server.Migrations
                 name: "UserCollections");
 
             migrationBuilder.DropTable(
+                name: "CollectionItemQualities");
+
+            migrationBuilder.DropTable(
                 name: "CollectionItemSpecialStatuses");
+
+            migrationBuilder.DropTable(
+                name: "CollectionItemStatuses");
 
             migrationBuilder.DropTable(
                 name: "CollectionItemTypes");
