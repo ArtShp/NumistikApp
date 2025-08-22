@@ -43,7 +43,7 @@ public class CollectionItemTypeController(CollectionItemTypeService typeService)
     }
 
     [HttpPost("create")]
-    [AuthorizeAllUsers]
+    [AuthorizeOnlyAdmins]
     public async Task<ActionResult<CollectionItemTypeCreationDto.Response?>> CreateCollectionItemTypeAsync(CollectionItemTypeCreationDto.Request request)
     {
         // Get the user's id from claims

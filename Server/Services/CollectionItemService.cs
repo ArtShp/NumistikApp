@@ -67,7 +67,7 @@ public class CollectionItemService(MyDbContext context, IWebHostEnvironment env)
         };
     }
 
-    public async Task<CollectionItemCreationDto.Response?> CreateCollectionItemAsync(CollectionItemCreationDto.Request request)
+    public async Task<CollectionItemCreationDto.Response?> CreateCollectionItemAsync(Guid userId, CollectionItemCreationDto.Request request)
     {
         var type = await context.CollectionItemTypes
             .FindAsync(request.TypeId);
@@ -95,6 +95,10 @@ public class CollectionItemService(MyDbContext context, IWebHostEnvironment env)
             .FindAsync(request.CollectionId);
         if (collection is null) return null;
 
+        var userCollection = collection.UserCollections
+            .FirstOrDefault(uc => uc.UserId == userId);
+        if (userCollection is null || userCollection.Role < CollectionRole.Editor) return null;
+
         var collectionItem = new CollectionItem
         {
             Type = type,
@@ -121,11 +125,14 @@ public class CollectionItemService(MyDbContext context, IWebHostEnvironment env)
         };
     }
 
-    public async Task<bool> UpdateCollectionItemAsync(CollectionItemUpdateDto.Request request)
+    public async Task<bool> UpdateCollectionItemAsync(Guid userId, CollectionItemUpdateDto.Request request)
     {
         var foundCollectionItem = await context.CollectionItems.FindAsync(request.Id);
-
         if (foundCollectionItem is null) return false;
+
+        var userCollection = foundCollectionItem.Collection.UserCollections
+            .FirstOrDefault(uc => uc.UserId == userId);
+        if (userCollection is null || userCollection.Role < CollectionRole.Editor) return false;
 
         if (request.TypeId.HasValue)
         {

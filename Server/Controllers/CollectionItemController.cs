@@ -64,7 +64,7 @@ public class CollectionItemController(CollectionItemService collectionItemServic
         if (authenticatedUserId is null)
             return Unauthorized("User is not authenticated.");
 
-        var collectionItem = await collectionItemService.CreateCollectionItemAsync(request);
+        var collectionItem = await collectionItemService.CreateCollectionItemAsync(authenticatedUserId.Value, request);
 
         if (collectionItem is null)
             return BadRequest("Error creating collection item.");
@@ -73,7 +73,7 @@ public class CollectionItemController(CollectionItemService collectionItemServic
     }
 
     [HttpPost("update")]
-    [AuthorizeOnlyAdmins]
+    [AuthorizeAllUsers]
     public async Task<ActionResult<bool>> UpdateCollectionItemAsync(CollectionItemUpdateDto.Request request)
     {
         // Get the user's id from claims
@@ -82,7 +82,7 @@ public class CollectionItemController(CollectionItemService collectionItemServic
         if (authenticatedUserId is null)
             return Unauthorized("User is not authenticated.");
 
-        var success = await collectionItemService.UpdateCollectionItemAsync(request);
+        var success = await collectionItemService.UpdateCollectionItemAsync(authenticatedUserId.Value, request);
 
         if (!success)
             return BadRequest("Error updating collection item.");

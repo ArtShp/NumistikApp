@@ -43,7 +43,7 @@ public class CollectionItemQualityController(CollectionItemQualityService qualit
     }
 
     [HttpPost("create")]
-    [AuthorizeAllUsers]
+    [AuthorizeOnlyAdmins]
     public async Task<ActionResult<CollectionItemQualityCreationDto.Response?>> CreateCollectionItemQualityAsync(CollectionItemQualityCreationDto.Request request)
     {
         // Get the user's id from claims
