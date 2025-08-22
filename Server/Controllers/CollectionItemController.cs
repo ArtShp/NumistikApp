@@ -82,9 +82,9 @@ public class CollectionItemController(CollectionItemService collectionItemServic
         if (authenticatedUserId is null)
             return Unauthorized("User is not authenticated.");
 
-        var catalogItem = await collectionItemService.UpdateCollectionItemAsync(request);
+        var success = await collectionItemService.UpdateCollectionItemAsync(request);
 
-        if (!catalogItem)
+        if (!success)
             return BadRequest("Error updating collection item.");
 
         return Ok(); 
