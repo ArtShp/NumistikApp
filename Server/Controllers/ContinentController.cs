@@ -43,7 +43,7 @@ public class ContinentController(ContinentService continentService) : MyControll
     }
 
     [HttpPost("create")]
-    [AuthorizeAllUsers]
+    [AuthorizeOnlyAdmins]
     public async Task<ActionResult<ContinentCreationDto.Response?>> CreateContinentAsync(ContinentCreationDto.Request request)
     {
         // Get the user's id from claims

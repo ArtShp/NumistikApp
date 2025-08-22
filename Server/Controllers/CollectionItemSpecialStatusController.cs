@@ -43,7 +43,7 @@ public class CollectionItemSpecialStatusController(CollectionItemSpecialStatusSe
     }
 
     [HttpPost("create")]
-    [AuthorizeAllUsers]
+    [AuthorizeOnlyAdmins]
     public async Task<ActionResult<CollectionItemSpecialStatusCreationDto.Response?>> CreateCollectionItemSpecialStatusAsync(CollectionItemSpecialStatusCreationDto.Request request)
     {
         // Get the user's id from claims

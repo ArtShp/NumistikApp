@@ -14,9 +14,7 @@ public class CountryService(MyDbContext context)
             {
                 Id = ci.Id,
                 Name = ci.Name,
-                Code = ci.Code,
-                ContinentId = ci.ContinentId,
-                CurrencyId = ci.CurrencyId
+                ContinentId = ci.ContinentId
             }
         );
     }
@@ -32,16 +30,14 @@ public class CountryService(MyDbContext context)
         {
             Id = country.Id,
             Name = country.Name,
-            Code = country.Code,
-            ContinentId = country.ContinentId,
-            CurrencyId = country.CurrencyId
+            ContinentId = country.ContinentId
         };
     }
 
     public async Task<CountryCreationDto.Response?> CreateCountryAsync(CountryCreationDto.Request request)
     {
         var foundCountry = await context.Countries.FirstOrDefaultAsync(c => 
-            c.Name == request.Name || c.Code == request.Code
+            c.Name == request.Name
         );
 
         if (foundCountry is not null) return null;
@@ -50,16 +46,10 @@ public class CountryService(MyDbContext context)
 
         if (continent is null) return null;
 
-        var currency = await context.Currencies.FindAsync(request.CurrencyId);
-
-        if (currency is null) return null;
-
         var country = new Country
         {
             Name = request.Name,
-            Code = request.Code,
-            Continent = continent,
-            Currency = currency
+            Continent = continent
         };
 
         context.Countries.Add(country);
@@ -68,8 +58,7 @@ public class CountryService(MyDbContext context)
         return new CountryCreationDto.Response
         {
             Id = country.Id,
-            Name = country.Name,
-            Code = country.Code
+            Name = country.Name
         };
     }
 
@@ -80,20 +69,12 @@ public class CountryService(MyDbContext context)
         if (foundCountry is null) return false;
 
         if (request.Name is not null) foundCountry.Name = request.Name;
-        if (request.Code is not null) foundCountry.Code = request.Code;
         if (request.ContinentId.HasValue)
         {
             var continent = await context.Continents.FindAsync(request.ContinentId.Value);
             if (continent is null) return false;
             
             foundCountry.Continent = continent;
-        }
-        if (request.CurrencyId.HasValue)
-        {
-            var currency = await context.Currencies.FindAsync(request.CurrencyId.Value);
-            if (currency is null) return false;
-
-            foundCountry.Currency = currency;
         }
 
         context.Countries.Update(foundCountry);

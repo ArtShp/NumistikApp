@@ -1,6 +1,4 @@
-﻿using Server.Entities;
-
-namespace Server.Models.CollectionItem;
+﻿namespace Server.Models.CollectionItem;
 
 public static class CollectionItemDto
 {
@@ -8,15 +6,23 @@ public static class CollectionItemDto
     {
         public required int Id { get; set; }
 
-        public required int CatalogItemId { get; set; }
+        public required int TypeId { get; set; }
 
-        public required CollectionItemStatus CollectionStatus { get; set; }
+        public required int CountryId { get; set; }
+
+        public required int CollectionStatusId { get; set; }
 
         public required int? SpecialStatusId { get; set; }
 
-        public required CollectionItemQuality? Quality { get; set; }
+        public required int? QualityId { get; set; }
 
         public required Guid CollectionId { get; set; }
+
+        public required string Value { get; set; }
+
+        public required string Currency { get; set; }
+
+        public required string? AdditionalInfo { get; set; }
 
         public required string? SerialNumber { get; set; }
 

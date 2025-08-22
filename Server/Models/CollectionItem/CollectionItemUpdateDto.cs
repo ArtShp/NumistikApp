@@ -1,5 +1,4 @@
-﻿using Server.Entities;
-using Server.Models.Extensions;
+﻿using Server.Models.Extensions;
 
 namespace Server.Models.CollectionItem;
 
@@ -9,15 +8,24 @@ public static class CollectionItemUpdateDto
     {
         public required int Id { get; set; }
 
-        public int? CatalogItemId { get; set; }
+        public int? TypeId { get; set; }
 
-        public CollectionItemStatus? CollectionStatus { get; set; }
+        public int? CountryId { get; set; }
+
+        public int? CollectionStatusId { get; set; }
 
         public int? SpecialStatusId { get; set; }
 
-        public CollectionItemQuality? Quality { get; set; }
+        public int? QualityId { get; set; }
 
         public Guid? CollectionId { get; set; }
+
+        [CatalogItemValue]
+        public string? Value { get; set; }
+
+        public string? Currency { get; set; }
+
+        public string? AdditionalInfo { get; set; }
 
         public string? SerialNumber { get; set; }
 

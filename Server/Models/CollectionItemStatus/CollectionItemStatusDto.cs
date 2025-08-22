@@ -1,13 +1,11 @@
-﻿namespace Server.Models.Country;
+﻿namespace Server.Models.CollectionItemStatus;
 
-public static class CountryDto
+public static class CollectionItemStatusDto
 {
     public class Response
     {
         public required int Id { get; set; }
 
         public required string Name { get; set; }
-
-        public required int ContinentId { get; set; }
     }
 }

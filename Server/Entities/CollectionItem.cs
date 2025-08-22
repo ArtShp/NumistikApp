@@ -7,17 +7,28 @@ public class CollectionItem
 {
     public int Id { get; set; }
 
-    [ForeignKey(nameof(CatalogItem))]
-    public int CatalogItemId { get; set; }
+    [ForeignKey(nameof(Type))]
+    public int TypeId { get; set; }
 
-    public CatalogItem CatalogItem { get; set; } = null!;
+    public CollectionItemType Type { get; set; } = null!;
 
-    public CollectionItemStatus CollectionStatus { get; set; }
+    [ForeignKey(nameof(Country))]
+    public int CountryId { get; set; }
+
+    public Country Country { get; set; } = null!;
+
+    [ForeignKey(nameof(CollectionStatus))]
+    public int CollectionStatusId { get; set; }
+
+    public CollectionItemStatus CollectionStatus { get; set; } = null!;
 
     [ForeignKey(nameof(SpecialStatus))]
     public int? SpecialStatusId { get; set; }
 
     public CollectionItemSpecialStatus? SpecialStatus { get; set; }
+
+    [ForeignKey(nameof(Quality))]
+    public int? QualityId { get; set; }
 
     public CollectionItemQuality? Quality { get; set; }
 
@@ -25,6 +36,12 @@ public class CollectionItem
     public Guid CollectionId { get; set; }
 
     public Collection Collection { get; set; } = null!;
+
+    public string Value { get; set; } = string.Empty;
+
+    public string Currency { get; set; } = string.Empty;
+
+    public string? AdditionalInfo { get; set; }
 
     public string? SerialNumber { get; set; }
 
@@ -43,21 +60,26 @@ public class CollectionItemSpecialStatus : IHasIntId
     public string Name { get; set; } = string.Empty;
 }
 
-public enum CollectionItemStatus
+[Index(nameof(Name), IsUnique = true)]
+public class CollectionItemType : IHasIntId
 {
-    InCollection = 1,
-    ForSaleOrExchange = 2,
-    SoldOrExchanged = 3,
-    Lost = 4,
+    public int Id { get; set; }
+
+    public string Name { get; set; } = string.Empty;
 }
 
-public enum CollectionItemQuality
+[Index(nameof(Name), IsUnique = true)]
+public class CollectionItemStatus : IHasIntId
 {
-    Uncirculated = 1,
-    ExtremelyFine = 2,
-    VeryFine = 3,
-    Fine = 4,
-    VeryGood = 5,
-    Good = 6,
-    Poor = 7
+    public int Id { get; set; }
+
+    public string Name { get; set; } = string.Empty;
+}
+
+[Index(nameof(Name), IsUnique = true)]
+public class CollectionItemQuality : IHasIntId
+{
+    public int Id { get; set; }
+
+    public string Name { get; set; } = string.Empty;
 }

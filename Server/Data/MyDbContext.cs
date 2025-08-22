@@ -10,10 +10,11 @@ public partial class MyDbContext(DbContextOptions<MyDbContext> options) : DbCont
     public DbSet<Collection> Collections { get; set; }
     public DbSet<UserCollection> UserCollections { get; set; }
     public DbSet<Continent> Continents { get; set; }
-    public DbSet<Currency> Currencies { get; set; }
     public DbSet<Country> Countries { get; set; }
-    public DbSet<CatalogItem> CatalogItems { get; set; }
     public DbSet<CollectionItem> CollectionItems { get; set; }
+    public DbSet<CollectionItemType> CollectionItemTypes { get; set; }
+    public DbSet<CollectionItemStatus> CollectionItemStatuses { get; set; }
+    public DbSet<CollectionItemQuality> CollectionItemQualities { get; set; }
     public DbSet<CollectionItemSpecialStatus> CollectionItemSpecialStatuses { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

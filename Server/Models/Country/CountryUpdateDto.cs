@@ -11,11 +11,6 @@ public static class CountryUpdateDto
         [NameWithSpacesNoNumbers]
         public string? Name { get; set; }
 
-        [CountryCode]
-        public string? Code { get; set; }
-
         public int? ContinentId { get; set; }
-
-        public int? CurrencyId { get; set; }
     }
 }

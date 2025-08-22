@@ -1,15 +1,13 @@
 ﻿using Server.Models.Extensions;
 
-namespace Server.Models.Country;
+namespace Server.Models.CollectionItemType;
 
-public static class CountryCreationDto
+public static class CollectionItemTypeCreationDto
 {
     public class Request
     {
         [NameWithSpacesNoNumbers]
         public required string Name { get; set; }
-
-        public required int ContinentId { get; set; }
     }
 
     public class Response
