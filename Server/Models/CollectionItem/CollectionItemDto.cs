@@ -8,7 +8,7 @@ public static class CollectionItemDto
     {
         public required int Id { get; set; }
 
-        public required CollectionItemType Type { get; set; }
+        public required int TypeId { get; set; }
 
         public required int CountryId { get; set; }
 

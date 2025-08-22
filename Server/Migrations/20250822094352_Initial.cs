@@ -16,7 +16,6 @@ namespace Server.Migrations
             migrationBuilder.AlterDatabase()
                 .Annotation("Npgsql:Enum:collection_item_quality", "extremely_fine,fine,good,poor,uncirculated,very_fine,very_good")
                 .Annotation("Npgsql:Enum:collection_item_status", "for_sale_or_exchange,in_collection,lost,sold_or_exchanged")
-                .Annotation("Npgsql:Enum:collection_item_type", "banknote,coin,other")
                 .Annotation("Npgsql:Enum:collection_role", "admin,editor,owner,viewer")
                 .Annotation("Npgsql:Enum:user_app_role", "admin,owner,user");
 
@@ -31,6 +30,19 @@ namespace Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CollectionItemSpecialStatuses", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CollectionItemTypes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CollectionItemTypes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -158,7 +170,7 @@ namespace Server.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Type = table.Column<CollectionItemType>(type: "collection_item_type", nullable: false),
+                    TypeId = table.Column<int>(type: "integer", nullable: false),
                     CountryId = table.Column<int>(type: "integer", nullable: false),
                     CollectionStatus = table.Column<CollectionItemStatus>(type: "collection_item_status", nullable: false),
                     SpecialStatusId = table.Column<int>(type: "integer", nullable: true),
@@ -180,6 +192,12 @@ namespace Server.Migrations
                         column: x => x.SpecialStatusId,
                         principalTable: "CollectionItemSpecialStatuses",
                         principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_CollectionItems_CollectionItemTypes_TypeId",
+                        column: x => x.TypeId,
+                        principalTable: "CollectionItemTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_CollectionItems_Collections_CollectionId",
                         column: x => x.CollectionId,
@@ -210,8 +228,19 @@ namespace Server.Migrations
                 column: "SpecialStatusId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CollectionItems_TypeId",
+                table: "CollectionItems",
+                column: "TypeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CollectionItemSpecialStatuses_Name",
                 table: "CollectionItemSpecialStatuses",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CollectionItemTypes_Name",
+                table: "CollectionItemTypes",
                 column: "Name",
                 unique: true);
 
@@ -279,6 +308,9 @@ namespace Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "CollectionItemSpecialStatuses");
+
+            migrationBuilder.DropTable(
+                name: "CollectionItemTypes");
 
             migrationBuilder.DropTable(
                 name: "Countries");

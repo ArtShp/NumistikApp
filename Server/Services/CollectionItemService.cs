@@ -18,7 +18,7 @@ public class CollectionItemService(MyDbContext context, IWebHostEnvironment env)
         return query.Select(ci => new CollectionItemDto.Response
         {
             Id = ci.Id,
-            Type = ci.Type,
+            TypeId = ci.TypeId,
             CountryId = ci.CountryId,
             CollectionStatus = ci.CollectionStatus,
             SpecialStatusId = ci.SpecialStatusId,
@@ -51,7 +51,7 @@ public class CollectionItemService(MyDbContext context, IWebHostEnvironment env)
         return new CollectionItemDto.Response
         {
             Id = collectionItem.Id,
-            Type = collectionItem.Type,
+            TypeId = collectionItem.TypeId,
             CountryId = collectionItem.CountryId,
             CollectionStatus = collectionItem.CollectionStatus,
             SpecialStatusId = collectionItem.SpecialStatusId,
@@ -69,6 +69,10 @@ public class CollectionItemService(MyDbContext context, IWebHostEnvironment env)
 
     public async Task<CollectionItemCreationDto.Response?> CreateCollectionItemAsync(CollectionItemCreationDto.Request request)
     {
+        var type = await context.CollectionItemTypes
+            .FindAsync(request.TypeId);
+        if (type is null) return null;
+
         var country = await context.Countries
             .FindAsync(request.CountryId);
         if (country is null) return null;
@@ -84,7 +88,7 @@ public class CollectionItemService(MyDbContext context, IWebHostEnvironment env)
 
         var collectionItem = new CollectionItem
         {
-            Type = request.Type,
+            Type = type,
             Country = country,
             CollectionStatus = request.CollectionStatus,
             SpecialStatus = specialStatus,
@@ -114,9 +118,13 @@ public class CollectionItemService(MyDbContext context, IWebHostEnvironment env)
 
         if (foundCollectionItem is null) return false;
 
-        if (request.Type.HasValue)
+        if (request.TypeId.HasValue)
         {
-            foundCollectionItem.Type = request.Type.Value;
+            var type = await context.CollectionItemTypes
+                .FindAsync(request.TypeId.Value);
+            if (type is null) return false;
+
+            foundCollectionItem.Type = type;
         }
         if (request.CountryId.HasValue)
         {

@@ -17,6 +17,7 @@ public static class DataSeeder
     public static void SeedAll(MyDbContext dbContext)
     {
         SeedItems(dbContext, dbContext.Continents, "Continents");
+        SeedItems(dbContext, dbContext.CollectionItemTypes, "CollectionItemTypes");
         SeedItems(dbContext, dbContext.CollectionItemSpecialStatuses, "CollectionItemSpecialStatuses");
         SeedItems(dbContext, dbContext.Countries, "Countries");
     }

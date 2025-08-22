@@ -7,7 +7,7 @@ public static class CollectionItemCreationDto
 {
     public class Request
     {
-        public required CollectionItemType Type { get; set; }
+        public required int TypeId { get; set; }
 
         public required int CountryId { get; set; }
 

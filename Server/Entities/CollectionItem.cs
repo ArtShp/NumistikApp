@@ -7,7 +7,10 @@ public class CollectionItem
 {
     public int Id { get; set; }
 
-    public CollectionItemType Type { get; set; }
+    [ForeignKey(nameof(Type))]
+    public int TypeId { get; set; }
+
+    public CollectionItemType Type { get; set; } = null!;
 
     [ForeignKey(nameof(Country))]
     public int CountryId { get; set; }
@@ -51,11 +54,12 @@ public class CollectionItemSpecialStatus : IHasIntId
     public string Name { get; set; } = string.Empty;
 }
 
-public enum CollectionItemType
+[Index(nameof(Name), IsUnique = true)]
+public class CollectionItemType : IHasIntId
 {
-    Banknote = 1,
-    Coin = 2,
-    Other = 3
+    public int Id { get; set; }
+
+    public string Name { get; set; } = string.Empty;
 }
 
 public enum CollectionItemStatus

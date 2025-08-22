@@ -23,7 +23,6 @@ namespace Server.Migrations
 
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "collection_item_quality", new[] { "extremely_fine", "fine", "good", "poor", "uncirculated", "very_fine", "very_good" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "collection_item_status", new[] { "for_sale_or_exchange", "in_collection", "lost", "sold_or_exchanged" });
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "collection_item_type", new[] { "banknote", "coin", "other" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "collection_role", new[] { "admin", "editor", "owner", "viewer" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "user_app_role", new[] { "admin", "owner", "user" });
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -88,8 +87,8 @@ namespace Server.Migrations
                     b.Property<int?>("SpecialStatusId")
                         .HasColumnType("integer");
 
-                    b.Property<CollectionItemType>("Type")
-                        .HasColumnType("collection_item_type");
+                    b.Property<int>("TypeId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Value")
                         .IsRequired()
@@ -102,6 +101,8 @@ namespace Server.Migrations
                     b.HasIndex("CountryId");
 
                     b.HasIndex("SpecialStatusId");
+
+                    b.HasIndex("TypeId");
 
                     b.ToTable("CollectionItems");
                 });
@@ -124,6 +125,26 @@ namespace Server.Migrations
                         .IsUnique();
 
                     b.ToTable("CollectionItemSpecialStatuses");
+                });
+
+            modelBuilder.Entity("Server.Entities.CollectionItemType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("CollectionItemTypes");
                 });
 
             modelBuilder.Entity("Server.Entities.Continent", b =>
@@ -289,11 +310,19 @@ namespace Server.Migrations
                         .WithMany()
                         .HasForeignKey("SpecialStatusId");
 
+                    b.HasOne("Server.Entities.CollectionItemType", "Type")
+                        .WithMany()
+                        .HasForeignKey("TypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Collection");
 
                     b.Navigation("Country");
 
                     b.Navigation("SpecialStatus");
+
+                    b.Navigation("Type");
                 });
 
             modelBuilder.Entity("Server.Entities.Country", b =>

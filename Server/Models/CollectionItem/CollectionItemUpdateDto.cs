@@ -9,7 +9,7 @@ public static class CollectionItemUpdateDto
     {
         public required int Id { get; set; }
 
-        public CollectionItemType? Type { get; set; }
+        public int? TypeId { get; set; }
 
         public int? CountryId { get; set; }
 
