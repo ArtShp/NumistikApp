@@ -12,6 +12,6 @@ public static class CollectionDto
 
         public required string? Description { get; set; }
 
-        public required CollectionRole CollectionRole { get; set; }
+        public required CollectionRole? CollectionRole { get; set; }
     }
 }
