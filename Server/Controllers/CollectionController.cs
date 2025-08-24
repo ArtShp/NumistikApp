@@ -19,14 +19,8 @@ public class CollectionController(CollectionService collectionService) : MyContr
         if (authenticatedUserId is null)
             return Unauthorized("User is not authenticated.");
 
-        // Get the user's role from claims
-        UserAppRole? authenticatedUserRole = GetAuthorizedUserRole();
-
-        if (authenticatedUserRole is null)
-            return Unauthorized("User role is not recognized.");
-
         var collections = await collectionService
-            .GetAllCollectionsAsync(authenticatedUserId.Value, authenticatedUserRole.Value);
+            .GetAllCollectionsAsync(authenticatedUserId.Value);
 
         if (collections is null)
             return StatusCode(StatusCodes.Status403Forbidden, "User does not have permission to view all collections.");

@@ -7,10 +7,8 @@ namespace Server.Services;
 
 public class CollectionService(MyDbContext context)
 {
-    public async Task<List<CollectionDto.Response>?> GetAllCollectionsAsync(Guid userId, UserAppRole userAppRole)
+    public async Task<List<CollectionDto.Response>?> GetAllCollectionsAsync(Guid userId)
     {
-        if (userAppRole < UserAppRole.Admin) return null;
-
         return await context.Collections
             .Select(collection => new CollectionDto.Response
             {
