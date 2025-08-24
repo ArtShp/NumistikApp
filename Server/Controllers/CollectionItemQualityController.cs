@@ -11,7 +11,7 @@ public class CollectionItemQualityController(CollectionItemQualityService qualit
 {
     [HttpGet]
     [AuthorizeAllUsers]
-    public ActionResult<IQueryable<CollectionItemQualityDto.Response>> GetCollectionItemQualities()
+    public async Task<ActionResult<List<CollectionItemQualityDto.Response>>> GetCollectionItemQualities()
     {
         // Get the user's id from claims
         Guid? authenticatedUserId = GetAuthorizedUserId();
@@ -19,7 +19,7 @@ public class CollectionItemQualityController(CollectionItemQualityService qualit
         if (authenticatedUserId is null)
             return Unauthorized("User is not authenticated.");
 
-        var qualitys = qualityService.GetCollectionItemQualities();
+        var qualitys = await qualityService.GetCollectionItemQualitiesAsync();
 
         return Ok(qualitys);
     }

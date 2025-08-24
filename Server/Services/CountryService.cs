@@ -7,16 +7,16 @@ namespace Server.Services;
 
 public class CountryService(MyDbContext context)
 {
-    public IQueryable<CountryDto.Response> GetCountries()
+    public async Task<List<CountryDto.Response>> GetCountriesAsync()
     {
-        return context.Countries.Select(ci =>
+        return await context.Countries.Select(ci =>
             new CountryDto.Response
             {
                 Id = ci.Id,
                 Name = ci.Name,
                 ContinentId = ci.ContinentId
-            }
-        );
+            })
+            .ToListAsync();
     }
 
     public async Task<CountryDto.Response?> GetCountryAsync(int countryId)
