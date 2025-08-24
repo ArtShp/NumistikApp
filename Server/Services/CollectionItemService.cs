@@ -1,4 +1,5 @@
-﻿using Server.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using Server.Data;
 using Server.Entities;
 using Server.Models.CollectionItem;
 
@@ -6,47 +7,56 @@ namespace Server.Services;
 
 public class CollectionItemService(MyDbContext context, IWebHostEnvironment env)
 {
-    public IQueryable<CollectionItemDto.Response> GetCollectionItems(Guid userId, UserAppRole userAppRole)
+    public async Task<List<CollectionItemDto.Response>?> GetCollectionItemsAsync(Guid userId, UserAppRole userAppRole, Guid collectionId)
     {
-        IQueryable<CollectionItem> query = context.CollectionItems;
+        var collection = await context.Collections
+            .FindAsync(collectionId);
 
-        if (userAppRole < UserAppRole.Admin)
-        {
-            query = query.Where(ci => ci.Collection.UserCollections.Any(c => c.UserId == userId));
-        }
+        if (collection is null) return null;
 
-        return query.Select(ci => new CollectionItemDto.Response
-        {
-            Id = ci.Id,
-            TypeId = ci.TypeId,
-            CountryId = ci.CountryId,
-            CollectionStatusId = ci.CollectionStatusId,
-            SpecialStatusId = ci.SpecialStatusId,
-            QualityId = ci.QualityId,
-            CollectionId = ci.CollectionId,
-            Value = ci.Value,
-            Currency = ci.Currency,
-            AdditionalInfo = ci.AdditionalInfo,
-            SerialNumber = ci.SerialNumber,
-            Description = ci.Description,
-            ObverseImageUrl = ci.ObverseImageUrl,
-            ReverseImageUrl = ci.ReverseImageUrl
-        });
+        var userCollection = collection.UserCollections
+            .FirstOrDefault(uc => uc.UserId == userId);
+
+        if (userCollection is null && userAppRole < UserAppRole.Admin) return null;
+
+        return await context.CollectionItems
+            .Where(ci => ci.CollectionId == collectionId)
+            .Select(ci => new CollectionItemDto.Response
+            {
+                Id = ci.Id,
+                TypeId = ci.TypeId,
+                CountryId = ci.CountryId,
+                CollectionStatusId = ci.CollectionStatusId,
+                SpecialStatusId = ci.SpecialStatusId,
+                QualityId = ci.QualityId,
+                CollectionId = ci.CollectionId,
+                Value = ci.Value,
+                Currency = ci.Currency,
+                AdditionalInfo = ci.AdditionalInfo,
+                SerialNumber = ci.SerialNumber,
+                Description = ci.Description,
+                ObverseImageUrl = ci.ObverseImageUrl,
+                ReverseImageUrl = ci.ReverseImageUrl
+            })
+            .ToListAsync();
     }
 
-    public async Task<CollectionItemDto.Response?> GetCollectionItemAsync(Guid userId, UserAppRole userAppRole, int collectionItemId)
+    public async Task<CollectionItemDto.Response?> GetCollectionItemAsync(Guid userId, UserAppRole userAppRole, Guid collectionId, int itemId)
     {
+        var collection = await context.Collections
+            .FindAsync(collectionId);
+
+        if (collection is null) return null;
+
+        var userCollection = collection.UserCollections
+            .FirstOrDefault(uc => uc.UserId == userId);
+
+        if (userCollection is null && userAppRole < UserAppRole.Admin) return null;
+
         var collectionItem = await context.CollectionItems
-            .FindAsync(collectionItemId);
+            .FindAsync(itemId);
 
-        if (collectionItem is null) return null;
-
-        if (userAppRole < UserAppRole.Admin)
-        {
-            var userCollection = collectionItem.Collection.UserCollections.FirstOrDefault(c => c.UserId == userId);
-
-            if (userCollection is null) return null;
-        }
+        if (collectionItem is null || collectionItem.CollectionId != collectionId) return null;
 
         return new CollectionItemDto.Response
         {
