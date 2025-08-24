@@ -9,9 +9,9 @@ namespace Server.Controllers;
 [ApiController]
 public class CollectionController(CollectionService collectionService) : MyControllerBase
 {
-    [HttpGet]
+    [HttpGet("my")]
     [AuthorizeAllUsers]
-    public ActionResult<IQueryable<CollectionDto.Response>> GetAllCollections()
+    public async Task<ActionResult<List<CollectionDto.Response>>> GetAllMyCollections()
     {
         // Get the user's id from claims
         Guid? authenticatedUserId = GetAuthorizedUserId();
@@ -19,7 +19,7 @@ public class CollectionController(CollectionService collectionService) : MyContr
         if (authenticatedUserId is null)
             return Unauthorized("User is not authenticated.");
 
-        var collections = collectionService.GetAllCollections(authenticatedUserId.Value);
+        var collections = await collectionService.GetAllMyCollectionsAsync(authenticatedUserId.Value);
 
         return Ok(collections);
     }
