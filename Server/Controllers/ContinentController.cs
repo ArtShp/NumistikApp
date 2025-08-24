@@ -11,7 +11,7 @@ public class ContinentController(ContinentService continentService) : MyControll
 {
     [HttpGet]
     [AuthorizeAllUsers]
-    public ActionResult<IQueryable<ContinentDto.Response>> GetContinents()
+    public async Task<ActionResult<List<ContinentDto.Response>>> GetContinents()
     {
         // Get the user's id from claims
         Guid? authenticatedUserId = GetAuthorizedUserId();
@@ -19,7 +19,7 @@ public class ContinentController(ContinentService continentService) : MyControll
         if (authenticatedUserId is null)
             return Unauthorized("User is not authenticated.");
 
-        var continents = continentService.GetContinents();
+        var continents = await continentService.GetContinentsAsync();
 
         return Ok(continents);
     }

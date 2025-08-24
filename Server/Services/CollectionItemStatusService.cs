@@ -7,15 +7,15 @@ namespace Server.Services;
 
 public class CollectionItemStatusService(MyDbContext context)
 {
-    public IQueryable<CollectionItemStatusDto.Response> GetCollectionItemStatuses()
+    public async Task<List<CollectionItemStatusDto.Response>> GetCollectionItemStatusesAsync()
     {
-        return context.CollectionItemStatuses.Select(ci =>
+        return await context.CollectionItemStatuses.Select(ci =>
             new CollectionItemStatusDto.Response
             {
                 Id = ci.Id,
                 Name = ci.Name
-            }
-        );
+            })
+            .ToListAsync();
     }
 
     public async Task<CollectionItemStatusDto.Response?> GetCollectionItemStatusAsync(int statusId)
