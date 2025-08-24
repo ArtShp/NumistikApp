@@ -9,9 +9,9 @@ namespace Server.Controllers;
 [ApiController]
 public class CollectionItemController(CollectionItemService collectionItemService) : MyControllerBase
 {
-    [HttpGet]
+    [HttpGet("{collectionId:Guid}")]
     [AuthorizeAllUsers]
-    public ActionResult<IQueryable<CollectionItemDto.Response>> GetCollectionItems()
+    public async Task<ActionResult<List<CollectionItemDto.Response>?>> GetCollectionItemsAsync(Guid collectionId)
     {
         // Get the user's id from claims
         Guid? authenticatedUserId = GetAuthorizedUserId();
@@ -25,14 +25,18 @@ public class CollectionItemController(CollectionItemService collectionItemServic
         if (authenticatedUserRole is null)
             return Unauthorized("User role is not recognized.");
 
-        var collectionItems = collectionItemService.GetCollectionItems(authenticatedUserId.Value, authenticatedUserRole.Value);
+        var collectionItems = await collectionItemService
+            .GetCollectionItemsAsync(authenticatedUserId.Value, authenticatedUserRole.Value, collectionId);
+
+        if (collectionItems is null)
+            return NotFound("No collection items found.");
 
         return Ok(collectionItems);
     }
 
-    [HttpGet("{id:int}")]
+    [HttpGet("{collectionId:Guid}/{itemId:int}")]
     [AuthorizeAllUsers]
-    public async Task<ActionResult<CollectionItemDto.Response?>> GetCollectionItemAsync(int id)
+    public async Task<ActionResult<CollectionItemDto.Response?>> GetCollectionItemAsync(Guid collectionId, int itemId)
     {
         // Get the user's id from claims
         Guid? authenticatedUserId = GetAuthorizedUserId();
@@ -46,7 +50,8 @@ public class CollectionItemController(CollectionItemService collectionItemServic
         if (authenticatedUserRole is null)
             return Unauthorized("User role is not recognized.");
 
-        var collectionItem = await collectionItemService.GetCollectionItemAsync(authenticatedUserId.Value, authenticatedUserRole.Value, id);
+        var collectionItem = await collectionItemService
+            .GetCollectionItemAsync(authenticatedUserId.Value, authenticatedUserRole.Value, collectionId, itemId);
 
         if (collectionItem is null)
             return NotFound("Collection item not found.");
