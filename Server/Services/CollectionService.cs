@@ -21,24 +21,24 @@ public class CollectionService(MyDbContext context)
             .ToListAsync();
     }
 
-    public async Task<CollectionDto.Response?> GetCollectionAsync(Guid userId, Guid collectionId)
+    public async Task<CollectionDto.Response?> GetCollectionAsync(Guid userId, UserAppRole userAppRole, Guid collectionId)
     {
-        var userCollection = await context.UserCollections
-            .FirstOrDefaultAsync(uc => uc.UserId == userId && uc.CollectionId == collectionId);
-
-        if (userCollection is null) return null;
-
         var collection = await context.Collections
             .FindAsync(collectionId);
 
         if (collection is null) return null;
+
+        var userCollection = await context.UserCollections
+            .FirstOrDefaultAsync(uc => uc.UserId == userId && uc.CollectionId == collectionId);
+
+        if (userCollection is null && userAppRole < UserAppRole.Admin) return null;
 
         return new CollectionDto.Response
         {
             Id = collection.Id,
             Name = collection.Name,
             Description = collection.Description,
-            CollectionRole = userCollection.Role
+            CollectionRole = userCollection?.Role
         };
     }
 
