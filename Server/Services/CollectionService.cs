@@ -7,7 +7,7 @@ namespace Server.Services;
 
 public class CollectionService(MyDbContext context)
 {
-    public async Task<List<CollectionDto.Response>> GetAllMyCollectionsAsync(Guid userId)
+    public async Task<List<CollectionDto.Response>> GetMyCollectionsAsync(Guid userId)
     {
         return await context.UserCollections
             .Where(uc => uc.UserId == userId)
