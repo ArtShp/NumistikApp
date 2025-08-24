@@ -7,6 +7,24 @@ namespace Server.Services;
 
 public class CollectionService(MyDbContext context)
 {
+    public async Task<List<CollectionDto.Response>?> GetAllCollectionsAsync(Guid userId, UserAppRole userAppRole)
+    {
+        if (userAppRole < UserAppRole.Admin) return null;
+
+        return await context.Collections
+            .Select(collection => new CollectionDto.Response
+            {
+                Id = collection.Id,
+                Name = collection.Name,
+                Description = collection.Description,
+                CollectionRole = context.UserCollections
+                    .Where(uc => uc.UserId == userId && uc.CollectionId == collection.Id)
+                    .Select(uc => (CollectionRole?) uc.Role)
+                    .FirstOrDefault()
+            })
+            .ToListAsync();
+    }
+
     public async Task<List<CollectionDto.Response>> GetMyCollectionsAsync(Guid userId)
     {
         return await context.UserCollections

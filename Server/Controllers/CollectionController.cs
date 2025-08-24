@@ -9,6 +9,31 @@ namespace Server.Controllers;
 [ApiController]
 public class CollectionController(CollectionService collectionService) : MyControllerBase
 {
+    [HttpGet("all")]
+    [AuthorizeAllUsers]
+    public async Task<ActionResult<List<CollectionDto.Response>>> GetAllCollections()
+    {
+        // Get the user's id from claims
+        Guid? authenticatedUserId = GetAuthorizedUserId();
+
+        if (authenticatedUserId is null)
+            return Unauthorized("User is not authenticated.");
+
+        // Get the user's role from claims
+        UserAppRole? authenticatedUserRole = GetAuthorizedUserRole();
+
+        if (authenticatedUserRole is null)
+            return Unauthorized("User role is not recognized.");
+
+        var collections = await collectionService
+            .GetAllCollectionsAsync(authenticatedUserId.Value, authenticatedUserRole.Value);
+
+        if (collections is null)
+            return StatusCode(StatusCodes.Status403Forbidden, "User does not have permission to view all collections.");
+
+        return Ok(collections);
+    }
+
     [HttpGet("my")]
     [AuthorizeAllUsers]
     public async Task<ActionResult<List<CollectionDto.Response>>> GetMyCollections()
