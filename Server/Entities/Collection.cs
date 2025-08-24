@@ -9,4 +9,6 @@ public class Collection
     public string? Description { get; set; }
 
     public ICollection<UserCollection> UserCollections { get; set; } = [];
+
+    public ICollection<CollectionItem> CollectionItems { get; set; } = [];
 }
