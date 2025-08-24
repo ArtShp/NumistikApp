@@ -10,7 +10,7 @@ namespace Server.Controllers;
 public class CollectionController(CollectionService collectionService) : MyControllerBase
 {
     [HttpGet("all")]
-    [AuthorizeAllUsers]
+    [AuthorizeOnlyAdmins]
     public async Task<ActionResult<List<CollectionDto.Response>>> GetAllCollections()
     {
         // Get the user's id from claims
