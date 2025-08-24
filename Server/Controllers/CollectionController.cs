@@ -22,9 +22,6 @@ public class CollectionController(CollectionService collectionService) : MyContr
         var collections = await collectionService
             .GetAllCollectionsAsync(authenticatedUserId.Value);
 
-        if (collections is null)
-            return StatusCode(StatusCodes.Status403Forbidden, "User does not have permission to view all collections.");
-
         return Ok(collections);
     }
 
