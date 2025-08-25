@@ -7,7 +7,7 @@ namespace Server.Services;
 
 public class CollectionItemService(MyDbContext context, IWebHostEnvironment env)
 {
-    public async Task<List<CollectionItemDto.Response>?> GetCollectionItemsAsync(Guid userId, UserAppRole userAppRole, Guid collectionId)
+    public async Task<List<CollectionItemDto.Response>?> GetCollectionItemsAsync(Guid userId, UserAppRole userAppRole, Guid collectionId, int? lastSeenId, int pageSize)
     {
         var collection = await context.Collections
             .FindAsync(collectionId);
@@ -19,8 +19,16 @@ public class CollectionItemService(MyDbContext context, IWebHostEnvironment env)
 
         if (userCollection is null && userAppRole < UserAppRole.Admin) return null;
 
-        return await context.CollectionItems
-            .Where(ci => ci.CollectionId == collectionId)
+        IQueryable<CollectionItem> query = context.CollectionItems
+            .OrderBy(ci => ci.Id)
+            .Where(ci => ci.CollectionId == collectionId);
+
+        if (lastSeenId.HasValue)
+        {
+            query = query.Where(ci => ci.Id > lastSeenId.Value);
+        }
+
+        return await query.Take(pageSize)
             .Select(ci => new CollectionItemDto.Response
             {
                 Id = ci.Id,

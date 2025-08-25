@@ -11,7 +11,7 @@ public class CollectionItemController(CollectionItemService collectionItemServic
 {
     [HttpGet("{collectionId:Guid}")]
     [AuthorizeAllUsers]
-    public async Task<ActionResult<List<CollectionItemDto.Response>?>> GetCollectionItemsAsync(Guid collectionId)
+    public async Task<ActionResult<List<CollectionItemDto.Response>?>> GetCollectionItemsAsync(Guid collectionId, [FromQuery] int? lastSeenId)
     {
         // Get the user's id from claims
         Guid? authenticatedUserId = GetAuthorizedUserId();
@@ -26,7 +26,7 @@ public class CollectionItemController(CollectionItemService collectionItemServic
             return Unauthorized("User role is not recognized.");
 
         var collectionItems = await collectionItemService
-            .GetCollectionItemsAsync(authenticatedUserId.Value, authenticatedUserRole.Value, collectionId);
+            .GetCollectionItemsAsync(authenticatedUserId.Value, authenticatedUserRole.Value, collectionId, lastSeenId, DefaultPageSize);
 
         if (collectionItems is null)
             return NotFound("No collection items found.");

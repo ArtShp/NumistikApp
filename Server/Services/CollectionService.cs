@@ -7,9 +7,17 @@ namespace Server.Services;
 
 public class CollectionService(MyDbContext context)
 {
-    public async Task<List<CollectionDto.Response>?> GetAllCollectionsAsync(Guid userId)
+    public async Task<List<CollectionDto.Response>?> GetAllCollectionsAsync(Guid userId, Guid? lastSeenId, int pageSize)
     {
-        return await context.Collections
+        IQueryable<Collection> query = context.Collections
+            .OrderBy(c => c.Id);
+
+        if (lastSeenId.HasValue)
+        {
+            query = query.Where(c => c.Id > lastSeenId.Value);
+        }
+
+        return await query.Take(pageSize)
             .Select(collection => new CollectionDto.Response
             {
                 Id = collection.Id,
@@ -23,10 +31,22 @@ public class CollectionService(MyDbContext context)
             .ToListAsync();
     }
 
-    public async Task<List<CollectionDto.Response>> GetMyCollectionsAsync(Guid userId)
+    public async Task<List<CollectionDto.Response>> GetMyCollectionsAsync(Guid userId, Guid? lastSeenId, string? lastSeenName, int pageSize)
     {
-        return await context.UserCollections
+        IQueryable<UserCollection> query = context.UserCollections
+            .Include(uc => uc.Collection)
             .Where(uc => uc.UserId == userId)
+            .OrderBy(uc => uc.Collection.Name)
+            .ThenBy(uc => uc.Collection.Id);
+
+        if (!string.IsNullOrEmpty(lastSeenName) && lastSeenId.HasValue)
+        {
+            query = query.Where(i =>
+                string.Compare(i.Collection.Name, lastSeenName) > 0 ||
+                (i.Collection.Name == lastSeenName && i.Collection.Id > lastSeenId.Value));
+        }
+
+        return await query.Take(pageSize)
             .Select(uc => new CollectionDto.Response
             {
                 Id = uc.Collection.Id,

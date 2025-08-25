@@ -11,7 +11,7 @@ public class CollectionItemQualityController(CollectionItemQualityService qualit
 {
     [HttpGet]
     [AuthorizeAllUsers]
-    public async Task<ActionResult<List<CollectionItemQualityDto.Response>>> GetCollectionItemQualities()
+    public async Task<ActionResult<List<CollectionItemQualityDto.Response>>> GetCollectionItemQualities([FromQuery] int? lastSeenId)
     {
         // Get the user's id from claims
         Guid? authenticatedUserId = GetAuthorizedUserId();
@@ -19,9 +19,9 @@ public class CollectionItemQualityController(CollectionItemQualityService qualit
         if (authenticatedUserId is null)
             return Unauthorized("User is not authenticated.");
 
-        var qualitys = await qualityService.GetCollectionItemQualitiesAsync();
+        var qualities = await qualityService.GetCollectionItemQualitiesAsync(lastSeenId, DefaultPageSize);
 
-        return Ok(qualitys);
+        return Ok(qualities);
     }
 
     [HttpGet("{id:int}")]
@@ -34,12 +34,12 @@ public class CollectionItemQualityController(CollectionItemQualityService qualit
         if (authenticatedUserId is null)
             return Unauthorized("User is not authenticated.");
 
-        var qualitys = await qualityService.GetCollectionItemQualityAsync(id);
+        var qualities = await qualityService.GetCollectionItemQualityAsync(id);
 
-        if (qualitys is null)
+        if (qualities is null)
             return NotFound("Collection item quality not found.");
 
-        return Ok(qualitys);
+        return Ok(qualities);
     }
 
     [HttpPost("create")]

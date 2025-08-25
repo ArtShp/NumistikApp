@@ -7,9 +7,17 @@ namespace Server.Services;
 
 public class CollectionItemQualityService(MyDbContext context)
 {
-    public async Task<List<CollectionItemQualityDto.Response>> GetCollectionItemQualitiesAsync()
+    public async Task<List<CollectionItemQualityDto.Response>> GetCollectionItemQualitiesAsync(int? lastSeenId, int pageSize)
     {
-        return await context.CollectionItemQualities.Select(ci =>
+        IQueryable<CollectionItemQuality> query = context.CollectionItemQualities
+            .OrderBy(ciq => ciq.Id);
+
+        if (lastSeenId.HasValue)
+        {
+            query = query.Where(ciq => ciq.Id > lastSeenId.Value);
+        }
+
+        return await query.Take(pageSize).Select(ci =>
             new CollectionItemQualityDto.Response
             {
                 Id = ci.Id,

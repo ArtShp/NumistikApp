@@ -11,7 +11,7 @@ public class CountryController(CountryService countryService) : MyControllerBase
 {
     [HttpGet]
     [AuthorizeAllUsers]
-    public async Task<ActionResult<List<CountryDto.Response>>> GetCountries()
+    public async Task<ActionResult<List<CountryDto.Response>>> GetCountries([FromQuery] string? lastSeenName)
     {
         // Get the user's id from claims
         Guid? authenticatedUserId = GetAuthorizedUserId();
@@ -19,7 +19,7 @@ public class CountryController(CountryService countryService) : MyControllerBase
         if (authenticatedUserId is null)
             return Unauthorized("User is not authenticated.");
 
-        var countries = await countryService.GetCountriesAsync();
+        var countries = await countryService.GetCountriesAsync(lastSeenName, DefaultPageSize);
 
         return Ok(countries);
     }
