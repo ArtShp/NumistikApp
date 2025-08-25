@@ -85,6 +85,30 @@ public class CollectionService(MyDbContext context)
         };
     }
 
+    public async Task<bool> UpdateCollectionAsync(Guid userId, CollectionUpdateDto.Request request)
+    {
+        var userCollection = await context.UserCollections
+            .FirstOrDefaultAsync(uc => uc.UserId == userId && uc.CollectionId == request.Id);
+
+        if (userCollection is null || userCollection.Role < CollectionRole.Admin) return false;
+
+        var foundCollection = await context.Collections.FindAsync(request.Id);
+
+        if (foundCollection is null) return false;
+
+        if (request.Name is not null)
+        {
+            foundCollection.Name = request.Name;
+        }
+
+        foundCollection.Description = request.Description;
+
+        context.Collections.Update(foundCollection);
+        await context.SaveChangesAsync();
+
+        return true;
+    }
+
     public async Task<bool> UpdateCollectionRoleAsync(Guid userId, CollectionUpdateRoleDto.Request request)
     {
         var userCollection = await context.UserCollections
