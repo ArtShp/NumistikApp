@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Server.Entities;
 using Server.Models.Collection;
-using Server.Models.CollectionItem;
 using Server.Services;
 
 namespace Server.Controllers;
@@ -12,7 +11,7 @@ public class CollectionController(CollectionService collectionService) : MyContr
 {
     [HttpGet("all")]
     [AuthorizeOnlyAdmins]
-    public async Task<ActionResult<List<CollectionDto.Response>>> GetAllCollections()
+    public async Task<ActionResult<List<CollectionDto.Response>>> GetAllCollections([FromQuery] Guid? lastSeenId)
     {
         // Get the user's id from claims
         Guid? authenticatedUserId = GetAuthorizedUserId();
@@ -21,14 +20,14 @@ public class CollectionController(CollectionService collectionService) : MyContr
             return Unauthorized("User is not authenticated.");
 
         var collections = await collectionService
-            .GetAllCollectionsAsync(authenticatedUserId.Value);
+            .GetAllCollectionsAsync(authenticatedUserId.Value, lastSeenId, DefaultPageSize);
 
         return Ok(collections);
     }
 
     [HttpGet("my")]
     [AuthorizeAllUsers]
-    public async Task<ActionResult<List<CollectionDto.Response>>> GetMyCollections()
+    public async Task<ActionResult<List<CollectionDto.Response>>> GetMyCollections([FromQuery] Guid? lastSeenId, [FromQuery] string? lastSeenName)
     {
         // Get the user's id from claims
         Guid? authenticatedUserId = GetAuthorizedUserId();
@@ -36,7 +35,7 @@ public class CollectionController(CollectionService collectionService) : MyContr
         if (authenticatedUserId is null)
             return Unauthorized("User is not authenticated.");
 
-        var collections = await collectionService.GetMyCollectionsAsync(authenticatedUserId.Value);
+        var collections = await collectionService.GetMyCollectionsAsync(authenticatedUserId.Value, lastSeenId, lastSeenName, DefaultPageSize);
 
         return Ok(collections);
     }
