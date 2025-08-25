@@ -11,7 +11,7 @@ public class CollectionItemStatusController(CollectionItemStatusService statusSe
 {
     [HttpGet]
     [AuthorizeAllUsers]
-    public async Task<ActionResult<List<CollectionItemStatusDto.Response>>> GetCollectionItemStatuses()
+    public async Task<ActionResult<List<CollectionItemStatusDto.Response>>> GetCollectionItemStatuses([FromQuery] int? lastSeenId)
     {
         // Get the user's id from claims
         Guid? authenticatedUserId = GetAuthorizedUserId();
@@ -19,7 +19,7 @@ public class CollectionItemStatusController(CollectionItemStatusService statusSe
         if (authenticatedUserId is null)
             return Unauthorized("User is not authenticated.");
 
-        var statuss = await statusService.GetCollectionItemStatusesAsync();
+        var statuss = await statusService.GetCollectionItemStatusesAsync(lastSeenId, DefaultPageSize);
 
         return Ok(statuss);
     }

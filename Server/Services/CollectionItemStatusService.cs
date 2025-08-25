@@ -7,9 +7,17 @@ namespace Server.Services;
 
 public class CollectionItemStatusService(MyDbContext context)
 {
-    public async Task<List<CollectionItemStatusDto.Response>> GetCollectionItemStatusesAsync()
+    public async Task<List<CollectionItemStatusDto.Response>> GetCollectionItemStatusesAsync(int? lastSeenId, int pageSize)
     {
-        return await context.CollectionItemStatuses.Select(ci =>
+        IQueryable<CollectionItemStatus> query = context.CollectionItemStatuses
+            .OrderBy(ciq => ciq.Id);
+
+        if (lastSeenId.HasValue)
+        {
+            query = query.Where(ciq => ciq.Id > lastSeenId.Value);
+        }
+
+        return await query.Take(pageSize).Select(ci =>
             new CollectionItemStatusDto.Response
             {
                 Id = ci.Id,
