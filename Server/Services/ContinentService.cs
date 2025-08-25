@@ -7,9 +7,17 @@ namespace Server.Services;
 
 public class ContinentService(MyDbContext context)
 {
-    public async Task<List<ContinentDto.Response>> GetContinentsAsync()
+    public async Task<List<ContinentDto.Response>> GetContinentsAsync(int? lastSeenId, int pageSize)
     {
-        return await context.Continents.Select(ci =>
+        IQueryable<Continent> query = context.Continents
+            .OrderBy(c => c.Id);
+
+        if (lastSeenId.HasValue)
+        {
+            query = query.Where(c => c.Id > lastSeenId.Value);
+        }
+
+        return await query.Take(pageSize).Select(ci =>
             new ContinentDto.Response
             {
                 Id = ci.Id,
