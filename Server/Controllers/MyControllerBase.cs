@@ -6,6 +6,8 @@ namespace Server.Controllers;
 
 public class MyControllerBase : ControllerBase
 {
+    protected const int DefaultPageSize = 10;
+
     protected Guid? GetAuthorizedUserId()
     {
         var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
