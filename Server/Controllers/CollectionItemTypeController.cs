@@ -11,7 +11,7 @@ public class CollectionItemTypeController(CollectionItemTypeService typeService)
 {
     [HttpGet]
     [AuthorizeAllUsers]
-    public async Task<ActionResult<List<CollectionItemTypeDto.Response>>> GetCollectionItemTypes()
+    public async Task<ActionResult<List<CollectionItemTypeDto.Response>>> GetCollectionItemTypes([FromQuery] int? lastSeenId)
     {
         // Get the user's id from claims
         Guid? authenticatedUserId = GetAuthorizedUserId();
@@ -19,7 +19,7 @@ public class CollectionItemTypeController(CollectionItemTypeService typeService)
         if (authenticatedUserId is null)
             return Unauthorized("User is not authenticated.");
 
-        var types = await typeService.GetCollectionItemTypesAsync();
+        var types = await typeService.GetCollectionItemTypesAsync(lastSeenId, DefaultPageSize);
 
         return Ok(types);
     }
