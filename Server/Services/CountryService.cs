@@ -7,9 +7,17 @@ namespace Server.Services;
 
 public class CountryService(MyDbContext context)
 {
-    public async Task<List<CountryDto.Response>> GetCountriesAsync()
+    public async Task<List<CountryDto.Response>> GetCountriesAsync(string? lastSeenName, int pageSize)
     {
-        return await context.Countries.Select(ci =>
+        IQueryable<Country> query = context.Countries
+            .OrderBy(c => c.Name);
+
+        if (!string.IsNullOrEmpty(lastSeenName))
+        {
+            query = query.Where(c => string.Compare(c.Name, lastSeenName) > 0);
+        }
+
+        return await query.Take(pageSize).Select(ci =>
             new CountryDto.Response
             {
                 Id = ci.Id,
