@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Server.Entities;
 using Server.Models.Collection;
+using Server.Models.CollectionItem;
 using Server.Services;
 
 namespace Server.Controllers;
@@ -80,6 +81,24 @@ public class CollectionController(CollectionService collectionService) : MyContr
             return BadRequest("Error creating collection.");
 
         return StatusCode(201, collection);
+    }
+
+    [HttpPost("update")]
+    [AuthorizeAllUsers]
+    public async Task<ActionResult<bool>> UpdateCollection(CollectionUpdateDto.Request request)
+    {
+        // Get the user's id from claims
+        Guid? authenticatedUserId = GetAuthorizedUserId();
+
+        if (authenticatedUserId is null)
+            return Unauthorized("User is not authenticated.");
+
+        var success = await collectionService.UpdateCollectionAsync(authenticatedUserId.Value, request);
+
+        if (!success)
+            return BadRequest("Error updating collection.");
+
+        return Ok();
     }
 
     [HttpPost("role")]
