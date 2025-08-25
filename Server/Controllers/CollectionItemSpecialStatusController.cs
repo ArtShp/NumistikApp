@@ -11,7 +11,7 @@ public class CollectionItemSpecialStatusController(CollectionItemSpecialStatusSe
 {
     [HttpGet]
     [AuthorizeAllUsers]
-    public async Task<ActionResult<List<CollectionItemSpecialStatusDto.Response>>> GetCollectionItemSpecialStatuses()
+    public async Task<ActionResult<List<CollectionItemSpecialStatusDto.Response>>> GetCollectionItemSpecialStatuses([FromQuery] int? lastSeenId)
     {
         // Get the user's id from claims
         Guid? authenticatedUserId = GetAuthorizedUserId();
@@ -19,7 +19,7 @@ public class CollectionItemSpecialStatusController(CollectionItemSpecialStatusSe
         if (authenticatedUserId is null)
             return Unauthorized("User is not authenticated.");
 
-        var specialStatuses = await specialStatusService.GetCollectionItemSpecialStatusesAsync();
+        var specialStatuses = await specialStatusService.GetCollectionItemSpecialStatusesAsync(lastSeenId, DefaultPageSize);
 
         return Ok(specialStatuses);
     }
