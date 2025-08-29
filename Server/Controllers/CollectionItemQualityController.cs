@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Server.Entities;
-using Server.Models.CollectionItemQuality;
 using Server.Services;
+using Shared.Models.CollectionItemQuality;
 
 namespace Server.Controllers;
 

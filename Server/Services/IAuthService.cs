@@ -1,5 +1,5 @@
-﻿using Server.Models.Auth;
-using Server.Models.Common;
+﻿using Shared.Models.Auth;
+using Shared.Models.Common;
 
 namespace Server.Services;
 

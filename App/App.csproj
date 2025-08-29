@@ -65,7 +65,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Common\Common.csproj" />
+	  <ProjectReference Include="..\Common\Shared.csproj" />
 	</ItemGroup>
 
 </Project>

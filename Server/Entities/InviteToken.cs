@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Server.Models.Common;
+using Shared.Models.Common;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Server.Entities;

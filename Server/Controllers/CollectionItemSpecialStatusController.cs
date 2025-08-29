@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Server.Entities;
-using Server.Models.CollectionItemSpecialStatus;
 using Server.Services;
+using Shared.Models.CollectionItemSpecialStatus;
 
 namespace Server.Controllers;
 

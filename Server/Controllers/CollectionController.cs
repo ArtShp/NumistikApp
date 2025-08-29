@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Server.Entities;
-using Server.Models.Collection;
-using Server.Models.Common;
 using Server.Services;
+using Shared.Models.Collection;
+using Shared.Models.Common;
 
 namespace Server.Controllers;
 

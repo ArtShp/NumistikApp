@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using Server.Models.Common;
+using Shared.Models.Common;
 using System.Data;
 
 namespace Server.Entities;
