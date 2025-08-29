@@ -18,11 +18,3 @@ public class UserCollection
 
     public CollectionRole Role { get; set; }
 }
-
-public enum CollectionRole
-{
-    Viewer = 1,
-    Editor = 2,
-    Admin = 3,
-    Owner = 4
-}

@@ -22,15 +22,6 @@ public class User
     public ICollection<UserCollection> UserCollections { get; set; } = [];
 }
 
-
-
-public enum UserAppRole
-{
-    User = 1,
-    Admin = 2,
-    Owner = 3
-}
-
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
 public abstract class AuthorizeRoleAttribute : AuthorizeAttribute
 {
