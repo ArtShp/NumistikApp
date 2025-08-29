@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Server.Data;
 using Server.Entities;
-using Server.Models.CollectionItemQuality;
+using Shared.Models.CollectionItemQuality;
 
 namespace Server.Services;
 

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Shared.Models.Common;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Server.Entities;
 
@@ -17,12 +18,4 @@ public class UserCollection
     public Collection Collection { get; set; } = null!;
 
     public CollectionRole Role { get; set; }
-}
-
-public enum CollectionRole
-{
-    Viewer = 1,
-    Editor = 2,
-    Admin = 3,
-    Owner = 4
 }

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Server.Data;
 using Server.Entities;
-using Server.Models.CollectionItemType;
+using Shared.Models.CollectionItemType;
 
 namespace Server.Services;
 

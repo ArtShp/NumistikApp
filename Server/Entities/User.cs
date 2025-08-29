@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Shared.Models.Common;
 using System.Data;
 
 namespace Server.Entities;
@@ -20,15 +21,6 @@ public class User
     public DateTime? RefreshTokenExpiryTime { get; set; }
 
     public ICollection<UserCollection> UserCollections { get; set; } = [];
-}
-
-
-
-public enum UserAppRole
-{
-    User = 1,
-    Admin = 2,
-    Owner = 3
 }
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = true)]

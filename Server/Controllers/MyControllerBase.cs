@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Server.Entities;
+using Shared.Models.Common;
 using System.Security.Claims;
 
 namespace Server.Controllers;

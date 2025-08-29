@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Server.Entities;
-using Server.Models.Auth;
 using Server.Services;
+using Shared.Models.Auth;
+using Shared.Models.Common;
 
 namespace Server.Controllers;
 

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Server.Entities;
-using Server.Models.Continent;
 using Server.Services;
+using Shared.Models.Continent;
 
 namespace Server.Controllers;
 
