@@ -1,4 +1,4 @@
-﻿using Server.Entities;
+﻿using Server.Models.Common;
 
 namespace Server.Models.Auth;
 

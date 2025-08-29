@@ -4,7 +4,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using Server.Data;
-using Server.Entities;
+using Server.Models.Common;
 using Server.Services;
 using System.Text;
 

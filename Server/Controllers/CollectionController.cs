@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Server.Entities;
 using Server.Models.Collection;
+using Server.Models.Common;
 using Server.Services;
 
 namespace Server.Controllers;
