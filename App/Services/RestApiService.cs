@@ -4,6 +4,8 @@ namespace App.Services;
 
 internal class RestApiService : IRestApiService
 {
+    private static Uri BaseUri => new (new (AppSettings.ServerUrl), "api/");
+
     private readonly HttpClient _client;
     private readonly JsonSerializerOptions _serializerOptions;
 
@@ -37,4 +39,15 @@ internal class RestApiService : IRestApiService
 
         return handler;
     }
+}
+
+internal class RestApiEndpoints
+{
+    
+}
+
+internal class RestApiEndpoint<TRequest, TResponse>(HttpMethod httpMethod, string endpoint)
+{
+    public HttpMethod HttpMethod { get; init; } = httpMethod;
+    public string Endpoint { get; init; } = endpoint;
 }
