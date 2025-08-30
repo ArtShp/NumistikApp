@@ -1,4 +1,5 @@
 ﻿using App.Models;
+using Shared.Models.Auth;
 
 namespace App.Services;
 
@@ -8,6 +9,10 @@ internal class LoginService(IRestApiService service) : ILoginService
 
     public Task<bool> TryLoginAsync(LoginCredentials creds)
     {
-        return Task.FromResult(true);
+        return _restApiService.Authorize(new UserLoginDto.Request
+        {
+            Username = creds.Username,
+            Password = creds.Password
+        });
     }
 }

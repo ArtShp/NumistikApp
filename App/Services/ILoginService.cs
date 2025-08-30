@@ -1,8 +1,18 @@
 ﻿using App.Models;
+using Shared.Models.Auth;
 
 namespace App.Services;
 
 public interface ILoginService
 {
     Task<bool> TryLoginAsync(LoginCredentials creds);
+}
+
+internal partial class RestApiEndpoints
+{
+    public static readonly RestApiEndpoint<UserLoginDto.Request, RefreshTokenDto.Response>
+        Login = new(HttpMethod.Post, "Auth/login");
+
+    public static readonly RestApiEndpoint<RefreshTokenDto.Request, RefreshTokenDto.Response>
+        ReLogin = new(HttpMethod.Post, "Auth/refresh-token");
 }
