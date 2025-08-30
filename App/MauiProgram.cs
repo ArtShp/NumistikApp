@@ -1,4 +1,6 @@
 ﻿using App.Services;
+using App.ViewModels;
+using App.Views;
 using Microsoft.Extensions.Logging;
 
 namespace App
@@ -18,6 +20,8 @@ namespace App
 
             builder.Services.AddSingleton<IRestApiService, RestApiService>();
             builder.Services.AddSingleton<ILoginService, LoginService>();
+
+            builder.Services.AddTransient<LoginViewModel>();
 
 #if DEBUG
             builder.Logging.AddDebug();

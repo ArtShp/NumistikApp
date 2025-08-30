@@ -2,7 +2,7 @@
 
 namespace App.Services;
 
-internal interface ILoginService
+public interface ILoginService
 {
     Task<bool> TryLoginAsync(LoginCredentials creds);
 }

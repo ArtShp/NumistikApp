@@ -4,11 +4,7 @@
              xmlns:viewModels="clr-namespace:App.ViewModels"
              x:Class="App.Views.LoginPage"
              Title="Login">
-    
-    <ContentPage.BindingContext>
-        <viewModels:LoginViewModel />
-    </ContentPage.BindingContext>
-    
+
     <VerticalStackLayout Padding="30" Spacing="20" VerticalOptions="Center" x:DataType="viewModels:LoginViewModel">
         <Label Text="Welcome, please log in" 
                FontSize="Title" 

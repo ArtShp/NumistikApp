@@ -1,9 +1,12 @@
+using App.ViewModels;
+
 namespace App.Views;
 
 public partial class LoginPage : ContentPage
 {
-    public LoginPage()
+    public LoginPage(LoginViewModel loginViewModel)
     {
         InitializeComponent();
+        BindingContext = loginViewModel;
     }
 }

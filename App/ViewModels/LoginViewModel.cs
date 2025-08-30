@@ -1,5 +1,6 @@
 ﻿using System.Windows.Input;
 using App.Models;
+using App.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -7,6 +8,8 @@ namespace App.ViewModels;
 
 public partial class LoginViewModel : ObservableObject
 {
+    private readonly ILoginService _loginService;
+
     private readonly LoginCredentials _creds = new();
 
     public string Username
@@ -37,16 +40,28 @@ public partial class LoginViewModel : ObservableObject
 
     public ICommand LoginCommand { get; init; }
 
-    public LoginViewModel()
+    private LoginViewModel()
     {
         LoginCommand = new AsyncRelayCommand(OnLogin);
+    }
+
+    public LoginViewModel(ILoginService loginService) : this()
+    {
+        _loginService = loginService;
     }
 
     private async Task OnLogin()
     {
         if (!string.IsNullOrWhiteSpace(Username) && !string.IsNullOrWhiteSpace(Password))
         {
-            await Shell.Current.GoToAsync("//MainPage");
+            if (await _loginService.TryLoginAsync(_creds))
+            {
+                await Shell.Current.GoToAsync("//MainPage");
+            }
+            else
+            {
+                await Shell.Current.CurrentPage.DisplayAlert("Login Failed", "Invalid username or password.", "OK");
+            }
         }
         else
         {
