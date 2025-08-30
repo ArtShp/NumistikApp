@@ -40,13 +40,10 @@ public partial class LoginViewModel : ObservableObject
 
     public ICommand LoginCommand { get; init; }
 
-    private LoginViewModel()
+    public LoginViewModel(ILoginService loginService)
     {
         LoginCommand = new AsyncRelayCommand(OnLogin);
-    }
 
-    public LoginViewModel(ILoginService loginService) : this()
-    {
         _loginService = loginService;
     }
 
