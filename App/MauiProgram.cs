@@ -17,6 +17,7 @@ namespace App
                 });
 
             builder.Services.AddSingleton<IRestApiService, RestApiService>();
+            builder.Services.AddSingleton<ILoginService, LoginService>();
 
 #if DEBUG
             builder.Logging.AddDebug();
