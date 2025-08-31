@@ -12,9 +12,7 @@ internal class RestApiService : IRestApiService
     private readonly HttpClient _client;
     private readonly JsonSerializerOptions _serializerOptions;
 
-    private string? _username;
     private string? _authToken;
-    private string? _refreshToken;
     private DateTime _tokenExpiry = DateTime.MinValue;
 
     public RestApiService()
@@ -54,10 +52,11 @@ internal class RestApiService : IRestApiService
 
         if (result != null)
         {
-            _username = requestBody.Username;
             _authToken = result.AccessToken;
-            _refreshToken = result.RefreshToken;
             _tokenExpiry = DateTime.UtcNow.AddSeconds(30); // TODO: receive expiry from server
+            AppSettings.RefreshToken = result.RefreshToken;
+            AppSettings.RefreshTokenExpiry = DateTime.UtcNow.AddDays(7); // TODO: receive expiry from server
+            await AppSettings.SetUsernameAsync(requestBody.Username);
 
             return true;
         }
@@ -72,8 +71,9 @@ internal class RestApiService : IRestApiService
         if (result != null)
         {
             _authToken = result.AccessToken;
-            _refreshToken = result.RefreshToken;
             _tokenExpiry = DateTime.UtcNow.AddSeconds(30); // TODO: receive expiry from server
+            AppSettings.RefreshToken = result.RefreshToken;
+            AppSettings.RefreshTokenExpiry = DateTime.UtcNow.AddDays(7); // TODO: receive expiry from server
 
             return true;
         }
@@ -87,8 +87,8 @@ internal class RestApiService : IRestApiService
         {
             bool authorized = await ReAuthorize(new RefreshTokenDto.Request
             {
-                Username = _username!,
-                RefreshToken = _refreshToken!
+                Username = (await AppSettings.GetUsernameAsync())!,
+                RefreshToken = AppSettings.RefreshToken
             });
 
             if (!authorized)
@@ -104,9 +104,10 @@ internal class RestApiService : IRestApiService
     {
         if (IsTokenExpired())
         {
-            bool authorized = await ReAuthorize(new RefreshTokenDto.Request { 
-                Username = _username!,
-                RefreshToken = _refreshToken!
+            bool authorized = await ReAuthorize(new RefreshTokenDto.Request
+            { 
+                Username = (await AppSettings.GetUsernameAsync())!,
+                RefreshToken = AppSettings.RefreshToken
             });
 
             if (!authorized)
