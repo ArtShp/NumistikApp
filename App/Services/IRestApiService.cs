@@ -6,6 +6,8 @@ public interface IRestApiService
 {
     Task<bool> Authorize(UserLoginDto.Request requestBody);
 
+    Task<bool> ReAuthorize(RefreshTokenDto.Request requestBody);
+
     Task<TResponse?> SendRestApiRequest<TResponse>(
         RestApiEndpoint<TResponse> endpoint
     );

@@ -9,4 +9,10 @@ public partial class LoginPage : ContentPage
         InitializeComponent();
         BindingContext = loginViewModel;
     }
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        await ((LoginViewModel) BindingContext).TryReLogin();
+    }
 }

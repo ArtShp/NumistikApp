@@ -5,7 +5,7 @@ internal static class AppSettings
     private const string ServerUrlKey = "ServerUrl";
     private const string RefreshTokenKey = "RefreshToken";
     private const string RefreshTokenExpiryKey = "RefreshTokenExpiry";
-    private const string UsernameSecureKey = "Username";
+    private const string UsernameKey = "Username";
 
     private const string DefaultServerUrl = "https://localhost:7163";
 
@@ -36,13 +36,9 @@ internal static class AppSettings
         set => Preferences.Default.Set(RefreshTokenExpiryKey, value?.ToString("o") ?? string.Empty);
     }
 
-    public static async Task<string?> GetUsernameAsync()
+    public static string Username
     {
-        return await SecureStorage.Default.GetAsync(UsernameSecureKey);
-    }
-
-    public static async Task SetUsernameAsync(string value)
-    {
-        await SecureStorage.Default.SetAsync(UsernameSecureKey, value);
+        get => Preferences.Default.Get(UsernameKey, string.Empty);
+        set => Preferences.Default.Set(UsernameKey, value);
     }
 }

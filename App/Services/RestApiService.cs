@@ -56,7 +56,7 @@ internal class RestApiService : IRestApiService
             _tokenExpiry = DateTime.UtcNow.AddSeconds(30); // TODO: receive expiry from server
             AppSettings.RefreshToken = result.RefreshToken;
             AppSettings.RefreshTokenExpiry = DateTime.UtcNow.AddDays(7); // TODO: receive expiry from server
-            await AppSettings.SetUsernameAsync(requestBody.Username);
+            AppSettings.Username = requestBody.Username;
 
             return true;
         }
@@ -64,7 +64,7 @@ internal class RestApiService : IRestApiService
         return false;
     }
 
-    private async Task<bool> ReAuthorize(RefreshTokenDto.Request requestBody)
+    public async Task<bool> ReAuthorize(RefreshTokenDto.Request requestBody)
     {
         RefreshTokenDto.Response? result = await SendInternalRestApiRequest(RestApiEndpoints.ReLogin, requestBody);
 
@@ -87,7 +87,7 @@ internal class RestApiService : IRestApiService
         {
             bool authorized = await ReAuthorize(new RefreshTokenDto.Request
             {
-                Username = (await AppSettings.GetUsernameAsync())!,
+                Username = AppSettings.Username,
                 RefreshToken = AppSettings.RefreshToken
             });
 
@@ -106,7 +106,7 @@ internal class RestApiService : IRestApiService
         {
             bool authorized = await ReAuthorize(new RefreshTokenDto.Request
             { 
-                Username = (await AppSettings.GetUsernameAsync())!,
+                Username = AppSettings.Username,
                 RefreshToken = AppSettings.RefreshToken
             });
 

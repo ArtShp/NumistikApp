@@ -6,6 +6,8 @@ namespace App.Services;
 public interface ILoginService
 {
     Task<bool> TryLoginAsync(LoginCredentials creds);
+
+    Task<bool> TryReLoginAsync();
 }
 
 internal partial class RestApiEndpoints

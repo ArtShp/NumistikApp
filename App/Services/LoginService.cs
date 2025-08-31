@@ -15,4 +15,13 @@ internal class LoginService(IRestApiService service) : ILoginService
             Password = creds.Password
         });
     }
+
+    public Task<bool> TryReLoginAsync()
+    {
+        return _restApiService.ReAuthorize(new RefreshTokenDto.Request
+        {
+            Username = AppSettings.Username,
+            RefreshToken = AppSettings.RefreshToken
+        });
+    }
 }

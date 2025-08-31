@@ -65,4 +65,15 @@ public partial class LoginViewModel : ObservableObject
             await Shell.Current.CurrentPage.DisplayAlert("Login Failed", "Please enter both username and password.", "OK");
         }
     }
+
+    public async Task TryReLogin()
+    {
+        if (!string.IsNullOrWhiteSpace(AppSettings.Username) && !string.IsNullOrWhiteSpace(AppSettings.RefreshToken))
+        {
+            if (await _loginService.TryReLoginAsync())
+            {
+                await Shell.Current.GoToAsync("//MainPage");
+            }
+        }
+    }
 }
