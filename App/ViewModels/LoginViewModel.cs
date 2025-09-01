@@ -115,6 +115,7 @@ public partial class LoginViewModel : ObservableObject
 
     private async Task OnRegister()
     {
+        ClearCredentials();
         await Shell.Current.GoToAsync("//RegisterPage");
     }
 

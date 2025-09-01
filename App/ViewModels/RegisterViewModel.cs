@@ -87,6 +87,7 @@ public partial class RegisterViewModel : ObservableObject
 
         if (success)
         {
+            ClearCredentials();
             await Shell.Current.DisplayAlert("Success", "Registration successful", "OK");
             await Shell.Current.GoToAsync("//LoginPage");
         }
@@ -98,6 +99,14 @@ public partial class RegisterViewModel : ObservableObject
 
     private async Task BackAsync()
     {
+        ClearCredentials();
         await Shell.Current.GoToAsync("//LoginPage");
+    }
+
+    private void ClearCredentials()
+    {
+        Username = string.Empty;
+        Password = string.Empty;
+        InviteToken = string.Empty;
     }
 }
