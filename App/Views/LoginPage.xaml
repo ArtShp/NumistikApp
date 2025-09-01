@@ -17,6 +17,8 @@
                IsPassword="True" />
         <Button Text="Login"
                 Command="{Binding LoginCommand}" />
+        <Button Text="Register"
+                Command="{Binding RegisterCommand}" />
         <!-- Settings toggle button -->
         <Button Text="Settings" 
                 Command="{Binding ToggleSettingsCommand}" 

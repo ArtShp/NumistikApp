@@ -22,6 +22,7 @@ namespace App
             builder.Services.AddSingleton<ILoginService, LoginService>();
 
             builder.Services.AddTransient<LoginViewModel>();
+            builder.Services.AddTransient<RegisterViewModel>();
             builder.Services.AddTransient<MainViewModel>();
 
 #if DEBUG
