@@ -4,7 +4,7 @@
              xmlns:viewModels="clr-namespace:App.ViewModels"
              x:Class="App.Views.LoginPage"
              Title="Login">
-
+    
     <VerticalStackLayout Padding="30" Spacing="20" VerticalOptions="Center" x:DataType="viewModels:LoginViewModel">
         <Label Text="Welcome, please log in" 
                FontSize="Title" 
@@ -17,6 +17,18 @@
                IsPassword="True" />
         <Button Text="Login"
                 Command="{Binding LoginCommand}" />
+        <!-- Settings toggle button -->
+        <Button Text="Settings" 
+                Command="{Binding ToggleSettingsCommand}" 
+                HorizontalOptions="Center" />
+        <!-- Hidden settings form -->
+        <StackLayout IsVisible="{Binding IsSettingsVisible}">
+            <Label Text="Server URL:" />
+            <Entry Text="{Binding ServerUrl}" 
+                   Placeholder="Enter server URL" />
+            <Button Text="Apply"
+                    Command="{Binding SaveServerUrlCommand}" />
+        </StackLayout>
     </VerticalStackLayout>
     
 </ContentPage>

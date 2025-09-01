@@ -38,13 +38,45 @@ public partial class LoginViewModel : ObservableObject
         }
     }
 
-    public ICommand LoginCommand { get; init; }
+    public string ServerUrl
+    {
+        get => AppSettings.ServerUrl;
+        set
+        {
+            if (AppSettings.ServerUrl != value)
+            {
+                AppSettings.ServerUrl = value;
+                OnPropertyChanged();
+            }
+        }
+    }
 
+    private bool _isSettingsVisible;
+    public bool IsSettingsVisible
+    {
+        get => _isSettingsVisible;
+        set => SetProperty(ref _isSettingsVisible, value);
+    }
+
+    public ICommand LoginCommand { get; init; }
+    public ICommand ToggleSettingsCommand { get; init; }
+    public ICommand SaveServerUrlCommand { get; init; }
+    
     public LoginViewModel(ILoginService loginService)
     {
-        LoginCommand = new AsyncRelayCommand(OnLogin);
-
         _loginService = loginService;
+
+        LoginCommand = new AsyncRelayCommand(OnLogin);
+        ToggleSettingsCommand = new RelayCommand(OnToggleSettings);
+        SaveServerUrlCommand = new AsyncRelayCommand(OnSaveServerUrl);
+    }
+
+    private void OnToggleSettings() => IsSettingsVisible = !IsSettingsVisible;
+
+    private async Task OnSaveServerUrl()
+    {
+        await Shell.Current.CurrentPage.DisplayAlert("Settings", "Server URL updated.", "OK");
+        IsSettingsVisible = false;
     }
 
     private async Task OnLogin()
