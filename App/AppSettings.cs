@@ -33,7 +33,7 @@ internal static class AppSettings
             return null;
         }
 
-        set => Preferences.Default.Set(RefreshTokenExpiryKey, value?.ToString("o") ?? string.Empty);
+        set => Preferences.Default.Set(RefreshTokenExpiryKey, value?.ToString() ?? string.Empty);
     }
 
     public static string Username
