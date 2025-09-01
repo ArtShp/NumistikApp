@@ -10,8 +10,6 @@ public interface IRestApiService
 
     void Logout();
 
-    Task<bool> Register(UserRegistrationDto.Request requestBody);
-
     Task<TResponse?> SendRestApiRequest<TResponse>(
         RestApiEndpoint<TResponse> endpoint
     );

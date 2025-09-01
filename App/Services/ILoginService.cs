@@ -8,6 +8,8 @@ public interface ILoginService
     Task<bool> TryLoginAsync(LoginCredentials creds);
 
     Task<bool> TryReLoginAsync();
+
+    Task<bool> Register(UserRegistrationDto.Request requestBody);
 }
 
 internal partial class RestApiEndpoints
