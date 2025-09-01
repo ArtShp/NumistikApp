@@ -53,12 +53,14 @@ public partial class RegisterViewModel : ObservableObject
     }
 
     public ICommand RegisterCommand { get; init; }
+    public ICommand BackCommand { get; init; }
 
     public RegisterViewModel(ILoginService service)
     {
         _loginService = service;
 
         RegisterCommand = new AsyncRelayCommand(RegisterAsync);
+        BackCommand = new AsyncRelayCommand(BackAsync);
     }
 
     private async Task RegisterAsync()
@@ -92,5 +94,10 @@ public partial class RegisterViewModel : ObservableObject
         {
             await Shell.Current.DisplayAlert("Error", "Registration failed", "OK");
         }
+    }
+
+    private async Task BackAsync()
+    {
+        await Shell.Current.GoToAsync("//LoginPage");
     }
 }

@@ -12,6 +12,7 @@
             <Entry Text="{Binding Password}" Placeholder="Password" IsPassword="True" />
             <Entry Text="{Binding InviteToken}" Placeholder="Invite Token" Keyboard="Default" />
             <Button Text="Register" Command="{Binding RegisterCommand}" />
+            <Button Text="Back to Login" Command="{Binding BackCommand}" />
         </VerticalStackLayout>
     </ScrollView>
     
