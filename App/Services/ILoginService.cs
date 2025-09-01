@@ -17,4 +17,7 @@ internal partial class RestApiEndpoints
 
     public static readonly RestApiEndpoint<RefreshTokenDto.Request, RefreshTokenDto.Response>
         ReLogin = new(HttpMethod.Post, "Auth/refresh-token");
+
+    public static readonly RestApiEndpoint<UserRegistrationDto.Request, UserRegistrationDto.Response>
+        Register = new(HttpMethod.Post, "Auth/register");
 }
