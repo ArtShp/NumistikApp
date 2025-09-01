@@ -86,6 +86,18 @@ internal class RestApiService : IRestApiService
         return false;
     }
 
+    public async Task<bool> Register(UserRegistrationDto.Request requestBody)
+    {
+        UserRegistrationDto.Response? result = await SendInternalRestApiRequest(RestApiEndpoints.Register, requestBody);
+
+        if (result != null)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     public async Task<TResponse?> SendRestApiRequest<TResponse>(RestApiEndpoint<TResponse> endpoint)
     {
         if (IsTokenExpired)
