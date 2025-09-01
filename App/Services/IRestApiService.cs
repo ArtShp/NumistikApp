@@ -5,8 +5,10 @@ namespace App.Services;
 public interface IRestApiService
 {
     Task<bool> Authorize(UserLoginDto.Request requestBody);
-
+    
     Task<bool> ReAuthorize(RefreshTokenDto.Request requestBody);
+
+    void Logout();
 
     Task<TResponse?> SendRestApiRequest<TResponse>(
         RestApiEndpoint<TResponse> endpoint

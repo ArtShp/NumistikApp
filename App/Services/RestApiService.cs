@@ -196,5 +196,14 @@ internal class RestApiService : IRestApiService
         return message;
     }
 
+    public void Logout()
+    {
+        _authToken = null;
+        _tokenExpiry = DateTime.MinValue;
+        AppSettings.Username = string.Empty;
+        AppSettings.RefreshToken = string.Empty;
+        AppSettings.RefreshTokenExpiry = null;
+    }
+
     private bool IsTokenExpired() => DateTime.UtcNow >= _tokenExpiry;
 }

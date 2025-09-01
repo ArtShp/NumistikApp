@@ -9,6 +9,9 @@
         <Label Text="Welcome to the Main Page!" 
                HorizontalOptions="Center" 
                FontSize="Title"/>
+        <Button Text="Logout" 
+                Command="{Binding LogoutCommand}"
+                HorizontalOptions="Center" />
     </VerticalStackLayout>
-    
+
 </ContentPage>
