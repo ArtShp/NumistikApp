@@ -66,6 +66,11 @@ internal class RestApiService : IRestApiService
 
     public async Task<bool> ReAuthorize(RefreshTokenDto.Request requestBody)
     {
+        if (IsRefreshTokenExpired)
+        {
+            return false;
+        }
+
         RefreshTokenDto.Response? result = await SendInternalRestApiRequest(RestApiEndpoints.ReLogin, requestBody);
 
         if (result != null)
@@ -206,4 +211,6 @@ internal class RestApiService : IRestApiService
     }
 
     private bool IsTokenExpired => DateTime.UtcNow >= _tokenExpiry;
+
+    private static bool IsRefreshTokenExpired => DateTime.UtcNow >= (AppSettings.RefreshTokenExpiry ?? DateTime.MinValue);
 }
