@@ -17,9 +17,20 @@
         ContentTemplate="{DataTemplate views:RegisterPage}"
         Route="RegisterPage" />
 
-    <ShellContent
-        Title="Home"
+    <TabBar Title="Main" Route="MainTabs">
+        <Tab Title="Home" Route="MainHome">
+            <ShellContent Title="Home"
         ContentTemplate="{DataTemplate views:MainPage}"
         Route="MainPage" />
+        </Tab>
+    </TabBar>
+
+    <TabBar Title="Admin" Route="AdminTabs">
+        <Tab Title="Dashboard" Route="AdminDashboard">
+            <ShellContent Title="Dashboard"
+                          ContentTemplate="{DataTemplate views:AdminPage}"
+                          Route="AdminPage" />
+        </Tab>
+    </TabBar>
 
 </Shell>

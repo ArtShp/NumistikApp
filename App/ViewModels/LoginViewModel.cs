@@ -88,7 +88,7 @@ public partial class LoginViewModel : ObservableObject
             if (await _loginService.TryLoginAsync(_creds))
             {
                 ClearCredentials();
-                await Shell.Current.GoToAsync("//MainPage");
+                await Shell.Current.GoToAsync("//MainTabs");
             }
             else
             {
@@ -108,7 +108,7 @@ public partial class LoginViewModel : ObservableObject
             if (await _loginService.TryReLoginAsync())
             {
                 ClearCredentials();
-                await Shell.Current.GoToAsync("//MainPage");
+                await Shell.Current.GoToAsync("//MainTabs");
             }
         }
     }

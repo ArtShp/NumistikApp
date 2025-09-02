@@ -2,24 +2,21 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewModels="clr-namespace:App.ViewModels"
-             x:Class="App.Views.MainPage"
-             x:DataType="viewModels:MainViewModel"
-             Title="Main Page">
+             x:Class="App.Views.AdminPage"
+             x:DataType="viewModels:AdminViewModel"
+             Title="Admin">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Admin"
+        <ToolbarItem Text="Main"
                      Priority="0"
                      Order="Primary"
-                     Command="{Binding NavigateToAdminCommand}" />
+                     Command="{Binding BackToMainCommand}" />
     </ContentPage.ToolbarItems>
 
     <VerticalStackLayout Padding="30" Spacing="20" VerticalOptions="Center">
-        <Label Text="Welcome to the Main Page!"
+        <Label Text="Admin Dashboard"
                HorizontalOptions="Center"
                FontSize="Title" />
-        <Button Text="Logout"
-                HorizontalOptions="Center"
-                Command="{Binding LogoutCommand}" />
     </VerticalStackLayout>
     
 </ContentPage>
