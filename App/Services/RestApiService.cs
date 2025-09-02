@@ -88,7 +88,7 @@ internal class RestApiService : IRestApiService
 
     public async Task<TResponse?> SendRestApiRequest<TResponse>(RestApiEndpoint<TResponse> endpoint)
     {
-        if (IsTokenExpired)
+        if (endpoint.RequiresAuth && IsTokenExpired)
         {
             bool authorized = await ReAuthorize(new RefreshTokenDto.Request
             {
@@ -107,7 +107,7 @@ internal class RestApiService : IRestApiService
 
     public async Task<TResponse?> SendRestApiRequest<TRequest, TResponse>(RestApiEndpoint<TRequest, TResponse> endpoint, TRequest? requestBody = null) where TRequest : class
     {
-        if (IsTokenExpired)
+        if (endpoint.RequiresAuth && IsTokenExpired)
         {
             bool authorized = await ReAuthorize(new RefreshTokenDto.Request
             { 

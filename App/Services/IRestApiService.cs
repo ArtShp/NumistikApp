@@ -19,17 +19,18 @@ public interface IRestApiService
     ) where TRequest : class;
 }
 
-public abstract class RestApiEndpoint(HttpMethod httpMethod, string endpoint)
+public abstract class RestApiEndpoint(HttpMethod httpMethod, string endpoint, bool requiresAuth)
 {
     public HttpMethod HttpMethod { get; init; } = httpMethod;
     public string Endpoint { get; init; } = endpoint;
+    public bool RequiresAuth { get; init; } = requiresAuth;
 }
 
-public class RestApiEndpoint<TResponse>(HttpMethod httpMethod, string endpoint) : 
-    RestApiEndpoint(httpMethod, endpoint) {}
+public class RestApiEndpoint<TResponse>(HttpMethod httpMethod, string endpoint, bool requiresAuth) : 
+    RestApiEndpoint(httpMethod, endpoint, requiresAuth) {}
 
-public class RestApiEndpoint<TRequest, TResponse>(HttpMethod httpMethod, string endpoint) : 
-    RestApiEndpoint(httpMethod, endpoint) where TRequest : class {}
+public class RestApiEndpoint<TRequest, TResponse>(HttpMethod httpMethod, string endpoint, bool requiresAuth) : 
+    RestApiEndpoint(httpMethod, endpoint, requiresAuth) where TRequest : class {}
 
 internal partial class RestApiEndpoints
 {

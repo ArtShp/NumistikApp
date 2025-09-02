@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:App.ViewModels"
+             x:Class="App.Views.RegisterPage"
+             Title="Register">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="30" Spacing="20" VerticalOptions="Center" x:DataType="viewModels:RegisterViewModel">
+            <Label Text="Create a new account" FontSize="Title" HorizontalOptions="Center" />
+            <Entry Text="{Binding Username}" Placeholder="Username" Keyboard="Default" />
+            <Entry Text="{Binding Password}" Placeholder="Password" IsPassword="True" />
+            <Entry Text="{Binding InviteToken}" Placeholder="Invite Token" Keyboard="Default" />
+            <Button Text="Register" Command="{Binding RegisterCommand}" />
+            <Button Text="Back to Login" Command="{Binding BackCommand}" />
+        </VerticalStackLayout>
+    </ScrollView>
+    
+</ContentPage>

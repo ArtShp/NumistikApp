@@ -24,4 +24,16 @@ internal class LoginService(IRestApiService service) : ILoginService
             RefreshToken = AppSettings.RefreshToken
         });
     }
+
+    public async Task<bool> Register(UserRegistrationDto.Request requestBody)
+    {
+        UserRegistrationDto.Response? result = await _restApiService.SendRestApiRequest(RestApiEndpoints.Register, requestBody);
+
+        if (result != null)
+        {
+            return true;
+        }
+
+        return false;
+    }
 }

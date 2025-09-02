@@ -59,6 +59,7 @@ public partial class LoginViewModel : ObservableObject
     }
 
     public ICommand LoginCommand { get; init; }
+    public ICommand RegisterCommand { get; init; }
     public ICommand ToggleSettingsCommand { get; init; }
     public ICommand SaveServerUrlCommand { get; init; }
     
@@ -67,6 +68,7 @@ public partial class LoginViewModel : ObservableObject
         _loginService = loginService;
 
         LoginCommand = new AsyncRelayCommand(OnLogin);
+        RegisterCommand = new AsyncRelayCommand(OnRegister);
         ToggleSettingsCommand = new RelayCommand(OnToggleSettings);
         SaveServerUrlCommand = new AsyncRelayCommand(OnSaveServerUrl);
     }
@@ -109,6 +111,12 @@ public partial class LoginViewModel : ObservableObject
                 await Shell.Current.GoToAsync("//MainPage");
             }
         }
+    }
+
+    private async Task OnRegister()
+    {
+        ClearCredentials();
+        await Shell.Current.GoToAsync("//RegisterPage");
     }
 
     private void ClearCredentials()

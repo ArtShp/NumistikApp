@@ -13,6 +13,11 @@
         Route="LoginPage" />
 
     <ShellContent
+        Title="Register Page"
+        ContentTemplate="{DataTemplate views:RegisterPage}"
+        Route="RegisterPage" />
+
+    <ShellContent
         Title="Home"
         ContentTemplate="{DataTemplate views:MainPage}"
         Route="MainPage" />
