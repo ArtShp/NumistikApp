@@ -1,6 +1,5 @@
 ﻿using App.Services;
 using App.ViewModels;
-using App.Views;
 using Microsoft.Extensions.Logging;
 
 namespace App
@@ -24,6 +23,7 @@ namespace App
             builder.Services.AddTransient<LoginViewModel>();
             builder.Services.AddTransient<RegisterViewModel>();
             builder.Services.AddTransient<MainViewModel>();
+            builder.Services.AddTransient<AdminViewModel>();
 
 #if DEBUG
             builder.Logging.AddDebug();
