@@ -10,6 +10,8 @@ public interface ILoginService
     Task<bool> TryReLoginAsync();
 
     Task<bool> Register(UserRegistrationDto.Request requestBody);
+
+    Task<InviteTokenDto.Response?> CreateInviteToken(InviteTokenDto.Request requestBody);
 }
 
 internal partial class RestApiEndpoints
@@ -22,4 +24,7 @@ internal partial class RestApiEndpoints
 
     public static readonly RestApiEndpoint<UserRegistrationDto.Request, UserRegistrationDto.Response>
         Register = new(HttpMethod.Post, "Auth/register", false);
+
+    public static readonly RestApiEndpoint<InviteTokenDto.Request, InviteTokenDto.Response>
+        CreateInviteToken = new(HttpMethod.Post, "Auth/create-invite-token", true);
 }
