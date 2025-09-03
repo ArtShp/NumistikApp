@@ -20,8 +20,8 @@
     <TabBar Title="Main" Route="MainTabs">
         <Tab Title="Home" Route="MainHome">
             <ShellContent Title="Home"
-        ContentTemplate="{DataTemplate views:MainPage}"
-        Route="MainPage" />
+                          ContentTemplate="{DataTemplate views:MainPage}"
+                          Route="MainPage" />
         </Tab>
     </TabBar>
 
@@ -30,6 +30,11 @@
             <ShellContent Title="Dashboard"
                           ContentTemplate="{DataTemplate views:AdminPage}"
                           Route="AdminPage" />
+        </Tab>
+        <Tab Title="Users" Route="AdminUsers">
+            <ShellContent Title="Users"
+                          ContentTemplate="{DataTemplate views:AdminUsersPage}"
+                          Route="AdminUsersPage" />
         </Tab>
     </TabBar>
 
