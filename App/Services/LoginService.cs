@@ -36,4 +36,9 @@ internal class LoginService(IRestApiService service) : ILoginService
 
         return false;
     }
+
+    public async Task<InviteTokenDto.Response?> CreateInviteToken(InviteTokenDto.Request requestBody)
+    {
+        return await _restApiService.SendRestApiRequest(RestApiEndpoints.CreateInviteToken, requestBody);
+    }
 }
