@@ -13,4 +13,11 @@
                      Command="{Binding BackToMainCommand}" />
     </ContentPage.ToolbarItems>
 
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="12">
+            <Button Text="Create invite token"
+                    Command="{Binding CreateInviteTokenCommand}" />
+        </VerticalStackLayout>
+    </ScrollView>
+
 </ContentPage>
