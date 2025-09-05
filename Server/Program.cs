@@ -58,7 +58,7 @@ public class Program
                     listenOptions.UseHttps(certPath, certPassword);
                 });
 
-                Console.WriteLine($"[INFO] HTTPS enabled on port 443 using {certPath}");
+                Console.WriteLine($"[INFO] HTTPS enabled on port 443 using provided certificate.");
             }
             else
             {
