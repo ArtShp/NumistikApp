@@ -46,6 +46,31 @@ public class Program
                 };
             });
 
+        builder.WebHost.ConfigureKestrel(options =>
+        {
+            var certPath = builder.Configuration["CertPath"];
+            var certPassword = builder.Configuration["CertPassword"];
+
+            if (!string.IsNullOrEmpty(certPath) && !string.IsNullOrEmpty(certPassword) && File.Exists(certPath))
+            {
+                options.ListenAnyIP(443, listenOptions =>
+                {
+                    listenOptions.UseHttps(certPath, certPassword);
+                });
+
+                Console.WriteLine($"[INFO] HTTPS enabled on port 443 using provided certificate.");
+            }
+            else
+            {
+                options.ListenLocalhost(5000, listenOptions =>
+                {
+                    listenOptions.UseHttps();
+                });
+
+                Console.WriteLine("[WARN] No certificate found. Running HTTPS on localhost:5000 (development only).");
+            }
+        });
+
         builder.Services.AddScoped<IAuthService, AuthService>();
         builder.Services.AddScoped<CollectionService>();
         builder.Services.AddScoped<ContinentService>();
