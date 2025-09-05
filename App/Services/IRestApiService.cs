@@ -11,11 +11,12 @@ public interface IRestApiService
     void Logout();
 
     Task<TResponse?> SendRestApiRequest<TResponse>(
-        RestApiEndpoint<TResponse> endpoint
+        RestApiEndpoint<TResponse> endpointб, IDictionary<string, string?>? query = null
     );
 
     Task<TResponse?> SendRestApiRequest<TRequest, TResponse>(
-        RestApiEndpoint<TRequest, TResponse> endpoint, TRequest? requestBody = null
+        RestApiEndpoint<TRequest, TResponse> endpoint, TRequest? requestBody = null,
+        IDictionary<string, string?>? query = null
     ) where TRequest : class;
 }
 
