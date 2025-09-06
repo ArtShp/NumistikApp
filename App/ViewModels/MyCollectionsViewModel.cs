@@ -11,7 +11,7 @@ public partial class MyCollectionsViewModel : ObservableObject
 {
     private readonly ICollectionService _collectionService;
 
-    private readonly ObservableCollection<MyCollectionDto> _collections = [];
+    public ObservableCollection<MyCollectionDto> Collections { get; init; } = [];
 
     private Guid? _lastSeenId;
     private string? _lastSeenName;
@@ -54,7 +54,7 @@ public partial class MyCollectionsViewModel : ObservableObject
 
     public async Task InitializeAsync()
     {
-        if (_collections.Count == 0)
+        if (Collections.Count == 0)
         {
             await RefreshAsync();
         }
@@ -62,7 +62,7 @@ public partial class MyCollectionsViewModel : ObservableObject
 
     private async Task RefreshAsync()
     {
-        _collections.Clear();
+        Collections.Clear();
 
         _lastSeenId = null;
         _lastSeenName = null;
@@ -83,7 +83,7 @@ public partial class MyCollectionsViewModel : ObservableObject
 
             foreach (var item in page)
             {
-                _collections.Add(item);
+                Collections.Add(item);
                 last = item;
             }
 
