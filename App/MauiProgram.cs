@@ -25,6 +25,7 @@ namespace App
             builder.Services.AddTransient<RegisterViewModel>();
             builder.Services.AddTransient<MainViewModel>();
             builder.Services.AddTransient<AdminViewModel>();
+            builder.Services.AddTransient<MyCollectionsViewModel>();
 
 #if DEBUG
             builder.Logging.AddDebug();
