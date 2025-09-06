@@ -19,6 +19,7 @@ namespace App
 
             builder.Services.AddSingleton<IRestApiService, RestApiService>();
             builder.Services.AddSingleton<ILoginService, LoginService>();
+            builder.Services.AddSingleton<ICollectionService, CollectionService>();
 
             builder.Services.AddTransient<LoginViewModel>();
             builder.Services.AddTransient<RegisterViewModel>();
