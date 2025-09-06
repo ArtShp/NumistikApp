@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:App.ViewModels"
+             xmlns:models="clr-namespace:App.Models"
+             xmlns:controls="clr-namespace:App.Controls"
+             x:Class="App.Views.MyCollectionsPage"
+             x:DataType="viewModels:MyCollectionsViewModel"
+             x:Name="Page"
+             Title="My collections">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Refresh" Command="{Binding RefreshCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <Grid RowDefinitions="Auto,*,Auto" Padding="16">
+        <CollectionView Grid.Row="1"
+                        ItemsSource="{Binding Collections}"
+                        SelectionMode="Single"
+                        SelectedItem="{Binding Selected, Mode=TwoWay}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:MyCollectionDto">
+                    <Grid Padding="12" ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
+                        <Label Grid.Row="0" Grid.Column="0" Text="{Binding Name}" FontAttributes="Bold" FontSize="16"/>
+                        <Button Grid.Row="0" Grid.Column="1" Text="Open"
+                                Command="{Binding Source={x:Reference Page}, Path=OpenCommand}"
+                                CommandParameter="{Binding}" />
+                        <Label Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Description}" MaxLines="2" LineBreakMode="TailTruncation" FontSize="13" />
+                        <Label Grid.Row="2" Grid.Column="0"
+                               Text="{Binding Id}"
+                               FontSize="12"
+                               MaxLines="1"
+                               LineBreakMode="TailTruncation"
+                               TextColor="{AppThemeBinding Light=Gray, Dark=LightGray}" />
+                        <Label Grid.Row="2" Grid.Column="1"
+                               Text="{Binding CollectionRole}"
+                               FontSize="12"
+                               HorizontalTextAlignment="End"
+                               TextColor="{AppThemeBinding Light=Gray, Dark=LightGray}" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <controls:LoadingButton Grid.Row="2"
+                                IdleText="Load more"
+                                LoadingText="Loading..."
+                                IsLoading="{Binding IsLoading}"
+                                IsEnabled="{Binding HasMore}"
+                                Command="{Binding LoadMoreCommand}" />
+    </Grid>
+</ContentPage>
