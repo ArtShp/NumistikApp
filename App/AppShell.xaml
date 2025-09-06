@@ -23,6 +23,11 @@
                           ContentTemplate="{DataTemplate views:MainPage}"
                           Route="MainPage" />
         </Tab>
+        <Tab Title="My collections" Route="MyCollectionsTab">
+            <ShellContent Title="My collections"
+                          ContentTemplate="{DataTemplate views:MyCollectionsPage}"
+                          Route="MyCollectionsPage" />
+        </Tab>
     </TabBar>
 
     <TabBar Title="Admin" Route="AdminTabs">

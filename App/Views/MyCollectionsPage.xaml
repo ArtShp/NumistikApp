@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:App.ViewModels"
+             xmlns:models="clr-namespace:App.Models"
+             xmlns:controls="clr-namespace:App.Controls"
+             x:Class="App.Views.MyCollectionsPage"
+             x:DataType="viewModels:MyCollectionsViewModel"
+             x:Name="Page"
+             Title="My collections">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Refresh" Command="{Binding RefreshCommand}" />
+        <ToolbarItem Text="New" Command="{Binding ToggleCreateCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <Grid RowDefinitions="Auto,*,Auto" Padding="16">
+
+        <Grid Grid.Row="0" RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,Auto"
+              IsVisible="{Binding Form.IsVisible}" Padding="0,0,0,12" RowSpacing="8">
+            <Entry Grid.Row="0" Grid.ColumnSpan="2"
+                   Placeholder="Collection name"
+                   Text="{Binding Form.Name}" />
+            <Editor Grid.Row="1" Grid.ColumnSpan="2"
+                    Placeholder="Description (optional)"
+                    AutoSize="TextChanges"
+                    Text="{Binding Form.Description}" />
+            <HorizontalStackLayout Grid.Row="2" Grid.ColumnSpan="2" Spacing="12" HorizontalOptions="End">
+                <Button Text="Cancel" Command="{Binding CancelCreateCommand}">
+                    <Button.Triggers>
+                        <DataTrigger TargetType="Button" Binding="{Binding Form.IsCreating}" Value="True">
+                            <Setter Property="IsEnabled" Value="False" />
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
+                <Button Text="Create" Command="{Binding CreateCommand}">
+                    <Button.Triggers>
+                        <DataTrigger TargetType="Button" Binding="{Binding Form.IsCreating}" Value="True">
+                            <Setter Property="IsEnabled" Value="False" />
+                            <Setter Property="Text" Value="Creating..." />
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
+            </HorizontalStackLayout>
+        </Grid>
+
+        <CollectionView Grid.Row="1"
+                        ItemsSource="{Binding Collections}"
+                        SelectionMode="Single"
+                        SelectedItem="{Binding Selected, Mode=TwoWay}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:MyCollectionDto">
+                    <Grid Padding="12" ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
+                        <Label Grid.Row="0" Grid.Column="0" Text="{Binding Name}" FontAttributes="Bold" FontSize="16"/>
+                        <Button Grid.Row="0" Grid.Column="1" Text="Open"
+                                Command="{Binding Source={x:Reference Page}, Path=OpenCommand}"
+                                CommandParameter="{Binding}" />
+                        <Label Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Description}" MaxLines="2" LineBreakMode="TailTruncation" FontSize="13" />
+                        <Label Grid.Row="2" Grid.Column="0"
+                               Text="{Binding Id}"
+                               FontSize="12"
+                               MaxLines="1"
+                               LineBreakMode="TailTruncation"
+                               TextColor="{AppThemeBinding Light=Gray, Dark=LightGray}" />
+                        <Label Grid.Row="2" Grid.Column="1"
+                               Text="{Binding CollectionRole}"
+                               FontSize="12"
+                               HorizontalTextAlignment="End"
+                               TextColor="{AppThemeBinding Light=Gray, Dark=LightGray}" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <controls:LoadingButton Grid.Row="2"
+                                IdleText="Load more"
+                                LoadingText="Loading..."
+                                IsLoading="{Binding IsLoading}"
+                                IsEnabled="{Binding HasMore}"
+                                Command="{Binding LoadMoreCommand}" />
+    </Grid>
+</ContentPage>

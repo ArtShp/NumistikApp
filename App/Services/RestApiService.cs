@@ -2,6 +2,7 @@
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using System.Web;
 
 namespace App.Services;
 
@@ -86,7 +87,7 @@ internal class RestApiService : IRestApiService
         return false;
     }
 
-    public async Task<TResponse?> SendRestApiRequest<TResponse>(RestApiEndpoint<TResponse> endpoint)
+    public async Task<TResponse?> SendRestApiRequest<TResponse>(RestApiEndpoint<TResponse> endpoint, IDictionary<string, string?>? query = null)
     {
         if (endpoint.RequiresAuth && IsTokenExpired)
         {
@@ -102,10 +103,11 @@ internal class RestApiService : IRestApiService
             }
         }
 
-        return await SendInternalRestApiRequest(endpoint);
+        return await SendInternalRestApiRequest(endpoint, query);
     }
 
-    public async Task<TResponse?> SendRestApiRequest<TRequest, TResponse>(RestApiEndpoint<TRequest, TResponse> endpoint, TRequest? requestBody = null) where TRequest : class
+    public async Task<TResponse?> SendRestApiRequest<TRequest, TResponse>(RestApiEndpoint<TRequest, TResponse> endpoint, TRequest? requestBody = null, 
+        IDictionary<string, string?>? query = null) where TRequest : class
     {
         if (endpoint.RequiresAuth && IsTokenExpired)
         {
@@ -121,12 +123,29 @@ internal class RestApiService : IRestApiService
             }
         }
 
-        return await SendInternalRestApiRequest(endpoint, requestBody);
+        return await SendInternalRestApiRequest(endpoint, requestBody, query);
     }
 
-    private async Task<TResponse?> SendInternalRestApiRequest<TResponse>(RestApiEndpoint<TResponse> endpoint)
+    private async Task<TResponse?> SendInternalRestApiRequest<TResponse>(RestApiEndpoint<TResponse> endpoint, IDictionary<string, string?>? query = null)
     {
-        Uri uri = new(BaseUri, endpoint.Endpoint);
+        var uriBuilder = new UriBuilder(new Uri(BaseUri, endpoint.Endpoint));
+
+        if (query is not null && query.Count > 0)
+        {
+            var q = HttpUtility.ParseQueryString(uriBuilder.Query);
+
+            foreach (var kv in query)
+            {
+                if (!string.IsNullOrWhiteSpace(kv.Value))
+                {
+                    q[kv.Key] = kv.Value;
+                }
+            }
+
+            uriBuilder.Query = q.ToString();
+        }
+
+        Uri uri = uriBuilder.Uri;
 
         TResponse? result = default;
         try
@@ -149,9 +168,27 @@ internal class RestApiService : IRestApiService
         return result;
     }
 
-    private async Task<TResponse?> SendInternalRestApiRequest<TRequest, TResponse>(RestApiEndpoint<TRequest, TResponse> endpoint, TRequest? requestBody = null) where TRequest : class
+    private async Task<TResponse?> SendInternalRestApiRequest<TRequest, TResponse>(RestApiEndpoint<TRequest, TResponse> endpoint, TRequest? requestBody = null,
+        IDictionary<string, string?>? query = null) where TRequest : class
     {
-        Uri uri = new(BaseUri, endpoint.Endpoint);
+        var uriBuilder = new UriBuilder(new Uri(BaseUri, endpoint.Endpoint));
+
+        if (query is not null && query.Count > 0)
+        {
+            var q = HttpUtility.ParseQueryString(uriBuilder.Query);
+
+            foreach (var kv in query)
+            {
+                if (!string.IsNullOrWhiteSpace(kv.Value))
+                {
+                    q[kv.Key] = kv.Value;
+                }
+            }
+
+            uriBuilder.Query = q.ToString();
+        }
+
+        Uri uri = uriBuilder.Uri;
 
         TResponse? result = default;
         try
