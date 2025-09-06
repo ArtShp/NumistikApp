@@ -1,3 +1,5 @@
+using Shared.Models.Common;
+
 namespace App.Models;
 
 public class MyCollectionDto
@@ -5,5 +7,5 @@ public class MyCollectionDto
     public required Guid Id { get; set; }
     public required string Name { get; set; }
     public required string? Description { get; set; }
-    public required string CollectionRole { get; set; }
+    public required CollectionRole CollectionRole { get; set; }
 }
