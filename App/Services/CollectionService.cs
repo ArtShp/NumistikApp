@@ -6,7 +6,7 @@ internal class CollectionService(IRestApiService restApiService) : ICollectionSe
 {
     private readonly IRestApiService _restApiService = restApiService;
 
-    public async Task<List<MyCollectionDto>> GetMyCollectionsAsync(Guid? lastSeenId, string? lastSeenName)
+    public async Task<IEnumerable<MyCollectionDto>> GetMyCollectionsAsync(Guid? lastSeenId, string? lastSeenName)
     {
         var query = new Dictionary<string, string?>
         {
@@ -16,6 +16,15 @@ internal class CollectionService(IRestApiService restApiService) : ICollectionSe
 
         var result = await _restApiService.SendRestApiRequest(RestApiEndpoints.GetMyCollections, query);
 
-        return result ?? [];
+        if (result is null) return [];
+
+        return result.Select(item => new MyCollectionDto
+            {
+                Id = item.Id,
+                Name = item.Name,
+                Description = item.Description,
+                CollectionRole = item.CollectionRole!.Value
+            }
+        );
     }
 }
