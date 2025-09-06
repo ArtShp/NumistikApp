@@ -11,9 +11,39 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Refresh" Command="{Binding RefreshCommand}" />
+        <ToolbarItem Text="New" Command="{Binding ToggleCreateCommand}" />
     </ContentPage.ToolbarItems>
 
     <Grid RowDefinitions="Auto,*,Auto" Padding="16">
+
+        <Grid Grid.Row="0" RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,Auto"
+              IsVisible="{Binding Form.IsVisible}" Padding="0,0,0,12" RowSpacing="8">
+            <Entry Grid.Row="0" Grid.ColumnSpan="2"
+                   Placeholder="Collection name"
+                   Text="{Binding Form.Name}" />
+            <Editor Grid.Row="1" Grid.ColumnSpan="2"
+                    Placeholder="Description (optional)"
+                    AutoSize="TextChanges"
+                    Text="{Binding Form.Description}" />
+            <HorizontalStackLayout Grid.Row="2" Grid.ColumnSpan="2" Spacing="12" HorizontalOptions="End">
+                <Button Text="Cancel" Command="{Binding CancelCreateCommand}">
+                    <Button.Triggers>
+                        <DataTrigger TargetType="Button" Binding="{Binding Form.IsCreating}" Value="True">
+                            <Setter Property="IsEnabled" Value="False" />
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
+                <Button Text="Create" Command="{Binding CreateCommand}">
+                    <Button.Triggers>
+                        <DataTrigger TargetType="Button" Binding="{Binding Form.IsCreating}" Value="True">
+                            <Setter Property="IsEnabled" Value="False" />
+                            <Setter Property="Text" Value="Creating..." />
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
+            </HorizontalStackLayout>
+        </Grid>
+
         <CollectionView Grid.Row="1"
                         ItemsSource="{Binding Collections}"
                         SelectionMode="Single"
