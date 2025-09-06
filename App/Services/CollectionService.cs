@@ -1,4 +1,5 @@
 using App.Models;
+using Shared.Models.Collection;
 
 namespace App.Services;
 
@@ -26,5 +27,14 @@ internal class CollectionService(IRestApiService restApiService) : ICollectionSe
                 CollectionRole = item.CollectionRole!.Value
             }
         );
+    }
+
+    public async Task<Guid?> CreateCollectionAsync(CollectionCreationDto.Request request)
+    {
+        var result = await _restApiService.SendRestApiRequest(
+            RestApiEndpoints.CreateCollection, request
+        );
+
+        return result?.Id;
     }
 }
