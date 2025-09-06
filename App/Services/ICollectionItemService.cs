@@ -1,14 +1,14 @@
-using Shared.Models.CollectionItem;
+using App.Models;
 
 namespace App.Services;
 
 public interface ICollectionItemService
 {
-    Task<IEnumerable<CollectionItemDto.Response>> GetCollectionItemsAsync(Guid collectionId, int? lastSeenId);
+    Task<IEnumerable<CollectionItemPreview>> GetCollectionItemsAsync(Guid collectionId, int? lastSeenId);
 }
 
 internal partial class RestApiEndpoints
 {
-    public static RestApiEndpoint<List<CollectionItemDto.Response>> GetCollectionItems(Guid collectionId)
+    public static RestApiEndpoint<List<CollectionItemPreview>> GetCollectionItems(Guid collectionId)
         => new(HttpMethod.Get, $"CollectionItem/{collectionId}", true);
 }
