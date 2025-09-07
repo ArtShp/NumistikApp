@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:App.ViewModels"
+             xmlns:models="clr-namespace:App.Models"
+             xmlns:controls="clr-namespace:App.Controls"
+             x:Class="App.Views.CollectionItemsPage"
+             x:DataType="viewModels:CollectionItemsViewModel"
+             Title="Collection items">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Refresh" Command="{Binding RefreshCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <Grid RowDefinitions="*,Auto" Padding="16">
+        <CollectionView Grid.Row="0"
+                        ItemsSource="{Binding Items}"
+                        ItemSizingStrategy="MeasureAllItems"
+                        Margin="0,0,0,8">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:CollectionItemPreview">
+                    <Grid Padding="8"
+                          ColumnSpacing="12"
+                          RowSpacing="6"
+                          ColumnDefinitions="420,*"
+                          RowDefinitions="Auto,Auto,Auto">
+
+                        <!-- Fixed-width column for alignment. Fit image by height for sharpness -->
+                        <Border Grid.RowSpan="3" Grid.Column="0"
+                                Stroke="{AppThemeBinding Light=#DDD, Dark=#333}"
+                                StrokeThickness="1"
+                                Padding="0"
+                                WidthRequest="420"
+                                HeightRequest="240">
+                            <Image Source="{Binding ObverseImageUrl}"
+                                   Aspect="AspectFit"
+                                   WidthRequest="420"
+                                   HeightRequest="240"
+                                   HorizontalOptions="Start"
+                                   VerticalOptions="Fill">
+                                <!-- Hide image when no url -->
+                                <Image.Triggers>
+                                    <DataTrigger TargetType="Image" Binding="{Binding ObverseImageUrl}" Value="{x:Null}">
+                                        <Setter Property="IsVisible" Value="False" />
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="Image" Binding="{Binding ObverseImageUrl}" Value="">
+                                        <Setter Property="IsVisible" Value="False" />
+                                    </DataTrigger>
+                                </Image.Triggers>
+                            </Image>
+                            <!-- Hide border stroke when no image, but keep reserved space -->
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border" Binding="{Binding ObverseImageUrl}" Value="{x:Null}">
+                                    <Setter Property="StrokeThickness" Value="0" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Border" Binding="{Binding ObverseImageUrl}" Value="">
+                                    <Setter Property="StrokeThickness" Value="0" />
+                                </DataTrigger>
+                            </Border.Triggers>
+                        </Border>
+
+                        <!-- Value + Currency + AdditionalInfo -->
+                        <Label Grid.Column="1" Grid.Row="0"
+                               Text="{Binding ValueCurrencyInfo}"
+                               FontAttributes="Bold"
+                               FontSize="20"
+                               MaxLines="1"
+                               LineBreakMode="TailTruncation" />
+
+                        <!-- Serial Number -->
+                        <Label Grid.Column="1" Grid.Row="1"
+                               Text="{Binding SerialNumber, StringFormat='SN: {0}'}"
+                               FontSize="13"
+                               MaxLines="1"
+                               LineBreakMode="TailTruncation"
+                               TextColor="{AppThemeBinding Light=Gray, Dark=LightGray}" />
+
+                        <!-- Description -->
+                        <Label Grid.Column="1" Grid.Row="2"
+                               Text="{Binding Description}"
+                               FontSize="14"
+                               MaxLines="4"
+                               LineBreakMode="WordWrap" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <controls:LoadingButton Grid.Row="1"
+                                IdleText="Load more"
+                                LoadingText="Loading..."
+                                IsLoading="{Binding IsLoading}"
+                                IsEnabled="{Binding HasMore}"
+                                Command="{Binding LoadMoreCommand}" />
+    </Grid>
+</ContentPage>
