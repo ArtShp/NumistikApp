@@ -18,6 +18,8 @@ public interface IRestApiService
         RestApiEndpoint<TRequest, TResponse> endpoint, TRequest? requestBody = null,
         IDictionary<string, string?>? query = null
     ) where TRequest : class;
+
+    Task<bool> DownloadToFileAsync(RestApiEndpoint<bool> endpoint, string filepath);
 }
 
 public abstract class RestApiEndpoint(HttpMethod httpMethod, string endpoint, bool requiresAuth)

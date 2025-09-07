@@ -222,6 +222,56 @@ internal class RestApiService : IRestApiService
         return result;
     }
 
+    public async Task<bool> DownloadToFileAsync(RestApiEndpoint<bool> endpoint, string filepath)
+    {
+        if (IsTokenExpired)
+        {
+            bool authorized = await ReAuthorize(new RefreshTokenDto.Request
+            {
+                Username = AppSettings.Username,
+                RefreshToken = AppSettings.RefreshToken
+            });
+
+            if (!authorized)
+            {
+                return false;
+            }
+        }
+
+        Uri uri = new(BaseUri, endpoint.Endpoint);
+
+        try
+        {
+            using var request = GenerateRequestMessage(endpoint.HttpMethod, uri);
+            using var response = await _client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+
+            if (!response.IsSuccessStatusCode)
+                return false;
+
+            var dir = Path.GetDirectoryName(filepath)!;
+            Directory.CreateDirectory(dir);
+
+            var temp = Path.Combine(dir, Guid.NewGuid().ToString("N") + ".tmp");
+            await using (var input = await response.Content.ReadAsStreamAsync())
+            await using (var output = new FileStream(temp, FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+                await input.CopyToAsync(output);
+            }
+
+            if (File.Exists(filepath))
+            {
+                File.Delete(filepath);
+            }
+
+            File.Move(temp, filepath);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
     private HttpRequestMessage GenerateRequestMessage(HttpMethod httpMethod, Uri uri, HttpContent? content = null)
     {
         var message = new HttpRequestMessage(httpMethod, uri)
