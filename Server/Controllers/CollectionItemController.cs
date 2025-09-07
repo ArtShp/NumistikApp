@@ -62,7 +62,8 @@ public class CollectionItemController(CollectionItemService collectionItemServic
 
     [HttpPost("create")]
     [AuthorizeAllUsers]
-    public async Task<ActionResult<CollectionItemCreationDto.Response?>> CreateCollectionItemAsync(CollectionItemCreationDto.Request request)
+    [Consumes("multipart/form-data", "application/x-www-form-urlencoded")]
+    public async Task<ActionResult<CollectionItemCreationDto.Response?>> CreateCollectionItemAsync([FromForm] CollectionItemCreationDto.Request request)
     {
         // Get the user's id from claims
         Guid? authenticatedUserId = GetAuthorizedUserId();
@@ -80,7 +81,8 @@ public class CollectionItemController(CollectionItemService collectionItemServic
 
     [HttpPost("update")]
     [AuthorizeAllUsers]
-    public async Task<ActionResult<bool>> UpdateCollectionItemAsync(CollectionItemUpdateDto.Request request)
+    [Consumes("multipart/form-data", "application/x-www-form-urlencoded")]
+    public async Task<ActionResult<bool>> UpdateCollectionItemAsync([FromForm] CollectionItemUpdateDto.Request request)
     {
         // Get the user's id from claims
         Guid? authenticatedUserId = GetAuthorizedUserId();
