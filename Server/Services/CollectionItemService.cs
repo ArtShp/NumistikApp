@@ -114,8 +114,8 @@ public class CollectionItemService(MyDbContext context, IWebHostEnvironment env)
             .FindAsync(request.CollectionId);
         if (collection is null) return null;
 
-        var userCollection = collection.UserCollections
-            .FirstOrDefault(uc => uc.UserId == userId);
+        var userCollection = await context.UserCollections
+            .FirstOrDefaultAsync(uc => uc.UserId == userId);
         if (userCollection is null || userCollection.Role < CollectionRole.Editor) return null;
 
         var collectionItem = new CollectionItem
