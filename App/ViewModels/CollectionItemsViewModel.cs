@@ -10,7 +10,8 @@ namespace App.ViewModels;
 [QueryProperty(nameof(CollectionId), "collectionId")]
 public partial class CollectionItemsViewModel : ObservableObject
 {
-    private readonly ICollectionItemService _service;
+    private readonly ICollectionItemService _itemsService;
+    private readonly IImageService _imageService;
 
     public ObservableCollection<CollectionItemPreview> Items { get; init; } = [];
 
@@ -45,9 +46,10 @@ public partial class CollectionItemsViewModel : ObservableObject
     public ICommand RefreshCommand { get; init; }
     public ICommand LoadMoreCommand { get; init; }
 
-    public CollectionItemsViewModel(ICollectionItemService service)
+    public CollectionItemsViewModel(ICollectionItemService itemsService, IImageService imageService)
     {
-        _service = service;
+        _itemsService = itemsService;
+        _imageService = imageService;
 
         RefreshCommand = new AsyncRelayCommand(RefreshAsync);
         LoadMoreCommand = new AsyncRelayCommand(LoadMoreAsync, () => HasMore && !IsLoading);
@@ -77,21 +79,13 @@ public partial class CollectionItemsViewModel : ObservableObject
         IsLoading = true;
         try
         {
-            var page = await _service.GetCollectionItemsAsync(_collectionGuid, _lastSeenId);
+            var page = await _itemsService.GetCollectionItemsAsync(_collectionGuid, _lastSeenId);
             int? lastId = null;
 
             foreach (var ci in page)
             {
-                Items.Add(new CollectionItemPreview
-                {
-                    Id = ci.Id,
-                    CollectionId = ci.CollectionId,
-                    Value = ci.Value,
-                    Currency = ci.Currency,
-                    SerialNumber = ci.SerialNumber,
-                    Description = ci.Description,
-                    ObverseImageUrl = ci.ObverseImageUrl
-                });
+                ci.ObverseImageUrl = await _imageService.GetLocalPathAsync(ci.ObverseImageUrl) ?? null;
+                Items.Add(ci);
                 lastId = ci.Id;
             }
 
