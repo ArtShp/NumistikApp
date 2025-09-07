@@ -1,4 +1,5 @@
 using App.Models;
+using Shared.Models.CollectionItem;
 
 namespace App.Services;
 
@@ -9,6 +10,6 @@ public interface ICollectionItemService
 
 internal partial class RestApiEndpoints
 {
-    public static RestApiEndpoint<List<CollectionItemPreview>> GetCollectionItems(Guid collectionId)
+    public static RestApiEndpoint<List<CollectionItemDto.Response>> GetCollectionItems(Guid collectionId)
         => new(HttpMethod.Get, $"CollectionItem/{collectionId}", true);
 }
