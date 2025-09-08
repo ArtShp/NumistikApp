@@ -11,14 +11,24 @@
 
     <ScrollView>
         <VerticalStackLayout Padding="16" Spacing="12">
-            <!-- Required numeric fields -->
-            <Entry Placeholder="Type ID" Keyboard="Numeric" Text="{Binding TypeId}" />
-            <Entry Placeholder="Country ID" Keyboard="Numeric" Text="{Binding CountryId}" />
-            <Entry Placeholder="Collection Status ID" Keyboard="Numeric" Text="{Binding CollectionStatusId}" />
+            <!-- Required dropdowns -->
+            <Picker Title="Type"
+                    ItemsSource="{Binding Types}"
+                    SelectedItem="{Binding SelectedType}" />
+            <Picker Title="Country"
+                    ItemsSource="{Binding Countries}"
+                    SelectedItem="{Binding SelectedCountry}" />
+            <Picker Title="Status"
+                    ItemsSource="{Binding Statuses}"
+                    SelectedItem="{Binding SelectedStatus}" />
 
-            <!-- Optional numeric fields -->
-            <Entry Placeholder="Special Status ID (optional)" Keyboard="Numeric" Text="{Binding SpecialStatusId}" />
-            <Entry Placeholder="Quality ID (optional)" Keyboard="Numeric" Text="{Binding QualityId}" />
+            <!-- Optional dropdowns -->
+            <Picker Title="Special Status (optional)"
+                    ItemsSource="{Binding SpecialStatuses}"
+                    SelectedItem="{Binding SelectedSpecialStatus}" />
+            <Picker Title="Quality (optional)"
+                    ItemsSource="{Binding Qualities}"
+                    SelectedItem="{Binding SelectedQuality}" />
 
             <!-- Required text -->
             <Entry Placeholder="Value" Text="{Binding Value}" />
@@ -79,8 +89,8 @@
                     </DataTrigger>
                 </Button.Triggers>
             </Button>
-            
+
         </VerticalStackLayout>
     </ScrollView>
-    
+
 </ContentPage>

@@ -9,4 +9,10 @@ public partial class CreateCollectionItemPage : ContentPage
         InitializeComponent();
         BindingContext = viewModel;
     }
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        await ((CreateCollectionItemViewModel) BindingContext).InitializeAsync();
+    }
 }

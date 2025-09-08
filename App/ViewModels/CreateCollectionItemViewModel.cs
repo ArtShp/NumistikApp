@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Windows.Input;
 using App.Models;
 using App.Services;
@@ -9,49 +10,58 @@ namespace App.ViewModels;
 [QueryProperty(nameof(CollectionId), "collectionId")]
 public partial class CreateCollectionItemViewModel : ObservableObject
 {
-    private readonly ICollectionItemService _service;
+    private readonly ICollectionItemService _itemService;
+    private readonly ILookupService _lookupService;
 
     private Guid _collectionGuid;
     private bool _isSubmitting;
-    
+
     private FileResult? _obverseFile;
     private FileResult? _reverseFile;
 
-    private int typeId;
-    public int TypeId
+    public ObservableCollection<LookupItem> Types { get; init; } = [];
+    public ObservableCollection<LookupItem> Countries { get; init; } = [];
+    public ObservableCollection<LookupItem> Statuses { get; init; } = [];
+    public ObservableCollection<LookupItem> Qualities { get; init; } = [];
+    public ObservableCollection<LookupItem> SpecialStatuses { get; init; } = [];
+
+    // Selected items
+    private LookupItem? selectedType;
+    public LookupItem? SelectedType
     {
-        get => typeId;
-        set => SetProperty(ref typeId, value);
+        get => selectedType;
+        set => SetProperty(ref selectedType, value);
     }
 
-    private int countryId;
-    public int CountryId
+    private LookupItem? selectedCountry;
+    public LookupItem? SelectedCountry
     {
-        get => countryId;
-        set => SetProperty(ref countryId, value);
+        get => selectedCountry;
+        set => SetProperty(ref selectedCountry, value);
     }
 
-    private int collectionStatusId;
-    public int CollectionStatusId
+    private LookupItem? selectedStatus;
+    public LookupItem? SelectedStatus
     {
-        get => collectionStatusId;
-        set => SetProperty(ref collectionStatusId, value);
+        get => selectedStatus;
+        set => SetProperty(ref selectedStatus, value);
     }
 
-    private int? specialStatusId;
-    public int? SpecialStatusId
+    private LookupItem? selectedSpecialStatus;
+    public LookupItem? SelectedSpecialStatus
     {
-        get => specialStatusId;
-        set => SetProperty(ref specialStatusId, value);
+        get => selectedSpecialStatus;
+        set => SetProperty(ref selectedSpecialStatus, value);
     }
 
-    private int? qualityId;
-    public int? QualityId
+    private LookupItem? selectedQuality;
+    public LookupItem? SelectedQuality
     {
-        get => qualityId;
-        set => SetProperty(ref qualityId, value);
+        get => selectedQuality;
+        set => SetProperty(ref selectedQuality, value);
     }
 
+    // Form fields
     private string value = string.Empty;
     public string Value
     {
@@ -124,15 +134,57 @@ public partial class CreateCollectionItemViewModel : ObservableObject
     public IRelayCommand CancelCommand { get; init; }
     public IAsyncRelayCommand GoBackCommand { get; init; }
 
-    public CreateCollectionItemViewModel(ICollectionItemService service)
+    public CreateCollectionItemViewModel(ICollectionItemService itemService, ILookupService lookupService)
     {
-        _service = service;
+        _itemService = itemService;
+        _lookupService = lookupService;
 
         PickObverseCommand = new AsyncRelayCommand(PickObverseAsync);
         PickReverseCommand = new AsyncRelayCommand(PickReverseAsync);
         SubmitCommand = new AsyncRelayCommand(SubmitAsync, () => !IsSubmitting);
         GoBackCommand = new AsyncRelayCommand(GoBackAsync);
         CancelCommand = new AsyncRelayCommand(GoBackAsync);
+    }
+
+    public async Task InitializeAsync()
+    {
+        var typesTask = _lookupService.GetTypesAsync();
+        var countriesTask = _lookupService.GetCountriesAsync();
+        var statusesTask = _lookupService.GetStatusesAsync();
+        var qualitiesTask = _lookupService.GetQualitiesAsync();
+        var specialStatusesTask = _lookupService.GetSpecialStatusesAsync();
+
+        // await all together
+        await Task.WhenAll(typesTask, countriesTask, statusesTask, qualitiesTask, specialStatusesTask);
+
+        // update UI collections
+        Replace(Types, typesTask.Result);
+        Replace(Countries, countriesTask.Result);
+        Replace(Statuses, statusesTask.Result);
+        Replace(Qualities, qualitiesTask.Result);
+        Replace(SpecialStatuses, specialStatusesTask.Result);
+
+        // optional pickers get a "None" item
+        InsertNoneOption(SpecialStatuses);
+        InsertNoneOption(Qualities);
+
+        // Preselect defaults
+        SelectedType ??= Types.FirstOrDefault();
+        SelectedCountry ??= Countries.FirstOrDefault();
+        SelectedStatus ??= Statuses.FirstOrDefault();
+        SelectedSpecialStatus ??= SpecialStatuses.FirstOrDefault();
+        SelectedQuality ??= Qualities.FirstOrDefault();
+    }
+
+    private static void Replace(ObservableCollection<LookupItem> target, IReadOnlyList<LookupItem> source)
+    {
+        target.Clear();
+        foreach (var i in source) target.Add(i);
+    }
+
+    private static void InsertNoneOption(ObservableCollection<LookupItem> target)
+    {
+        target.Insert(0, new LookupItem { Id = 0, Name = "— None —" });
     }
 
     private async Task PickObverseAsync()
@@ -173,10 +225,10 @@ public partial class CreateCollectionItemViewModel : ObservableObject
             return;
         }
 
-        if (TypeId <= 0 || CountryId <= 0 || CollectionStatusId <= 0 ||
-            string.IsNullOrWhiteSpace(Value) || string.IsNullOrWhiteSpace(Currency))
+        if (SelectedType is null || SelectedCountry is null || SelectedStatus is null
+            || string.IsNullOrWhiteSpace(Value) || string.IsNullOrWhiteSpace(Currency))
         {
-            await ShowAlert("Validation", "Please fill all required fields.");
+            await ShowAlert("Validation", "Please select Type, Country, Status and fill required fields.");
             return;
         }
 
@@ -186,11 +238,11 @@ public partial class CreateCollectionItemViewModel : ObservableObject
         {
             var request = new CollectionItemCreateRequest
             {
-                TypeId = TypeId,
-                CountryId = CountryId,
-                CollectionStatusId = CollectionStatusId,
-                SpecialStatusId = SpecialStatusId,
-                QualityId = QualityId,
+                TypeId = SelectedType.Id,
+                CountryId = SelectedCountry.Id,
+                CollectionStatusId = SelectedStatus.Id,
+                SpecialStatusId = SelectedSpecialStatus is { Id: > 0 } ? SelectedSpecialStatus.Id : null,
+                QualityId = SelectedQuality is { Id: > 0 } ? SelectedQuality.Id : null,
                 CollectionId = _collectionGuid,
                 Value = Value,
                 Currency = Currency,
@@ -201,7 +253,7 @@ public partial class CreateCollectionItemViewModel : ObservableObject
                 ReverseImage = _reverseFile
             };
 
-            var id = await _service.CreateCollectionItemAsync(request);
+            var id = await _itemService.CreateCollectionItemAsync(request);
 
             if (id is null)
             {
@@ -218,10 +270,7 @@ public partial class CreateCollectionItemViewModel : ObservableObject
         }
     }
 
-    private Task GoBackAsync()
-    {
-        return Shell.Current.GoToAsync("..");
-    }
+    private Task GoBackAsync() => Shell.Current.GoToAsync("..");
 
     private static Task ShowAlert(string title, string message)
         => Shell.Current.DisplayAlert(title, message, "OK");
