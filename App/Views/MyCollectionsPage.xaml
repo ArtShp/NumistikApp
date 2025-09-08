@@ -51,10 +51,13 @@
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:MyCollectionDto">
                     <Grid Padding="12" ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
-                        <Label Grid.Row="0" Grid.Column="0" Text="{Binding Name}" FontAttributes="Bold" FontSize="16"/>
-                        <Button Grid.Row="0" Grid.Column="1" Text="Open"
-                                Command="{Binding Source={x:Reference Page}, Path=OpenCommand}"
-                                CommandParameter="{Binding}" />
+                        <Label Grid.Row="0" Grid.Column="0" Text="{Binding Name}" FontAttributes="Bold" FontSize="16" />
+
+                        <Button x:DataType="{x:Null}"
+                                Grid.Row="0" Grid.Column="1" Text="Open"
+                                Command="{Binding Source={x:Reference Page}, Path=BindingContext.OpenCommand}"
+                                CommandParameter="{Binding .}" />
+
                         <Label Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Description}" MaxLines="2" LineBreakMode="TailTruncation" FontSize="13" />
                         <Label Grid.Row="2" Grid.Column="0"
                                Text="{Binding Id}"

@@ -8,14 +8,8 @@ namespace App
         {
             InitializeComponent();
 
-            Routing.RegisterRoute(nameof(MainPage), typeof(MainPage));
-            Routing.RegisterRoute(nameof(LoginPage), typeof(LoginPage));
-            Routing.RegisterRoute(nameof(RegisterPage), typeof(RegisterPage));
-            Routing.RegisterRoute(nameof(AdminPage), typeof(AdminPage));
-            Routing.RegisterRoute(nameof(MyCollectionsPage), typeof(MyCollectionsPage));
-
-            // TODO
-            Routing.RegisterRoute("CollectionItemsPage", typeof(Page));
+            Routing.RegisterRoute(nameof(CollectionItemsPage), typeof(CollectionItemsPage));
+            Routing.RegisterRoute(nameof(CreateCollectionItemPage), typeof(CreateCollectionItemPage));
         }
     }
 }

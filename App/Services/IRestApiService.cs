@@ -11,12 +11,22 @@ public interface IRestApiService
     void Logout();
 
     Task<TResponse?> SendRestApiRequest<TResponse>(
-        RestApiEndpoint<TResponse> endpointб, IDictionary<string, string?>? query = null
+        RestApiEndpoint<TResponse> endpoint, IDictionary<string, string?>? query = null
     );
 
     Task<TResponse?> SendRestApiRequest<TRequest, TResponse>(
         RestApiEndpoint<TRequest, TResponse> endpoint, TRequest? requestBody = null,
         IDictionary<string, string?>? query = null
+    ) where TRequest : class;
+
+    Task<bool> SendRestApiRequest(RestApiEndpointNoContent endpoint, IDictionary<string, string?>? query = null);
+
+    Task<bool> DownloadToFileAsync(RestApiEndpoint<bool> endpoint, string filepath);
+
+    Task<TResponse?> SendMultipartRestApiRequest<TRequest, TResponse>(
+        RestApiEndpoint<TRequest, TResponse> endpoint,
+        TRequest? requestBody,
+        IEnumerable<(string Name, string FileName, string ContentType, Stream Content)> files
     ) where TRequest : class;
 }
 
@@ -26,6 +36,9 @@ public abstract class RestApiEndpoint(HttpMethod httpMethod, string endpoint, bo
     public string Endpoint { get; init; } = endpoint;
     public bool RequiresAuth { get; init; } = requiresAuth;
 }
+
+public class RestApiEndpointNoContent(HttpMethod httpMethod, string endpoint, bool requiresAuth) :
+    RestApiEndpoint(httpMethod, endpoint, requiresAuth) {}
 
 public class RestApiEndpoint<TResponse>(HttpMethod httpMethod, string endpoint, bool requiresAuth) : 
     RestApiEndpoint(httpMethod, endpoint, requiresAuth) {}
