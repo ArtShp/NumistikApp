@@ -236,6 +236,31 @@ public class CollectionItemService(MyDbContext context, IWebHostEnvironment env)
         return true;
     }
 
+    public async Task<bool> DeleteCollectionItemAsync(Guid userId, UserAppRole userAppRole, Guid collectionId, int itemId)
+    {
+        var item = await context.CollectionItems
+            .FindAsync(itemId);
+
+        if (item is null || item.CollectionId != collectionId)
+            return false;
+
+        if (userAppRole < UserAppRole.Admin)
+        {
+            var userCollection = await context.UserCollections.FirstOrDefaultAsync(uc => uc.CollectionId == collectionId && uc.UserId == userId);
+
+            if (userCollection is null || userCollection.Role < CollectionRole.Admin)
+                return false;
+        }
+
+        DeleteImageIfExists(item.ObverseImageUrl);
+        DeleteImageIfExists(item.ReverseImageUrl);
+
+        context.CollectionItems.Remove(item);
+        await context.SaveChangesAsync();
+
+        return true;
+    }
+
     public string? GetImagePath(string? filename)
     {
         if (filename is null) return null;
@@ -264,5 +289,17 @@ public class CollectionItemService(MyDbContext context, IWebHostEnvironment env)
         }
 
         return filename;
+    }
+
+    private void DeleteImageIfExists(string? filename)
+    {
+        if (string.IsNullOrWhiteSpace(filename)) return;
+
+        var path = Path.Combine(env.ContentRootPath, "static", "images", filename);
+
+        if (File.Exists(path))
+        {
+            try { File.Delete(path); } catch { }
+        }
     }
 }

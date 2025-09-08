@@ -98,6 +98,31 @@ public class CollectionItemController(CollectionItemService collectionItemServic
         return Ok(); 
     }
 
+    [HttpDelete("{collectionId:Guid}/{itemId:int}")]
+    [AuthorizeAllUsers]
+    public async Task<ActionResult> DeleteCollectionItemAsync(Guid collectionId, int itemId)
+    {
+        // Get the user's id from claims
+        Guid? authenticatedUserId = GetAuthorizedUserId();
+
+        if (authenticatedUserId is null)
+            return Unauthorized("User is not authenticated.");
+
+        // Get the user's role from claims
+        UserAppRole? authenticatedUserRole = GetAuthorizedUserRole();
+
+        if (authenticatedUserRole is null)
+            return Unauthorized("User role is not recognized.");
+
+        var deleted = await collectionItemService.DeleteCollectionItemAsync(
+            authenticatedUserId.Value, authenticatedUserRole.Value, collectionId, itemId);
+
+        if (!deleted)
+            return Forbid("You do not have permissions to delete this item or it does not exist.");
+
+        return Ok();
+    }
+
     [HttpGet("image/{filename}")]
     [AuthorizeAllUsers]
     public IResult GetImageAsync(string filename)
