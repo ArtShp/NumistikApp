@@ -1,4 +1,5 @@
-﻿using CsvHelper;
+﻿using System.Text;
+using CsvHelper;
 using CsvHelper.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Server.Entities;
@@ -28,7 +29,9 @@ public static class DataSeeder
     {
         if (data.Any()) return;
 
-        using var reader = new StreamReader("Data/Seeds/" + filename + "_seed.csv");
+        var path = Path.Combine("Data", "Seeds", $"{filename}_seed.csv");
+
+        using var reader = new StreamReader(path, new UTF8Encoding(false), true);
         using var csv = new CsvReader(reader, csvConfiguration);
 
         int maxId = 0;
