@@ -222,6 +222,83 @@ internal class RestApiService : IRestApiService
         return result;
     }
 
+    public async Task<TResponse?> SendMultipartRestApiRequest<TRequest, TResponse>(
+        RestApiEndpoint<TRequest, TResponse> endpoint,
+        TRequest? requestBody,
+        IEnumerable<(string Name, string FileName, string ContentType, Stream Content)> files
+    ) where TRequest : class
+    {
+        if (endpoint.RequiresAuth && IsTokenExpired)
+        {
+            bool authorized = await ReAuthorize(new RefreshTokenDto.Request
+            {
+                Username = AppSettings.Username,
+                RefreshToken = AppSettings.RefreshToken
+            });
+
+            if (!authorized)
+            {
+                return default;
+            }
+        }
+
+        Uri uri = new(BaseUri, endpoint.Endpoint);
+
+        TResponse? result = default;
+        try
+        {
+            using var form = new MultipartFormDataContent();
+
+            if (requestBody is not null)
+            {
+                string json = JsonSerializer.Serialize(requestBody, _serializerOptions);
+                var fields = JsonSerializer.Deserialize<Dictionary<string, object?>>(json, _serializerOptions);
+
+                if (fields is not null)
+                {
+                    foreach (var kv in fields)
+                    {
+                        var value = kv.Value?.ToString();
+                        if (!string.IsNullOrWhiteSpace(value))
+                        {
+                            form.Add(new StringContent(value), kv.Key);
+                        }
+                    }
+                }
+            }
+
+            foreach (var (Name, FileName, ContentType, Content) in files)
+            {
+                var streamContent = new StreamContent(Content);
+                streamContent.Headers.ContentType = new MediaTypeHeaderValue(ContentType);
+
+                form.Add(streamContent, Name, FileName);
+            }
+
+            using var request = GenerateRequestMessage(endpoint.HttpMethod, uri, form);
+            using var response = await _client.SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                string content = await response.Content.ReadAsStringAsync();
+                result = JsonSerializer.Deserialize<TResponse>(content, _serializerOptions);
+            }
+        }
+        catch
+        {
+
+        }
+        finally
+        {
+            foreach (var (_, _, _, Content) in files)
+            {
+                try { Content.Dispose(); } catch { }
+            }
+        }
+
+        return result;
+    }
+
     public async Task<bool> DownloadToFileAsync(RestApiEndpoint<bool> endpoint, string filepath)
     {
         if (IsTokenExpired)

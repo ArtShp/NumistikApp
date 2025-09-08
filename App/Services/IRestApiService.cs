@@ -20,6 +20,12 @@ public interface IRestApiService
     ) where TRequest : class;
 
     Task<bool> DownloadToFileAsync(RestApiEndpoint<bool> endpoint, string filepath);
+
+    Task<TResponse?> SendMultipartRestApiRequest<TRequest, TResponse>(
+        RestApiEndpoint<TRequest, TResponse> endpoint,
+        TRequest? requestBody,
+        IEnumerable<(string Name, string FileName, string ContentType, Stream Content)> files
+    ) where TRequest : class;
 }
 
 public abstract class RestApiEndpoint(HttpMethod httpMethod, string endpoint, bool requiresAuth)
