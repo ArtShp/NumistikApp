@@ -126,6 +126,44 @@ internal class RestApiService : IRestApiService
         return await SendInternalRestApiRequest(endpoint, requestBody, query);
     }
 
+    public async Task<bool> SendRestApiRequest(RestApiEndpointNoContent endpoint, IDictionary<string, string?>? query = null)
+    {
+        var uriBuilder = new UriBuilder(new Uri(BaseUri, endpoint.Endpoint));
+
+        if (query is not null && query.Count > 0)
+        {
+            var q = HttpUtility.ParseQueryString(uriBuilder.Query);
+
+            foreach (var kv in query)
+            {
+                if (!string.IsNullOrWhiteSpace(kv.Value))
+                {
+                    q[kv.Key] = kv.Value;
+                }
+            }
+
+            uriBuilder.Query = q.ToString();
+        }
+
+        Uri uri = uriBuilder.Uri;
+
+        bool result = false;
+        try
+        {
+            HttpRequestMessage requestMessage = GenerateRequestMessage(endpoint.HttpMethod, uri);
+
+            HttpResponseMessage response = await _client.SendAsync(requestMessage);
+
+            result = response.IsSuccessStatusCode;
+        }
+        catch (Exception)
+        {
+
+        }
+
+        return result;
+    }
+
     private async Task<TResponse?> SendInternalRestApiRequest<TResponse>(RestApiEndpoint<TResponse> endpoint, IDictionary<string, string?>? query = null)
     {
         var uriBuilder = new UriBuilder(new Uri(BaseUri, endpoint.Endpoint));

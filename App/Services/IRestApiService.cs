@@ -19,6 +19,8 @@ public interface IRestApiService
         IDictionary<string, string?>? query = null
     ) where TRequest : class;
 
+    Task<bool> SendRestApiRequest(RestApiEndpointNoContent endpoint, IDictionary<string, string?>? query = null);
+
     Task<bool> DownloadToFileAsync(RestApiEndpoint<bool> endpoint, string filepath);
 
     Task<TResponse?> SendMultipartRestApiRequest<TRequest, TResponse>(
@@ -34,6 +36,9 @@ public abstract class RestApiEndpoint(HttpMethod httpMethod, string endpoint, bo
     public string Endpoint { get; init; } = endpoint;
     public bool RequiresAuth { get; init; } = requiresAuth;
 }
+
+public class RestApiEndpointNoContent(HttpMethod httpMethod, string endpoint, bool requiresAuth) :
+    RestApiEndpoint(httpMethod, endpoint, requiresAuth) {}
 
 public class RestApiEndpoint<TResponse>(HttpMethod httpMethod, string endpoint, bool requiresAuth) : 
     RestApiEndpoint(httpMethod, endpoint, requiresAuth) {}
