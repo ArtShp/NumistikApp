@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using App.Models;
 using App.Services;
+using App.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -45,6 +46,7 @@ public partial class CollectionItemsViewModel : ObservableObject
 
     public ICommand RefreshCommand { get; init; }
     public ICommand LoadMoreCommand { get; init; }
+    public ICommand AddItemCommand { get; init; }
 
     public CollectionItemsViewModel(ICollectionItemService itemsService, IImageService imageService)
     {
@@ -53,6 +55,7 @@ public partial class CollectionItemsViewModel : ObservableObject
 
         RefreshCommand = new AsyncRelayCommand(RefreshAsync);
         LoadMoreCommand = new AsyncRelayCommand(LoadMoreAsync, () => HasMore && !IsLoading);
+        AddItemCommand = new AsyncRelayCommand(OpenCreateItemAsync);
     }
 
     public async Task InitializeAsync()
@@ -104,5 +107,15 @@ public partial class CollectionItemsViewModel : ObservableObject
             IsLoading = false;
             (LoadMoreCommand as AsyncRelayCommand)?.NotifyCanExecuteChanged();
         }
+    }
+
+    private async Task OpenCreateItemAsync()
+    {
+        if (_collectionGuid == Guid.Empty) return;
+
+        await Shell.Current.GoToAsync(nameof(CreateCollectionItemPage), new Dictionary<string, object>
+        {
+            ["collectionId"] = _collectionGuid.ToString()
+        });
     }
 }
