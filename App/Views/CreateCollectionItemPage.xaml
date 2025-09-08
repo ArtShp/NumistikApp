@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:App.ViewModels"
+             x:Class="App.Views.CreateCollectionItemPage"
+             x:DataType="viewModels:CreateCollectionItemViewModel"
+             Title="Add Collection Item">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Cancel" Command="{Binding CancelCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="12">
+            <!-- Required numeric fields -->
+            <Entry Placeholder="Type ID" Keyboard="Numeric" Text="{Binding TypeId}" />
+            <Entry Placeholder="Country ID" Keyboard="Numeric" Text="{Binding CountryId}" />
+            <Entry Placeholder="Collection Status ID" Keyboard="Numeric" Text="{Binding CollectionStatusId}" />
+
+            <!-- Optional numeric fields -->
+            <Entry Placeholder="Special Status ID (optional)" Keyboard="Numeric" Text="{Binding SpecialStatusId}" />
+            <Entry Placeholder="Quality ID (optional)" Keyboard="Numeric" Text="{Binding QualityId}" />
+
+            <!-- Required text -->
+            <Entry Placeholder="Value" Text="{Binding Value}" />
+            <Entry Placeholder="Currency" Text="{Binding Currency}" />
+
+            <!-- Optional text -->
+            <Entry Placeholder="Additional Info (optional)" Text="{Binding AdditionalInfo}" />
+            <Entry Placeholder="Serial Number (optional)" Text="{Binding SerialNumber}" />
+            <Editor Placeholder="Description (optional)" AutoSize="TextChanges" Text="{Binding Description}" />
+
+            <!-- Images -->
+            <Label Text="Images (optional)" FontAttributes="Bold" />
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                <VerticalStackLayout Grid.Column="0" Spacing="6">
+                    <Button Text="Pick obverse image" Command="{Binding PickObverseCommand}" />
+                    <Border Stroke="{AppThemeBinding Light=#DDD, Dark=#333}" StrokeThickness="1" Padding="0" HeightRequest="180">
+                        <Image Aspect="AspectFit">
+                            <Image.Source>
+                                <FileImageSource File="{Binding ObversePreviewPath}" />
+                            </Image.Source>
+                            <Image.Triggers>
+                                <DataTrigger TargetType="Image" Binding="{Binding ObversePreviewPath}" Value="{x:Null}">
+                                    <Setter Property="IsVisible" Value="False" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Image" Binding="{Binding ObversePreviewPath}" Value="">
+                                    <Setter Property="IsVisible" Value="False" />
+                                </DataTrigger>
+                            </Image.Triggers>
+                        </Image>
+                    </Border>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Grid.Column="1" Spacing="6">
+                    <Button Text="Pick reverse image" Command="{Binding PickReverseCommand}" />
+                    <Border Stroke="{AppThemeBinding Light=#DDD, Dark=#333}" StrokeThickness="1" Padding="0" HeightRequest="180">
+                        <Image Aspect="AspectFit">
+                            <Image.Source>
+                                <FileImageSource File="{Binding ReversePreviewPath}" />
+                            </Image.Source>
+                            <Image.Triggers>
+                                <DataTrigger TargetType="Image" Binding="{Binding ReversePreviewPath}" Value="{x:Null}">
+                                    <Setter Property="IsVisible" Value="False" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Image" Binding="{Binding ReversePreviewPath}" Value="">
+                                    <Setter Property="IsVisible" Value="False" />
+                                </DataTrigger>
+                            </Image.Triggers>
+                        </Image>
+                    </Border>
+                </VerticalStackLayout>
+            </Grid>
+
+            <Button Text="Create" Command="{Binding SubmitCommand}">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button" Binding="{Binding IsSubmitting}" Value="True">
+                        <Setter Property="IsEnabled" Value="False" />
+                        <Setter Property="Text" Value="Creating..." />
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
+            
+        </VerticalStackLayout>
+    </ScrollView>
+    
+</ContentPage>

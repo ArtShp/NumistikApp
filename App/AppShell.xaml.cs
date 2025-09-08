@@ -14,6 +14,7 @@ namespace App
             Routing.RegisterRoute(nameof(AdminPage), typeof(AdminPage));
             Routing.RegisterRoute(nameof(MyCollectionsPage), typeof(MyCollectionsPage));
             Routing.RegisterRoute(nameof(CollectionItemsPage), typeof(CollectionItemsPage));
+            Routing.RegisterRoute(nameof(CreateCollectionItemPage), typeof(CreateCollectionItemPage));
         }
     }
 }
