@@ -29,6 +29,7 @@ namespace App
             builder.Services.AddTransient<AdminViewModel>();
             builder.Services.AddTransient<MyCollectionsViewModel>();
             builder.Services.AddTransient<CollectionItemsViewModel>();
+            builder.Services.AddTransient<CreateCollectionItemViewModel>();
 
 #if DEBUG
             builder.Logging.AddDebug();
