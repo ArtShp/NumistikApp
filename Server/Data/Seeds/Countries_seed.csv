@@ -1,21 +1,254 @@
 Id,Name,ContinentId
-1,United States,3
-2,Canada,3
-3,Mexico,3
-4,Brazil,4
-5,Argentina,4
-6,United Kingdom,6
-7,Germany,6
-8,France,6
-9,Italy,6
-10,Spain,6
-11,China,1
-12,Japan,1
-13,South Korea,1
-14,India,1
+1,United Arab Emirates,1
+2,Afghanistan,1
+3,Åland Islands,6
+4,Albania,6
+5,Algeria,2
+6,American Samoa,7
+7,Andorra,6
+8,Angola,2
+9,Anguilla,3
+10,Antarctica,5
+11,Antigua and Barbuda,3
+12,Argentina,4
+13,Armenia,1
+14,Aruba,3
 15,Australia,7
-16,New Zealand,7
-17,South Africa,2
-18,Nigeria,2
-19,Egypt,2
-20,Russia,6
+16,Austria,6
+17,Azerbaijan,1
+18,Bahamas,3
+19,Bahrain,1
+20,Bangladesh,1
+21,Barbados,3
+22,Belarus,6
+23,Belgium,6
+24,Belize,3
+25,Benin,2
+26,Bermuda,3
+27,Bhutan,1
+28,Bolivia,4
+29,Bonaire,3
+30,Sint Eustatius,3
+31,Saba,3
+32,Bosnia and Herzegovina,6
+33,Botswana,2
+34,Brazil,4
+35,British Indian Ocean Territory,1
+36,British Virgin Islands,3
+37,Brunei Darussalam,1
+38,Bulgaria,6
+39,Burkina Faso,2
+40,Burma,1
+41,Burundi,2
+42,Cabo Verde,2
+43,Cambodia,1
+44,Cameroon,2
+45,Canada,3
+46,Caribbean Netherlands,3
+47,Cayman Islands,3
+48,Central African Republic,2
+49,Chad,2
+50,Chile,4
+51,China,1
+52,Christmas Island,1
+53,Cocos (Keeling) Islands,1
+54,Colombia,4
+55,Comoros,2
+56,Democratic Republic of the Congo,2
+57,Congo,2
+58,Cook Islands,7
+59,Costa Rica,3
+60,Côte d'Ivoire,2
+61,Croatia,6
+62,Cuba,3
+63,Curaçao,3
+64,Cyprus,6
+65,Czechia,6
+66,Democratic People's Republic of Korea,1
+67,Denmark,6
+68,Djibouti,2
+69,Dominica,3
+70,Dominican Republic,3
+71,Ecuador,4
+72,Egypt,2
+73,El Salvador,3
+74,Equatorial Guinea,2
+75,Eritrea,2
+76,Estonia,6
+77,Eswatini,2
+78,Ethiopia,2
+79,Falkland Islands,4
+80,Faroe Islands,6
+81,Fiji,7
+82,Finland,6
+83,France,6
+84,French Guiana,4
+85,French Polynesia,7
+86,Gabon,2
+87,Gambia,2
+88,Georgia,1
+89,Germany,6
+90,Ghana,2
+91,Gibraltar,6
+92,Great Britain,6
+93,Greece,6
+94,Greenland,3
+95,Grenada,3
+96,Guadeloupe,3
+97,Guatemala,3
+98,Guernsey,6
+99,Guinea,2
+100,Guinea-Bissau,2
+101,Guyana,4
+102,Haiti,3
+103,Honduras,3
+104,Hong Kong,1
+105,Hungary,6
+106,Iceland,6
+107,India,1
+108,Indonesia,1
+109,Iran,1
+110,Iraq,1
+111,Ireland,6
+112,Isle of Man,6
+113,Israel,1
+114,Italy,6
+115,Jamaica,3
+116,Jan Mayen,6
+117,Japan,1
+118,Jersey,6
+119,Jordan,1
+120,Kazakhstan,1
+121,Kenya,2
+122,Kiribati,7
+123,Democratic People's Republic of Korea,1
+124,Republic of Korea,1
+125,Kuwait,1
+126,Kyrgyzstan,1
+127,Lao People's Democratic Republic,1
+128,Latvia,6
+129,Lebanon,1
+130,Lesotho,2
+131,Liberia,2
+132,Libya,2
+133,Liechtenstein,6
+134,Lithuania,6
+135,Luxembourg,6
+136,Macao,1
+137,Madagascar,2
+138,Malawi,2
+139,Malaysia,1
+140,Maldives,1
+141,Mali,2
+142,Malta,6
+143,Marshall Islands,7
+144,Martinique,3
+145,Mauritania,2
+146,Mauritius,2
+147,Mayotte,2
+148,Mexico,3
+149,Micronesia,7
+150,Moldova,6
+151,Monaco,6
+152,Mongolia,1
+153,Montenegro,6
+154,Montserrat,3
+155,Morocco,2
+156,Mozambique,2
+157,Myanmar,1
+158,Namibia,2
+159,Nauru,7
+160,Nepal,1
+161,Netherlands,6
+162,New Caledonia,7
+163,New Zealand,7
+164,Nicaragua,3
+165,Niger,2
+166,Nigeria,2
+167,Niue,7
+168,Norfolk Island,7
+169,North Macedonia,6
+170,Norway,6
+171,Oman,1
+172,Pakistan,1
+173,Palau,7
+174,Palestine,1
+175,Panama,3
+176,Papua New Guinea,7
+177,Peru,4
+178,Philippines,1
+179,Poland,6
+180,Portugal,6
+181,Puerto Rico,3
+182,Qatar,1
+183,Sahrawi Arab Democratic Republic,2
+184,Réunion,2
+185,Romania,6
+186,Russian Federation,6
+187,Rwanda,2
+188,Saint Barthélemy,3
+189,Saint Helena,2
+190,Saint Kitts and Nevis,3
+191,Saint Lucia,3
+192,Saint Martin (French part),3
+193,Saint Pierre and Miquelon,3
+194,Saint Vincent and the Grenadines,3
+195,Samoa,7
+196,San Marino,6
+197,Sao Tome and Principe,2
+198,Saudi Arabia,1
+199,Senegal,2
+200,Serbia,6
+201,Seychelles,2
+202,Sierra Leone,2
+203,Singapore,1
+204,Slovakia,6
+205,Slovenia,6
+206,Solomon Islands,7
+207,Somalia,2
+208,South Africa,2
+209,South Georgia and the South Sandwich Islands,4
+210,South Sudan,2
+211,Spain,6
+212,Sri Lanka,1
+213,Sudan,2
+214,Suriname,4
+215,Svalbard,6
+216,Sweden,6
+217,Switzerland,6
+218,Syrian Arab Republic,1
+219,Taiwan,1
+220,Tajikistan,1
+221,Tanzania,2
+222,Thailand,1
+223,Timor-Leste,1
+224,Togo,2
+225,Tokelau,7
+226,Tonga,7
+227,Trinidad and Tobago,3
+228,Tunisia,2
+229,Türkiye,1
+230,Turkmenistan,1
+231,Turks and Caicos Islands,3
+232,Tuvalu,7
+233,Uganda,2
+234,Ukraine,6
+235,United States of America,3
+236,United States Virgin Islands,3
+237,Uruguay,4
+238,Uzbekistan,1
+239,Vanuatu,7
+240,Vatican,6
+241,Venezuela,4
+242,Viet Nam,1
+243,Wallis and Futuna,7
+244,Yemen,1
+245,Zambia,2
+246,Zimbabwe,2
+247,USSR,6
+248,Russian Empire,6
+249,Abkhazia,6
+250,South Ossetia,6
+251,Transnistria,6
+252,Somaliland,2
+253,Paraguay,4
