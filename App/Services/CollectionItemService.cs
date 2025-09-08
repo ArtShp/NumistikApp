@@ -93,4 +93,11 @@ internal class CollectionItemService(IRestApiService restApiService) : ICollecti
 
         return response?.Id;
     }
+
+    public async Task<bool> DeleteCollectionItemAsync(Guid collectionId, int itemId)
+    {
+        var endpoint = RestApiEndpoints.DeleteCollectionItem(collectionId, itemId);
+
+        return await _restApiService.SendRestApiRequest(endpoint);
+    }
 }
