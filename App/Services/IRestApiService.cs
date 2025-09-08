@@ -11,7 +11,7 @@ public interface IRestApiService
     void Logout();
 
     Task<TResponse?> SendRestApiRequest<TResponse>(
-        RestApiEndpoint<TResponse> endpointб, IDictionary<string, string?>? query = null
+        RestApiEndpoint<TResponse> endpoint, IDictionary<string, string?>? query = null
     );
 
     Task<TResponse?> SendRestApiRequest<TRequest, TResponse>(
