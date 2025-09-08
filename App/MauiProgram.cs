@@ -22,6 +22,7 @@ namespace App
             builder.Services.AddSingleton<ICollectionService, CollectionService>();
             builder.Services.AddSingleton<ICollectionItemService, CollectionItemService>();
             builder.Services.AddSingleton<IImageService, ImageService>();
+            builder.Services.AddSingleton<ILookupService, LookupService>();
 
             builder.Services.AddTransient<LoginViewModel>();
             builder.Services.AddTransient<RegisterViewModel>();
