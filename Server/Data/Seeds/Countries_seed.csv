@@ -121,134 +121,133 @@ Id,Name,ContinentId
 120,Kazakhstan,1
 121,Kenya,2
 122,Kiribati,7
-123,Democratic People's Republic of Korea,1
-124,Republic of Korea,1
-125,Kuwait,1
-126,Kyrgyzstan,1
-127,Lao People's Democratic Republic,1
-128,Latvia,6
-129,Lebanon,1
-130,Lesotho,2
-131,Liberia,2
-132,Libya,2
-133,Liechtenstein,6
-134,Lithuania,6
-135,Luxembourg,6
-136,Macao,1
-137,Madagascar,2
-138,Malawi,2
-139,Malaysia,1
-140,Maldives,1
-141,Mali,2
-142,Malta,6
-143,Marshall Islands,7
-144,Martinique,3
-145,Mauritania,2
-146,Mauritius,2
-147,Mayotte,2
-148,Mexico,3
-149,Micronesia,7
-150,Moldova,6
-151,Monaco,6
-152,Mongolia,1
-153,Montenegro,6
-154,Montserrat,3
-155,Morocco,2
-156,Mozambique,2
-157,Myanmar,1
-158,Namibia,2
-159,Nauru,7
-160,Nepal,1
-161,Netherlands,6
-162,New Caledonia,7
-163,New Zealand,7
-164,Nicaragua,3
-165,Niger,2
-166,Nigeria,2
-167,Niue,7
-168,Norfolk Island,7
-169,North Macedonia,6
-170,Norway,6
-171,Oman,1
-172,Pakistan,1
-173,Palau,7
-174,Palestine,1
-175,Panama,3
-176,Papua New Guinea,7
-177,Peru,4
-178,Philippines,1
-179,Poland,6
-180,Portugal,6
-181,Puerto Rico,3
-182,Qatar,1
-183,Sahrawi Arab Democratic Republic,2
-184,Réunion,2
-185,Romania,6
-186,Russian Federation,6
-187,Rwanda,2
-188,Saint Barthélemy,3
-189,Saint Helena,2
-190,Saint Kitts and Nevis,3
-191,Saint Lucia,3
-192,Saint Martin (French part),3
-193,Saint Pierre and Miquelon,3
-194,Saint Vincent and the Grenadines,3
-195,Samoa,7
-196,San Marino,6
-197,Sao Tome and Principe,2
-198,Saudi Arabia,1
-199,Senegal,2
-200,Serbia,6
-201,Seychelles,2
-202,Sierra Leone,2
-203,Singapore,1
-204,Slovakia,6
-205,Slovenia,6
-206,Solomon Islands,7
-207,Somalia,2
-208,South Africa,2
-209,South Georgia and the South Sandwich Islands,4
-210,South Sudan,2
-211,Spain,6
-212,Sri Lanka,1
-213,Sudan,2
-214,Suriname,4
-215,Svalbard,6
-216,Sweden,6
-217,Switzerland,6
-218,Syrian Arab Republic,1
-219,Taiwan,1
-220,Tajikistan,1
-221,Tanzania,2
-222,Thailand,1
-223,Timor-Leste,1
-224,Togo,2
-225,Tokelau,7
-226,Tonga,7
-227,Trinidad and Tobago,3
-228,Tunisia,2
-229,Türkiye,1
-230,Turkmenistan,1
-231,Turks and Caicos Islands,3
-232,Tuvalu,7
-233,Uganda,2
-234,Ukraine,6
-235,United States of America,3
-236,United States Virgin Islands,3
-237,Uruguay,4
-238,Uzbekistan,1
-239,Vanuatu,7
-240,Vatican,6
-241,Venezuela,4
-242,Viet Nam,1
-243,Wallis and Futuna,7
-244,Yemen,1
-245,Zambia,2
-246,Zimbabwe,2
-247,USSR,6
-248,Russian Empire,6
-249,Abkhazia,6
-250,South Ossetia,6
-251,Transnistria,6
-252,Somaliland,2
-253,Paraguay,4
+123,Republic of Korea,1
+124,Kuwait,1
+125,Kyrgyzstan,1
+126,Lao People's Democratic Republic,1
+127,Latvia,6
+128,Lebanon,1
+129,Lesotho,2
+130,Liberia,2
+131,Libya,2
+132,Liechtenstein,6
+133,Lithuania,6
+134,Luxembourg,6
+135,Macao,1
+136,Madagascar,2
+137,Malawi,2
+138,Malaysia,1
+139,Maldives,1
+140,Mali,2
+141,Malta,6
+142,Marshall Islands,7
+143,Martinique,3
+144,Mauritania,2
+145,Mauritius,2
+146,Mayotte,2
+147,Mexico,3
+148,Micronesia,7
+149,Moldova,6
+150,Monaco,6
+151,Mongolia,1
+152,Montenegro,6
+153,Montserrat,3
+154,Morocco,2
+155,Mozambique,2
+156,Myanmar,1
+157,Namibia,2
+158,Nauru,7
+159,Nepal,1
+160,Netherlands,6
+161,New Caledonia,7
+162,New Zealand,7
+163,Nicaragua,3
+164,Niger,2
+165,Nigeria,2
+166,Niue,7
+167,Norfolk Island,7
+168,North Macedonia,6
+169,Norway,6
+170,Oman,1
+171,Pakistan,1
+172,Palau,7
+173,Palestine,1
+174,Panama,3
+175,Papua New Guinea,7
+176,Peru,4
+177,Philippines,1
+178,Poland,6
+179,Portugal,6
+180,Puerto Rico,3
+181,Qatar,1
+182,Sahrawi Arab Democratic Republic,2
+183,Réunion,2
+184,Romania,6
+185,Russian Federation,6
+186,Rwanda,2
+187,Saint Barthélemy,3
+188,Saint Helena,2
+189,Saint Kitts and Nevis,3
+190,Saint Lucia,3
+191,Saint Martin (French part),3
+192,Saint Pierre and Miquelon,3
+193,Saint Vincent and the Grenadines,3
+194,Samoa,7
+195,San Marino,6
+196,Sao Tome and Principe,2
+197,Saudi Arabia,1
+198,Senegal,2
+199,Serbia,6
+200,Seychelles,2
+201,Sierra Leone,2
+202,Singapore,1
+203,Slovakia,6
+204,Slovenia,6
+205,Solomon Islands,7
+206,Somalia,2
+207,South Africa,2
+208,South Georgia and the South Sandwich Islands,4
+209,South Sudan,2
+210,Spain,6
+211,Sri Lanka,1
+212,Sudan,2
+213,Suriname,4
+214,Svalbard,6
+215,Sweden,6
+216,Switzerland,6
+217,Syrian Arab Republic,1
+218,Taiwan,1
+219,Tajikistan,1
+220,Tanzania,2
+221,Thailand,1
+222,Timor-Leste,1
+223,Togo,2
+224,Tokelau,7
+225,Tonga,7
+226,Trinidad and Tobago,3
+227,Tunisia,2
+228,Türkiye,1
+229,Turkmenistan,1
+230,Turks and Caicos Islands,3
+231,Tuvalu,7
+232,Uganda,2
+233,Ukraine,6
+234,United States of America,3
+235,United States Virgin Islands,3
+236,Uruguay,4
+237,Uzbekistan,1
+238,Vanuatu,7
+239,Vatican,6
+240,Venezuela,4
+241,Viet Nam,1
+242,Wallis and Futuna,7
+243,Yemen,1
+244,Zambia,2
+245,Zimbabwe,2
+246,USSR,6
+247,Russian Empire,6
+248,Abkhazia,6
+249,South Ossetia,6
+250,Transnistria	,6
+251,Somaliland,2
+252,Paraguay,4
