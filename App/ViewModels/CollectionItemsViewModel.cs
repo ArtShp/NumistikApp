@@ -47,6 +47,7 @@ public partial class CollectionItemsViewModel : ObservableObject
     public ICommand RefreshCommand { get; init; }
     public ICommand LoadMoreCommand { get; init; }
     public ICommand AddItemCommand { get; init; }
+    public ICommand DeleteItemCommand { get; init; }
 
     public CollectionItemsViewModel(ICollectionItemService itemsService, IImageService imageService)
     {
@@ -56,6 +57,7 @@ public partial class CollectionItemsViewModel : ObservableObject
         RefreshCommand = new AsyncRelayCommand(RefreshAsync);
         LoadMoreCommand = new AsyncRelayCommand(LoadMoreAsync, () => HasMore && !IsLoading);
         AddItemCommand = new AsyncRelayCommand(OpenCreateItemAsync);
+        DeleteItemCommand = new AsyncRelayCommand<CollectionItemPreview>(DeleteItemAsync);
     }
 
     public async Task InitializeAsync()
@@ -117,5 +119,23 @@ public partial class CollectionItemsViewModel : ObservableObject
         {
             ["collectionId"] = _collectionGuid.ToString()
         });
+    }
+
+    private async Task DeleteItemAsync(CollectionItemPreview? item)
+    {
+        if (item is null) return;
+
+        var confirm = await Shell.Current.DisplayAlert("Delete item",
+            "Are you sure you want to delete this item?", "Delete", "Cancel");
+        if (!confirm) return;
+
+        bool ok = await _itemsService.DeleteCollectionItemAsync(item.CollectionId, item.Id);
+        if (!ok)
+        {
+            await Shell.Current.DisplayAlert("Error", "Unable to delete item. You might not have permissions.", "OK");
+            return;
+        }
+
+        Items.Remove(item);
     }
 }
