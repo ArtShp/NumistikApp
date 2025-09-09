@@ -29,9 +29,7 @@ public static class DataSeeder
     {
         if (data.Any()) return;
 
-        var path = Path.Combine("Data", "Seeds", $"{filename}_seed.csv");
-
-        using var reader = new StreamReader(path, new UTF8Encoding(false), true);
+        using var reader = new StreamReader("Data/Seeds/" + filename + "_seed.csv", new UTF8Encoding(false), true);
         using var csv = new CsvReader(reader, csvConfiguration);
 
         int maxId = 0;
