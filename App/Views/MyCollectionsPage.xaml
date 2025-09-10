@@ -47,6 +47,7 @@
         <CollectionView Grid.Row="1"
                         ItemsSource="{Binding Collections}"
                         SelectionMode="Single"
+                        ItemsUpdatingScrollMode="KeepScrollOffset"
                         SelectedItem="{Binding Selected, Mode=TwoWay}">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:MyCollectionDto">
