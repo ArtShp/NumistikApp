@@ -171,4 +171,49 @@ public class CollectionService(MyDbContext context)
 
         return true;
     }
+
+    public async Task<CollectionMembersDto.Response?> GetCollectionMembersAsync(Guid requesterUserId, UserAppRole requesterAppRole, Guid collectionId)
+    {
+        var collection = await context.Collections.FindAsync(collectionId);
+        if (collection is null) return null;
+
+        // Must be member or app admin to view
+        var userCollection = await context.UserCollections
+            .FirstOrDefaultAsync(uc => uc.UserId == requesterUserId && uc.CollectionId == collectionId);
+
+        if (userCollection is null && requesterAppRole < UserAppRole.Admin)
+            return null;
+
+        var members = await context.UserCollections
+            .Include(uc => uc.User)
+            .Where(uc => uc.CollectionId == collectionId)
+            .OrderBy(uc => uc.Role)
+            .Select(uc => new CollectionMembersDto.Member
+            {
+                UserId = uc.UserId,
+                Username = uc.User.Username,
+                Role = uc.Role
+            })
+            .ToListAsync();
+
+        return new CollectionMembersDto.Response
+        {
+            CollectionId = collectionId,
+            Members = members
+        };
+    }
+
+    public async Task<List<CollectionRole>> GetAssignableRolesAsync(Guid requesterUserId, Guid collectionId)
+    {
+        var userCollection = await context.UserCollections
+            .FirstOrDefaultAsync(uc => uc.UserId == requesterUserId && uc.CollectionId == collectionId);
+
+        if (userCollection is null || userCollection.Role < CollectionRole.Admin)
+            return [];
+
+        return Enum.GetValues<CollectionRole>()
+            .Where(r => r < userCollection.Role)
+            .OrderBy(r => r)
+            .ToList();
+    }
 }
