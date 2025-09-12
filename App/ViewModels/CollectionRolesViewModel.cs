@@ -67,6 +67,22 @@ public partial class CollectionRolesViewModel : ObservableObject
         return true;
     }
 
+    public async Task<bool> AssignRoleAsync(string username, CollectionRole role)
+    {
+        if (_collectionId == Guid.Empty) return false;
+
+        var ok = await _collectionService.AssignCollectionRoleAsync(_collectionId, username, role);
+
+        if (!ok)
+        {
+            await Shell.Current.DisplayAlert("Error", "Unable to assign role. User may not exist or you lack permissions.", "OK");
+            return false;
+        }
+
+        await RefreshAsync();
+        return true;
+    }
+
     private async Task RefreshAsync()
     {
         if (_collectionId == Guid.Empty) return;
