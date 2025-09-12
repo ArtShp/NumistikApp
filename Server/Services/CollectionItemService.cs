@@ -15,8 +15,8 @@ public class CollectionItemService(MyDbContext context, IWebHostEnvironment env)
 
         if (collection is null) return null;
 
-        var userCollection = collection.UserCollections
-            .FirstOrDefault(uc => uc.UserId == userId);
+        var userCollection = await context.UserCollections
+            .FirstOrDefaultAsync(uc => uc.CollectionId == collectionId && uc.UserId == userId);
 
         if (userCollection is null && userAppRole < UserAppRole.Admin) return null;
 
@@ -57,8 +57,8 @@ public class CollectionItemService(MyDbContext context, IWebHostEnvironment env)
 
         if (collection is null) return null;
 
-        var userCollection = collection.UserCollections
-            .FirstOrDefault(uc => uc.UserId == userId);
+        var userCollection = await context.UserCollections
+            .FirstOrDefaultAsync(uc => uc.CollectionId == collectionId && uc.UserId == userId);
 
         if (userCollection is null && userAppRole < UserAppRole.Admin) return null;
 
@@ -149,8 +149,8 @@ public class CollectionItemService(MyDbContext context, IWebHostEnvironment env)
         var foundCollectionItem = await context.CollectionItems.FindAsync(request.Id);
         if (foundCollectionItem is null) return false;
 
-        var userCollection = foundCollectionItem.Collection.UserCollections
-            .FirstOrDefault(uc => uc.UserId == userId);
+        var userCollection = await context.UserCollections
+            .FirstOrDefaultAsync(uc => uc.CollectionId == foundCollectionItem.CollectionId && uc.UserId == userId);
         if (userCollection is null || userCollection.Role < CollectionRole.Editor) return false;
 
         if (request.TypeId.HasValue)
