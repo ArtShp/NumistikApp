@@ -78,4 +78,18 @@ internal class CollectionService(IRestApiService restApiService) : ICollectionSe
 
         return result ?? [];
     }
+
+    public async Task<bool> AssignCollectionRoleAsync(Guid collectionId, string username, CollectionRole role)
+    {
+        var request = new CollectionUpdateRoleDto.Request
+        {
+            CollectionId = collectionId,
+            Username = username,
+            Role = role
+        };
+
+        var ok = await _restApiService.SendRestApiRequest(RestApiEndpoints.UpdateCollectionRole, request);
+
+        return ok;
+    }
 }

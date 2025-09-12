@@ -15,6 +15,8 @@ public interface ICollectionService
     Task<bool> UpdateCollectionRoleAsync(Guid collectionId, Guid userId, CollectionRole role);
 
     Task<IReadOnlyList<CollectionRole>> GetAssignableRolesAsync(Guid collectionId);
+
+    Task<bool> AssignCollectionRoleAsync(Guid collectionId, string username, CollectionRole role);
 }
 
 internal partial class RestApiEndpoints
