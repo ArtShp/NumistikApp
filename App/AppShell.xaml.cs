@@ -10,6 +10,7 @@ namespace App
 
             Routing.RegisterRoute(nameof(CollectionItemsPage), typeof(CollectionItemsPage));
             Routing.RegisterRoute(nameof(CreateCollectionItemPage), typeof(CreateCollectionItemPage));
+            Routing.RegisterRoute(nameof(CollectionRolesPage), typeof(CollectionRolesPage));
         }
     }
 }
