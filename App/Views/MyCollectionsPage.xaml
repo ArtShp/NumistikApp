@@ -51,7 +51,7 @@
                         SelectedItem="{Binding Selected, Mode=TwoWay}">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:MyCollectionDto">
-                    <Grid Padding="12" ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
+                    <Grid Padding="12" ColumnDefinitions="*,Auto,Auto" RowDefinitions="Auto,Auto,Auto">
                         <Label Grid.Row="0" Grid.Column="0" Text="{Binding Name}" FontAttributes="Bold" FontSize="16" />
 
                         <Button x:DataType="{x:Null}"
@@ -59,14 +59,20 @@
                                 Command="{Binding Source={x:Reference Page}, Path=BindingContext.OpenCommand}"
                                 CommandParameter="{Binding .}" />
 
-                        <Label Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Description}" MaxLines="2" LineBreakMode="TailTruncation" FontSize="13" />
+                        <Button x:DataType="{x:Null}"
+                                Grid.Row="0" Grid.Column="2" Text="Roles"
+                                Margin="8,0,0,0"
+                                Command="{Binding Source={x:Reference Page}, Path=BindingContext.OpenRolesCommand}"
+                                CommandParameter="{Binding .}" />
+
+                        <Label Grid.Row="1" Grid.ColumnSpan="3" Text="{Binding Description}" MaxLines="2" LineBreakMode="TailTruncation" FontSize="13" />
                         <Label Grid.Row="2" Grid.Column="0"
                                Text="{Binding Id}"
                                FontSize="12"
                                MaxLines="1"
                                LineBreakMode="TailTruncation"
                                TextColor="{AppThemeBinding Light=Gray, Dark=LightGray}" />
-                        <Label Grid.Row="2" Grid.Column="1"
+                        <Label Grid.Row="2" Grid.Column="2"
                                Text="{Binding CollectionRole}"
                                FontSize="12"
                                HorizontalTextAlignment="End"

@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Windows.Input;
 using App.Models;
 using App.Services;
+using App.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Shared.Models.Collection;
@@ -45,6 +46,7 @@ public partial class MyCollectionsViewModel : ObservableObject
     public ICommand RefreshCommand { get; init; }
     public ICommand OpenSelectedCommand { get; init; }
     public ICommand OpenCommand { get; init; }
+    public ICommand OpenRolesCommand { get; init; }
     public ICommand ToggleCreateCommand { get; init; }
     public ICommand CreateCommand { get; init; }
     public ICommand CancelCreateCommand { get; init; }
@@ -57,6 +59,7 @@ public partial class MyCollectionsViewModel : ObservableObject
         RefreshCommand = new AsyncRelayCommand(RefreshAsync);
         OpenSelectedCommand = new AsyncRelayCommand(OpenSelectedAsync);
         OpenCommand = new AsyncRelayCommand<MyCollectionDto?>(OpenAsync);
+        OpenRolesCommand = new AsyncRelayCommand<MyCollectionDto?>(OpenRolesAsync);
         ToggleCreateCommand = new RelayCommand(() => Form.IsVisible = !Form.IsVisible);
         CreateCommand = new AsyncRelayCommand(CreateAsync, CanCreate);
         CancelCreateCommand = new RelayCommand(CancelCreate);
@@ -133,7 +136,14 @@ public partial class MyCollectionsViewModel : ObservableObject
     {
         if (item is null) return;
 
-        await Shell.Current.GoToAsync($"CollectionItemsPage?collectionId={item.Id}");
+        await Shell.Current.GoToAsync($"{nameof(CollectionItemsPage)}?collectionId={item.Id}");
+    }
+
+    private async Task OpenRolesAsync(MyCollectionDto? item)
+    {
+        if (item is null) return;
+
+        await Shell.Current.GoToAsync($"{nameof(CollectionRolesPage)}?collectionId={item.Id}");
     }
 
     private bool CanCreate()
