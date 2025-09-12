@@ -1,4 +1,5 @@
 ﻿using Shared.Models.Common;
+using Shared.Models.Extensions;
 
 namespace Shared.Models.Collection;
 
@@ -8,7 +9,10 @@ public static class CollectionUpdateRoleDto
     {
         public required Guid CollectionId { get; set; }
 
-        public required Guid UserId { get; set; }
+        public Guid? UserId { get; set; }
+
+        [Username]
+        public string? Username { get; set; }
 
         public required CollectionRole Role { get; set; }
     }

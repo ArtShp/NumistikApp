@@ -145,13 +145,23 @@ public class CollectionService(MyDbContext context)
 
         if (targetUserCollection is null)
         {
-            if (await context.Users.FindAsync(request.UserId) is null)
-                return false;
+            Guid? requestUserId = request.UserId;
+            if (requestUserId is null)
+            {
+                if (string.IsNullOrEmpty(request.Username)) return false;
+
+                var user = await context.Users
+                    .FirstOrDefaultAsync(u => u.Username == request.Username);
+
+                if (user is null) return false;
+
+                requestUserId = user.Id;
+            }
 
             // assign
             targetUserCollection = new UserCollection
             {
-                UserId = request.UserId,
+                UserId = requestUserId.Value,
                 CollectionId = request.CollectionId,
                 Role = request.Role
             };
