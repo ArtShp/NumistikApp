@@ -118,4 +118,43 @@ public class CollectionController(CollectionService collectionService) : MyContr
 
         return Ok();
     }
+
+    [HttpGet("{collectionId:Guid}/members")]
+    [AuthorizeAllUsers]
+    public async Task<ActionResult<CollectionMembersDto.Response>> GetCollectionMembers(Guid collectionId)
+    {
+        // Get the user's id from claims
+        Guid? authenticatedUserId = GetAuthorizedUserId();
+
+        if (authenticatedUserId is null)
+            return Unauthorized("User is not authenticated.");
+
+        // Get the user's role from claims
+        UserAppRole? authenticatedUserRole = GetAuthorizedUserRole();
+
+        if (authenticatedUserRole is null)
+            return Unauthorized("User role is not recognized.");
+
+        var result = await collectionService.GetCollectionMembersAsync(authenticatedUserId.Value, authenticatedUserRole.Value, collectionId);
+
+        if (result is null)
+            return NotFound("Collection not found.");
+
+        return Ok(result);
+    }
+
+    [HttpGet("{collectionId:Guid}/assignable-roles")]
+    [AuthorizeAllUsers]
+    public async Task<ActionResult<List<CollectionRole>>> GetAssignableRoles(Guid collectionId)
+    {
+        // Get the user's id from claims
+        Guid? authenticatedUserId = GetAuthorizedUserId();
+
+        if (authenticatedUserId is null)
+            return Unauthorized("User is not authenticated.");
+
+        var roles = await collectionService.GetAssignableRolesAsync(authenticatedUserId.Value, collectionId);
+
+        return Ok(roles);
+    }
 }
