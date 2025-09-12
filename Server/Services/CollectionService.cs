@@ -187,7 +187,7 @@ public class CollectionService(MyDbContext context)
         var members = await context.UserCollections
             .Include(uc => uc.User)
             .Where(uc => uc.CollectionId == collectionId)
-            .OrderBy(uc => uc.Role)
+            .OrderByDescending(uc => uc.Role)
             .Select(uc => new CollectionMembersDto.Member
             {
                 UserId = uc.UserId,
