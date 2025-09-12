@@ -164,6 +164,66 @@ internal class RestApiService : IRestApiService
         return result;
     }
 
+    public async Task<bool> SendRestApiRequest<TRequest>(RestApiEndpointNoContent<TRequest> endpoint, TRequest? requestBody = null,
+        IDictionary<string, string?>? query = null) where TRequest : class
+    {
+        if (endpoint.RequiresAuth && IsTokenExpired)
+        {
+            bool authorized = await ReAuthorize(new RefreshTokenDto.Request
+            {
+                Username = AppSettings.Username,
+                RefreshToken = AppSettings.RefreshToken
+            });
+
+            if (!authorized)
+            {
+                return false;
+            }
+        }
+
+        var uriBuilder = new UriBuilder(new Uri(BaseUri, endpoint.Endpoint));
+
+        if (query is not null && query.Count > 0)
+        {
+            var q = HttpUtility.ParseQueryString(uriBuilder.Query);
+
+            foreach (var kv in query)
+            {
+                if (!string.IsNullOrWhiteSpace(kv.Value))
+                {
+                    q[kv.Key] = kv.Value;
+                }
+            }
+
+            uriBuilder.Query = q.ToString();
+        }
+
+        Uri uri = uriBuilder.Uri;
+
+        try
+        {
+            HttpRequestMessage requestMessage;
+            if (requestBody is not null)
+            {
+                string json = JsonSerializer.Serialize(requestBody, _serializerOptions);
+                var requestContent = new StringContent(json, Encoding.UTF8, "application/json");
+
+                requestMessage = GenerateRequestMessage(endpoint.HttpMethod, uri, requestContent);
+            }
+            else
+            {
+                requestMessage = GenerateRequestMessage(endpoint.HttpMethod, uri);
+            }
+
+            HttpResponseMessage response = await _client.SendAsync(requestMessage);
+            return response.IsSuccessStatusCode;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
     private async Task<TResponse?> SendInternalRestApiRequest<TResponse>(RestApiEndpoint<TResponse> endpoint, IDictionary<string, string?>? query = null)
     {
         var uriBuilder = new UriBuilder(new Uri(BaseUri, endpoint.Endpoint));
