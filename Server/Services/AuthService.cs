@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Common;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Server.Data;
@@ -166,7 +167,7 @@ public class AuthService(MyDbContext context, IConfiguration configuration) : IA
 
         user.RefreshTokenHash = new PasswordHasher<User>()
             .HashPassword(user, refreshToken);
-        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+        user.RefreshTokenExpiryTime = DateTime.UtcNow.Add(Settings.RefreshTokenExpiration);
 
         await context.SaveChangesAsync();
 
@@ -191,7 +192,7 @@ public class AuthService(MyDbContext context, IConfiguration configuration) : IA
             issuer: configuration["AppSettings:Issuer"],
             audience: configuration["AppSettings:Audience"],
             claims: claims,
-            expires: DateTime.UtcNow.AddDays(1),
+            expires: DateTime.UtcNow.Add(Settings.AccessTokenExpiration),
             signingCredentials: creds
         );
 
@@ -204,7 +205,7 @@ public class AuthService(MyDbContext context, IConfiguration configuration) : IA
         {
             CreatedById = createdById,
             CreatedAt = DateTime.UtcNow,
-            ExpiresAt = DateTime.UtcNow.AddDays(30),
+            ExpiresAt = DateTime.UtcNow.Add(Settings.RefreshTokenExpiration),
             AssignedRole = assignedRole
         };
 
