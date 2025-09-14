@@ -1,4 +1,5 @@
-﻿using Shared.Models.Auth;
+﻿using Common;
+using Shared.Models.Auth;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -56,9 +57,9 @@ internal class RestApiService : IRestApiService
         if (result != null)
         {
             _authToken = result.AccessToken;
-            _tokenExpiry = DateTime.UtcNow.AddSeconds(30); // TODO: receive expiry from server
+            _tokenExpiry = DateTime.UtcNow.Add(Settings.AccessTokenExpiration);
             AppSettings.RefreshToken = result.RefreshToken;
-            AppSettings.RefreshTokenExpiry = DateTime.UtcNow.AddDays(7); // TODO: receive expiry from server
+            AppSettings.RefreshTokenExpiry = DateTime.UtcNow.Add(Settings.RefreshTokenExpiration);
             AppSettings.Username = requestBody.Username;
 
             return true;
@@ -89,9 +90,9 @@ internal class RestApiService : IRestApiService
             if (result != null)
             {
                 _authToken = result.AccessToken;
-                _tokenExpiry = DateTime.UtcNow.AddSeconds(30); // TODO: receive expiry from server
+                _tokenExpiry = DateTime.UtcNow.Add(Settings.AccessTokenExpiration);
                 AppSettings.RefreshToken = result.RefreshToken;
-                AppSettings.RefreshTokenExpiry = DateTime.UtcNow.AddDays(7); // TODO: receive expiry from server
+                AppSettings.RefreshTokenExpiry = DateTime.UtcNow.Add(Settings.RefreshTokenExpiration);
 
                 return true;
             }
