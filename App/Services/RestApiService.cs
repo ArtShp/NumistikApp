@@ -16,6 +16,8 @@ internal class RestApiService : IRestApiService
     private string? _authToken;
     private DateTime _tokenExpiry = DateTime.MinValue;
 
+    private readonly SemaphoreSlim _refreshSemaphore = new(1, 1);
+
     public RestApiService()
     {
 #if DEBUG
@@ -68,23 +70,38 @@ internal class RestApiService : IRestApiService
     public async Task<bool> ReAuthorize(RefreshTokenDto.Request requestBody)
     {
         if (IsRefreshTokenExpired)
+            return false;
+
+        if (!IsTokenExpired && _authToken is not null)
+            return true;
+
+        await _refreshSemaphore.WaitAsync();
+        try
         {
+            if (IsRefreshTokenExpired)
+                return false;
+
+            if (!IsTokenExpired && _authToken is not null)
+                return true;
+
+            RefreshTokenDto.Response? result = await SendInternalRestApiRequest(RestApiEndpoints.ReLogin, requestBody);
+
+            if (result != null)
+            {
+                _authToken = result.AccessToken;
+                _tokenExpiry = DateTime.UtcNow.AddSeconds(30); // TODO: receive expiry from server
+                AppSettings.RefreshToken = result.RefreshToken;
+                AppSettings.RefreshTokenExpiry = DateTime.UtcNow.AddDays(7); // TODO: receive expiry from server
+
+                return true;
+            }
+
             return false;
         }
-
-        RefreshTokenDto.Response? result = await SendInternalRestApiRequest(RestApiEndpoints.ReLogin, requestBody);
-
-        if (result != null)
+        finally
         {
-            _authToken = result.AccessToken;
-            _tokenExpiry = DateTime.UtcNow.AddSeconds(30); // TODO: receive expiry from server
-            AppSettings.RefreshToken = result.RefreshToken;
-            AppSettings.RefreshTokenExpiry = DateTime.UtcNow.AddDays(7); // TODO: receive expiry from server
-
-            return true;
+            _refreshSemaphore.Release();
         }
-
-        return false;
     }
 
     public async Task<TResponse?> SendRestApiRequest<TResponse>(RestApiEndpoint<TResponse> endpoint, IDictionary<string, string?>? query = null)
@@ -106,13 +123,13 @@ internal class RestApiService : IRestApiService
         return await SendInternalRestApiRequest(endpoint, query);
     }
 
-    public async Task<TResponse?> SendRestApiRequest<TRequest, TResponse>(RestApiEndpoint<TRequest, TResponse> endpoint, TRequest? requestBody = null, 
+    public async Task<TResponse?> SendRestApiRequest<TRequest, TResponse>(RestApiEndpoint<TRequest, TResponse> endpoint, TRequest? requestBody = null,
         IDictionary<string, string?>? query = null) where TRequest : class
     {
         if (endpoint.RequiresAuth && IsTokenExpired)
         {
             bool authorized = await ReAuthorize(new RefreshTokenDto.Request
-            { 
+            {
                 Username = AppSettings.Username,
                 RefreshToken = AppSettings.RefreshToken
             });
