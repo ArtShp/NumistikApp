@@ -18,6 +18,7 @@ A cross-platform (.NET MAUI) client and ASP.NET Core server for managing numisma
 - [Pagination Strategy](#pagination-strategy)
 - [Image Handling](#image-handling)
 - [Seeding & Initial Data](#seeding-initial-data)
+- [Additional Documentation](#additional-documentation)
 - [Roadmap](#roadmap)
 - [License](#license)
 
@@ -144,8 +145,8 @@ Prerequisites:
 4. Note server URL (Kestrel: https://localhost:5000 or https://0.0.0.0:443 with cert)
 5. Launch MAUI client
 6. On first run (no users in DB):
-- Set `AppSettings:OwnerInviteToken` to a known GUID
-- Register via client using that token omitted (logic inserts token automatically if it's a first user and matches configured value)
+   - Set `AppSettings:OwnerInviteToken` to a known GUID
+   - Register via client using that token omitted (logic inserts token automatically if it's a first user and matches configured value)
 
 ## Deployment (Summary)
 
@@ -197,9 +198,16 @@ Server provides initial data.
 
 Sets sequence values after inserts.
 
+## Additional Documentation
+
+| Topic | File |
+|-------|------|
+| User Guide | [docs/USER_GUIDE.md](docs/USER_GUIDE.md) |
+| Developer Guide | [docs/DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md) |
+| API Reference | [docs/API_REFERENCE.md](docs/API_REFERENCE.md) |
+
 ## Roadmap
 
-- Add endpoint list
 - Centralized logging
 - Rate limiting
 - Add search & filtering for items
