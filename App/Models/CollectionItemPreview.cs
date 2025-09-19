@@ -11,6 +11,12 @@ public class CollectionItemPreview
     public string? Description { get; set; }
     public string? ObverseImageUrl { get; set; }
 
+    public string? TypeName { get; set; }
+    public string? CountryName { get; set; }
+    public string? StatusName { get; set; }
+    public string? QualityName { get; set; }
+    public string? SpecialStatusName { get; set; }
+
     public string ValueCurrencyInfo
     {
         get
@@ -18,11 +24,25 @@ public class CollectionItemPreview
             var main = Value + ' ' + Currency;
             if (!string.IsNullOrWhiteSpace(AdditionalInfo))
             {
-                var info = AdditionalInfo;
                 return $"{main} ({AdditionalInfo})";
             }
 
             return main;
+        }
+    }
+
+    public string? SecondaryInfo
+    {
+        get
+        {
+            var parts = new List<string>(5);
+            if (!string.IsNullOrWhiteSpace(TypeName)) parts.Add(TypeName!);
+            if (!string.IsNullOrWhiteSpace(CountryName)) parts.Add(CountryName!);
+            if (!string.IsNullOrWhiteSpace(StatusName)) parts.Add(StatusName!);
+            if (!string.IsNullOrWhiteSpace(QualityName)) parts.Add(QualityName!);
+            if (!string.IsNullOrWhiteSpace(SpecialStatusName)) parts.Add(SpecialStatusName!);
+
+            return parts.Count == 0 ? null : string.Join(" · ", parts);
         }
     }
 }
