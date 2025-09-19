@@ -26,10 +26,10 @@
                           ColumnSpacing="12"
                           RowSpacing="6"
                           ColumnDefinitions="420,*,Auto"
-                          RowDefinitions="Auto,Auto,Auto">
+                          RowDefinitions="Auto,Auto,Auto,Auto">
 
                         <!-- Fixed-width column for alignment. Fit image by height for sharpness -->
-                        <Border Grid.RowSpan="3" Grid.Column="0"
+                        <Border Grid.RowSpan="4" Grid.Column="0"
                                 Stroke="{AppThemeBinding Light=#DDD, Dark=#333}"
                                 StrokeThickness="1"
                                 Padding="0"
@@ -70,8 +70,16 @@
                                MaxLines="1"
                                LineBreakMode="TailTruncation" />
 
-                        <!-- Serial Number -->
+                        <!-- Secondary info: Type · Country · Status · Quality · Special Status -->
                         <Label Grid.Column="1" Grid.Row="1"
+                               Text="{Binding SecondaryInfo}"
+                               FontSize="13"
+                               MaxLines="1"
+                               LineBreakMode="TailTruncation"
+                               TextColor="{AppThemeBinding Light=Gray, Dark=LightGray}" />
+
+                        <!-- Serial Number -->
+                        <Label Grid.Column="1" Grid.Row="2"
                                Text="{Binding SerialNumber, StringFormat='SN: {0}'}"
                                FontSize="13"
                                MaxLines="1"
@@ -79,7 +87,7 @@
                                TextColor="{AppThemeBinding Light=Gray, Dark=LightGray}" />
 
                         <!-- Description -->
-                        <Label Grid.Column="1" Grid.Row="2"
+                        <Label Grid.Column="1" Grid.Row="3"
                                Text="{Binding Description}"
                                FontSize="14"
                                MaxLines="4"
