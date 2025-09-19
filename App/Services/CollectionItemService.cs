@@ -3,9 +3,10 @@ using Shared.Models.CollectionItem;
 
 namespace App.Services;
 
-internal class CollectionItemService(IRestApiService restApiService) : ICollectionItemService
+internal class CollectionItemService(IRestApiService restApiService, ILookupService lookupService) : ICollectionItemService
 {
     private readonly IRestApiService _restApiService = restApiService;
+    private readonly ILookupService _lookupService = lookupService;
 
     public async Task<IEnumerable<CollectionItemPreview>> GetCollectionItemsAsync(Guid collectionId, int? lastSeenId)
     {
@@ -16,16 +17,39 @@ internal class CollectionItemService(IRestApiService restApiService) : ICollecti
 
         if (result is null) return [];
 
-        return result.Select(item => new CollectionItemPreview
+        var previews = new List<CollectionItemPreview>(result.Count);
+
+        foreach (var item in result)
         {
-            Id = item.Id,
-            CollectionId = item.CollectionId,
-            Value = item.Value,
-            Currency = item.Currency,
-            SerialNumber = item.SerialNumber,
-            Description = item.Description,
-            ObverseImageUrl = item.ObverseImageUrl
-        });
+            var typeTask = _lookupService.GetTypeNameAsync(item.TypeId);
+            var countryTask = _lookupService.GetCountryNameAsync(item.CountryId);
+            var statusTask = _lookupService.GetStatusNameAsync(item.CollectionStatusId);
+            var qualityTask = item.QualityId.HasValue ? _lookupService.GetQualityNameAsync(item.QualityId.Value) : Task.FromResult<string?>(null);
+            var specialStatusTask = item.SpecialStatusId.HasValue ? _lookupService.GetSpecialStatusNameAsync(item.SpecialStatusId.Value) : Task.FromResult<string?>(null);
+
+            await Task.WhenAll(typeTask, countryTask, statusTask, qualityTask, specialStatusTask);
+
+            var preview = new CollectionItemPreview
+            {
+                Id = item.Id,
+                CollectionId = item.CollectionId,
+                Value = item.Value,
+                Currency = item.Currency,
+                AdditionalInfo = item.AdditionalInfo,
+                SerialNumber = item.SerialNumber,
+                Description = item.Description,
+                ObverseImageUrl = item.ObverseImageUrl,
+                TypeName = typeTask.Result,
+                CountryName = countryTask.Result,
+                StatusName = statusTask.Result,
+                QualityName = qualityTask.Result,
+                SpecialStatusName = specialStatusTask.Result
+            };
+
+            previews.Add(preview);
+        }
+
+        return previews;
     }
 
     public async Task<int?> CreateCollectionItemAsync(CollectionItemCreateRequest request)
