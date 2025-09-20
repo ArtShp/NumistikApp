@@ -11,8 +11,8 @@ public partial class CollectionItemDetailsViewModel : ObservableObject
 {
     private readonly IImageViewerService _imageViewerService;
 
-    private CollectionItemPreview? _item;
-    public CollectionItemPreview? Item
+    private CollectionItem? _item;
+    public CollectionItem? Item
     {
         get => _item!;
         set => SetProperty(ref _item, value);

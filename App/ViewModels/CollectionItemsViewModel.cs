@@ -14,7 +14,7 @@ public partial class CollectionItemsViewModel : ObservableObject
     private readonly ICollectionItemService _itemsService;
     private readonly IImageService _imageService;
 
-    public ObservableCollection<CollectionItemPreview> Items { get; init; } = [];
+    public ObservableCollection<CollectionItem> Items { get; init; } = [];
 
     private Guid _collectionGuid;
     private int? _lastSeenId;
@@ -58,8 +58,8 @@ public partial class CollectionItemsViewModel : ObservableObject
         RefreshCommand = new AsyncRelayCommand(RefreshAsync);
         LoadMoreCommand = new AsyncRelayCommand(LoadMoreAsync, () => HasMore && !IsLoading);
         AddItemCommand = new AsyncRelayCommand(OpenCreateItemAsync);
-        DeleteItemCommand = new AsyncRelayCommand<CollectionItemPreview>(DeleteItemAsync);
-        OpenItemCommand = new AsyncRelayCommand<CollectionItemPreview>(OpenItemAsync);
+        DeleteItemCommand = new AsyncRelayCommand<CollectionItem>(DeleteItemAsync);
+        OpenItemCommand = new AsyncRelayCommand<CollectionItem>(OpenItemAsync);
     }
 
     public async Task InitializeAsync()
@@ -130,7 +130,7 @@ public partial class CollectionItemsViewModel : ObservableObject
         });
     }
 
-    private async Task OpenItemAsync(CollectionItemPreview? item)
+    private async Task OpenItemAsync(CollectionItem? item)
     {
         if (item is null) return;
 
@@ -140,7 +140,7 @@ public partial class CollectionItemsViewModel : ObservableObject
         });
     }
 
-    private async Task DeleteItemAsync(CollectionItemPreview? item)
+    private async Task DeleteItemAsync(CollectionItem? item)
     {
         if (item is null) return;
 

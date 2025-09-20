@@ -1,6 +1,6 @@
 namespace App.Models;
 
-public class CollectionItemPreview
+public class CollectionItem
 {
     public required int Id { get; set; }
     public required Guid CollectionId { get; set; }

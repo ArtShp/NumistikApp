@@ -8,7 +8,7 @@ internal class CollectionItemService(IRestApiService restApiService, ILookupServ
     private readonly IRestApiService _restApiService = restApiService;
     private readonly ILookupService _lookupService = lookupService;
 
-    public async Task<IEnumerable<CollectionItemPreview>> GetCollectionItemsAsync(Guid collectionId, int? lastSeenId)
+    public async Task<IEnumerable<CollectionItem>> GetCollectionItemsAsync(Guid collectionId, int? lastSeenId)
     {
         var endpoint = RestApiEndpoints.GetCollectionItems(collectionId);
         var query = new Dictionary<string, string?> { ["lastSeenId"] = lastSeenId?.ToString() };
@@ -17,7 +17,7 @@ internal class CollectionItemService(IRestApiService restApiService, ILookupServ
 
         if (result is null) return [];
 
-        var previews = new List<CollectionItemPreview>(result.Count);
+        var previews = new List<CollectionItem>(result.Count);
 
         foreach (var item in result)
         {
@@ -29,7 +29,7 @@ internal class CollectionItemService(IRestApiService restApiService, ILookupServ
 
             await Task.WhenAll(typeTask, countryTask, statusTask, qualityTask, specialStatusTask);
 
-            var preview = new CollectionItemPreview
+            var preview = new CollectionItem
             {
                 Id = item.Id,
                 CollectionId = item.CollectionId,

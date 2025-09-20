@@ -5,7 +5,7 @@ namespace App.Services;
 
 public interface ICollectionItemService
 {
-    Task<IEnumerable<CollectionItemPreview>> GetCollectionItemsAsync(Guid collectionId, int? lastSeenId);
+    Task<IEnumerable<CollectionItem>> GetCollectionItemsAsync(Guid collectionId, int? lastSeenId);
     Task<int?> CreateCollectionItemAsync(CollectionItemCreateRequest request);
     Task<bool> DeleteCollectionItemAsync(Guid collectionId, int itemId);
 }
