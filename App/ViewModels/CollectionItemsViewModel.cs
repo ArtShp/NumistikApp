@@ -49,6 +49,7 @@ public partial class CollectionItemsViewModel : ObservableObject
     public ICommand AddItemCommand { get; init; }
     public ICommand DeleteItemCommand { get; init; }
     public ICommand OpenItemCommand { get; init; }
+    public ICommand UpdateItemCommand { get; init; }
 
     public CollectionItemsViewModel(ICollectionItemService itemsService, IImageService imageService)
     {
@@ -60,6 +61,7 @@ public partial class CollectionItemsViewModel : ObservableObject
         AddItemCommand = new AsyncRelayCommand(OpenCreateItemAsync);
         DeleteItemCommand = new AsyncRelayCommand<CollectionItem>(DeleteItemAsync);
         OpenItemCommand = new AsyncRelayCommand<CollectionItem>(OpenItemAsync);
+        UpdateItemCommand = new AsyncRelayCommand<CollectionItem>(OpenUpdateItemAsync);
     }
 
     public async Task InitializeAsync()
@@ -140,6 +142,16 @@ public partial class CollectionItemsViewModel : ObservableObject
         if (item is null) return;
 
         await Shell.Current.GoToAsync(nameof(CollectionItemDetailsPage), new Dictionary<string, object>
+        {
+            ["item"] = item
+        });
+    }
+
+    private async Task OpenUpdateItemAsync(CollectionItem? item)
+    {
+        if (item is null) return;
+
+        await Shell.Current.GoToAsync(nameof(UpdateCollectionItemPage), new Dictionary<string, object>
         {
             ["item"] = item
         });
