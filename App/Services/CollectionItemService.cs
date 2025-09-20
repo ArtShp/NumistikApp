@@ -1,3 +1,4 @@
+using App.Helpers;
 using App.Models;
 using Shared.Models.CollectionItem;
 
@@ -55,20 +56,6 @@ internal class CollectionItemService(IRestApiService restApiService, ILookupServ
 
     public async Task<int?> CreateCollectionItemAsync(CollectionItemCreateRequest request)
     {
-        static string GetMimeType(FileResult fileResult)
-        {
-            if (!string.IsNullOrWhiteSpace(fileResult.ContentType))
-                return fileResult.ContentType;
-
-            var ext = Path.GetExtension(fileResult.FileName ?? fileResult.FullPath)?.ToLowerInvariant();
-            return ext switch
-            {
-                ".jpg" or ".jpeg" => "image/jpeg",
-                ".png" => "image/png",
-                _ => "application/octet-stream"
-            };
-        }
-
         var endpoint = RestApiEndpoints.CreateCollectionItem;
 
         var files = new List<(string Name, string FileName, string ContentType, Stream Content)>();
@@ -79,8 +66,8 @@ internal class CollectionItemService(IRestApiService restApiService, ILookupServ
             files.Add(
                 (
                     "ObverseImage",
-                    Path.GetFileName(request.ObverseImage.FileName ?? request.ObverseImage.FullPath),
-                    GetMimeType(request.ObverseImage),
+                    Path.GetFileName(request.ObverseImage.FileName),
+                    FileMimeHelper.GetContentType(request.ObverseImage),
                     stream
                 )
             );
@@ -92,8 +79,8 @@ internal class CollectionItemService(IRestApiService restApiService, ILookupServ
             files.Add(
                 (
                     "ReverseImage",
-                    Path.GetFileName(request.ReverseImage.FileName ?? request.ReverseImage.FullPath),
-                    GetMimeType(request.ReverseImage),
+                    Path.GetFileName(request.ReverseImage.FileName),
+                    FileMimeHelper.GetContentType(request.ReverseImage),
                     stream
                 )
             );
@@ -117,6 +104,58 @@ internal class CollectionItemService(IRestApiService restApiService, ILookupServ
         var response = await _restApiService.SendMultipartRestApiRequest(endpoint, requestBody, files);
 
         return response?.Id;
+    }
+
+    public async Task<bool> UpdateCollectionItemAsync(CollectionItemUpdateRequest request)
+    {
+        var endpoint = RestApiEndpoints.UpdateCollectionItem;
+
+        var files = new List<(string Name, string FileName, string ContentType, Stream Content)>();
+
+        if (request.ObverseImage is not null)
+        {
+            var stream = await request.ObverseImage.OpenReadAsync();
+            files.Add(
+                (
+                    "ObverseImage",
+                    Path.GetFileName(request.ObverseImage.FileName),
+                    FileMimeHelper.GetContentType(request.ObverseImage),
+                    stream
+                )
+            );
+        }
+
+        if (request.ReverseImage is not null)
+        {
+            var stream = await request.ReverseImage.OpenReadAsync();
+            files.Add(
+                (
+                    "ReverseImage",
+                    Path.GetFileName(request.ReverseImage.FileName),
+                    FileMimeHelper.GetContentType(request.ReverseImage),
+                    stream
+                )
+            );
+        }
+
+        var requestBody = new CollectionItemUpdateDto.Request
+        {
+            Id = request.Id,
+            CollectionId = request.CollectionId,
+            TypeId = request.TypeId,
+            CountryId = request.CountryId,
+            CollectionStatusId = request.CollectionStatusId,
+            SpecialStatusId = request.SpecialStatusId,
+            QualityId = request.QualityId,
+            Value = request.Value,
+            Currency = request.Currency,
+            AdditionalInfo = request.AdditionalInfo,
+            SerialNumber = request.SerialNumber,
+            Description = request.Description
+        };
+
+        var response = await _restApiService.SendMultipartRestApiRequest(endpoint, requestBody, files);
+        return response;
     }
 
     public async Task<bool> DeleteCollectionItemAsync(Guid collectionId, int itemId)
