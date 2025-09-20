@@ -118,6 +118,11 @@ public partial class CollectionItemsViewModel : ObservableObject
             IsLoading = false;
             (LoadMoreCommand as AsyncRelayCommand)?.NotifyCanExecuteChanged();
         }
+
+        if (!HasMore)
+        {
+            await Shell.Current.DisplayAlert("Nothing loaded", "No more items to load.", "OK");
+        }
     }
 
     private async Task OpenCreateItemAsync()

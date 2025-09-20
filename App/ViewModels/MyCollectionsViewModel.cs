@@ -113,17 +113,23 @@ public partial class MyCollectionsViewModel : ObservableObject
             if (!page.Any() || last is null)
             {
                 HasMore = false;
-                return;
             }
-
-            _lastSeenId = last.Id;
-            _lastSeenName = last.Name;
-            HasMore = true;
+            else
+            {
+                _lastSeenId = last.Id;
+                _lastSeenName = last.Name;
+                HasMore = true;
+            }
         }
         finally
         {
             IsLoading = false;
             (LoadMoreCommand as AsyncRelayCommand)?.NotifyCanExecuteChanged();
+        }
+
+        if (!HasMore)
+        {
+            await Shell.Current.DisplayAlert("Nothing loaded", "No more collections to load.", "OK");
         }
     }
 
