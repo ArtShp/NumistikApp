@@ -104,6 +104,16 @@
                                 x:DataType="{x:Null}"
                                 Command="{Binding Source={x:Reference CollectionItemsPageRoot}, Path=BindingContext.DeleteItemCommand}"
                                 CommandParameter="{Binding .}" />
+
+                        <!-- Open button -->
+                        <Button Grid.Column="2" Grid.Row="1"
+                                Text="Open"
+                                FontSize="12"
+                                HeightRequest="28"
+                                CornerRadius="6"
+                                x:DataType="{x:Null}"
+                                Command="{Binding Source={x:Reference CollectionItemsPageRoot}, Path=BindingContext.OpenItemCommand}"
+                                CommandParameter="{Binding .}" />
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
