@@ -39,6 +39,7 @@ internal class CollectionItemService(IRestApiService restApiService, ILookupServ
                 SerialNumber = item.SerialNumber,
                 Description = item.Description,
                 ObverseImageUrl = item.ObverseImageUrl,
+                ReverseImageUrl = item.ReverseImageUrl,
                 TypeName = typeTask.Result,
                 CountryName = countryTask.Result,
                 StatusName = statusTask.Result,
