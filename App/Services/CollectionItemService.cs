@@ -41,6 +41,13 @@ internal class CollectionItemService(IRestApiService restApiService, ILookupServ
                 Description = item.Description,
                 ObverseImageUrl = item.ObverseImageUrl,
                 ReverseImageUrl = item.ReverseImageUrl,
+
+                TypeId = item.TypeId,
+                CountryId = item.CountryId,
+                StatusId = item.CollectionStatusId,
+                QualityId = item.QualityId,
+                SpecialStatusId = item.SpecialStatusId,
+
                 TypeName = typeTask.Result,
                 CountryName = countryTask.Result,
                 StatusName = statusTask.Result,
@@ -66,7 +73,7 @@ internal class CollectionItemService(IRestApiService restApiService, ILookupServ
             files.Add(
                 (
                     "ObverseImage",
-                    Path.GetFileName(request.ObverseImage.FileName),
+                    Path.GetFileName(request.ObverseImage.FileName ?? request.ObverseImage.FullPath),
                     FileMimeHelper.GetContentType(request.ObverseImage),
                     stream
                 )
@@ -79,7 +86,7 @@ internal class CollectionItemService(IRestApiService restApiService, ILookupServ
             files.Add(
                 (
                     "ReverseImage",
-                    Path.GetFileName(request.ReverseImage.FileName),
+                    Path.GetFileName(request.ReverseImage.FileName ?? request.ReverseImage.FullPath),
                     FileMimeHelper.GetContentType(request.ReverseImage),
                     stream
                 )
@@ -118,7 +125,7 @@ internal class CollectionItemService(IRestApiService restApiService, ILookupServ
             files.Add(
                 (
                     "ObverseImage",
-                    Path.GetFileName(request.ObverseImage.FileName),
+                    Path.GetFileName(request.ObverseImage.FileName ?? request.ObverseImage.FullPath),
                     FileMimeHelper.GetContentType(request.ObverseImage),
                     stream
                 )
@@ -131,7 +138,7 @@ internal class CollectionItemService(IRestApiService restApiService, ILookupServ
             files.Add(
                 (
                     "ReverseImage",
-                    Path.GetFileName(request.ReverseImage.FileName),
+                    Path.GetFileName(request.ReverseImage.FileName ?? request.ReverseImage.FullPath),
                     FileMimeHelper.GetContentType(request.ReverseImage),
                     stream
                 )
@@ -151,7 +158,7 @@ internal class CollectionItemService(IRestApiService restApiService, ILookupServ
             Currency = request.Currency,
             AdditionalInfo = request.AdditionalInfo,
             SerialNumber = request.SerialNumber,
-            Description = request.Description
+            Description = request.Description,
         };
 
         var response = await _restApiService.SendMultipartRestApiRequest(endpoint, requestBody, files);
