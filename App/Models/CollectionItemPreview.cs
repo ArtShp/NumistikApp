@@ -10,6 +10,7 @@ public class CollectionItemPreview
     public string? SerialNumber { get; set; }
     public string? Description { get; set; }
     public string? ObverseImageUrl { get; set; }
+    public string? ReverseImageUrl { get; set; }
 
     public string? TypeName { get; set; }
     public string? CountryName { get; set; }
