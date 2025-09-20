@@ -21,7 +21,7 @@
                         ItemsUpdatingScrollMode="KeepScrollOffset"
                         Margin="0,0,0,8">
             <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="models:CollectionItemPreview">
+                <DataTemplate x:DataType="models:CollectionItem">
                     <Grid Padding="8"
                           ColumnSpacing="12"
                           RowSpacing="6"
