@@ -7,7 +7,7 @@ public static class FileMimeHelper
         if (!string.IsNullOrWhiteSpace(fileResult.ContentType))
             return fileResult.ContentType;
 
-        return ExtensionToType(Path.GetExtension(fileResult.FileName ?? fileResult.FullPath));
+        return ExtensionToType(Path.GetExtension(fileResult.FileName));
     }
 
     public static string GetContentType(string path)
