@@ -33,6 +33,7 @@ namespace App
             builder.Services.AddTransient<CollectionItemsViewModel>();
             builder.Services.AddTransient<CreateCollectionItemViewModel>();
             builder.Services.AddTransient<CollectionRolesViewModel>();
+            builder.Services.AddTransient<CollectionItemDetailsViewModel>();
             builder.Services.AddTransient<ImageViewerViewModel>();
 
 #if DEBUG
