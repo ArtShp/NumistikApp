@@ -56,7 +56,7 @@ public partial class CollectionItemsViewModel : ObservableObject
         _imageService = imageService;
 
         RefreshCommand = new AsyncRelayCommand(RefreshAsync);
-        LoadMoreCommand = new AsyncRelayCommand(LoadMoreAsync, () => HasMore && !IsLoading);
+        LoadMoreCommand = new AsyncRelayCommand(LoadMoreAsync, () => !IsLoading);
         AddItemCommand = new AsyncRelayCommand(OpenCreateItemAsync);
         DeleteItemCommand = new AsyncRelayCommand<CollectionItem>(DeleteItemAsync);
         OpenItemCommand = new AsyncRelayCommand<CollectionItem>(OpenItemAsync);
@@ -81,7 +81,7 @@ public partial class CollectionItemsViewModel : ObservableObject
 
     private async Task LoadMoreAsync()
     {
-        if (!HasMore || IsLoading || _collectionGuid == Guid.Empty) return;
+        if (IsLoading || _collectionGuid == Guid.Empty) return;
 
         IsLoading = true;
         try

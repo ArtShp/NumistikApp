@@ -55,7 +55,7 @@ public partial class MyCollectionsViewModel : ObservableObject
     {
         _collectionService = collectionService;
 
-        LoadMoreCommand = new AsyncRelayCommand(LoadMoreAsync, () => HasMore && !IsLoading);
+        LoadMoreCommand = new AsyncRelayCommand(LoadMoreAsync, () => !IsLoading);
         RefreshCommand = new AsyncRelayCommand(RefreshAsync);
         OpenSelectedCommand = new AsyncRelayCommand(OpenSelectedAsync);
         OpenCommand = new AsyncRelayCommand<MyCollectionDto?>(OpenAsync);
@@ -96,7 +96,7 @@ public partial class MyCollectionsViewModel : ObservableObject
 
     private async Task LoadMoreAsync()
     {
-        if (!HasMore || IsLoading) return;
+        if (IsLoading) return;
 
         IsLoading = true;
         try
