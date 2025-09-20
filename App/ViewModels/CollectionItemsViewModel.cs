@@ -14,7 +14,7 @@ public partial class CollectionItemsViewModel : ObservableObject
     private readonly ICollectionItemService _itemsService;
     private readonly IImageService _imageService;
 
-    public ObservableCollection<CollectionItemPreview> Items { get; init; } = [];
+    public ObservableCollection<CollectionItem> Items { get; init; } = [];
 
     private Guid _collectionGuid;
     private int? _lastSeenId;
@@ -48,6 +48,7 @@ public partial class CollectionItemsViewModel : ObservableObject
     public ICommand LoadMoreCommand { get; init; }
     public ICommand AddItemCommand { get; init; }
     public ICommand DeleteItemCommand { get; init; }
+    public ICommand OpenItemCommand { get; init; }
 
     public CollectionItemsViewModel(ICollectionItemService itemsService, IImageService imageService)
     {
@@ -57,7 +58,8 @@ public partial class CollectionItemsViewModel : ObservableObject
         RefreshCommand = new AsyncRelayCommand(RefreshAsync);
         LoadMoreCommand = new AsyncRelayCommand(LoadMoreAsync, () => HasMore && !IsLoading);
         AddItemCommand = new AsyncRelayCommand(OpenCreateItemAsync);
-        DeleteItemCommand = new AsyncRelayCommand<CollectionItemPreview>(DeleteItemAsync);
+        DeleteItemCommand = new AsyncRelayCommand<CollectionItem>(DeleteItemAsync);
+        OpenItemCommand = new AsyncRelayCommand<CollectionItem>(OpenItemAsync);
     }
 
     public async Task InitializeAsync()
@@ -89,7 +91,14 @@ public partial class CollectionItemsViewModel : ObservableObject
 
             foreach (var ci in page)
             {
-                ci.ObverseImageUrl = await _imageService.GetLocalPathAsync(ci.ObverseImageUrl) ?? null;
+                var obverseImageTask = _imageService.GetLocalPathAsync(ci.ObverseImageUrl);
+                var reverseImageTask = _imageService.GetLocalPathAsync(ci.ReverseImageUrl);
+
+                await Task.WhenAll(obverseImageTask, reverseImageTask);
+
+                ci.ObverseImageUrl = obverseImageTask.Result ?? null;
+                ci.ReverseImageUrl = reverseImageTask.Result ?? null;
+
                 Items.Add(ci);
                 lastId = ci.Id;
             }
@@ -121,7 +130,17 @@ public partial class CollectionItemsViewModel : ObservableObject
         });
     }
 
-    private async Task DeleteItemAsync(CollectionItemPreview? item)
+    private async Task OpenItemAsync(CollectionItem? item)
+    {
+        if (item is null) return;
+
+        await Shell.Current.GoToAsync(nameof(CollectionItemDetailsPage), new Dictionary<string, object>
+        {
+            ["item"] = item
+        });
+    }
+
+    private async Task DeleteItemAsync(CollectionItem? item)
     {
         if (item is null) return;
 

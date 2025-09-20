@@ -23,6 +23,7 @@ namespace App
             builder.Services.AddSingleton<ICollectionItemService, CollectionItemService>();
             builder.Services.AddSingleton<IImageService, ImageService>();
             builder.Services.AddSingleton<ILookupService, LookupService>();
+            builder.Services.AddSingleton<IImageViewerService, ImageViewerService>();
 
             builder.Services.AddTransient<LoginViewModel>();
             builder.Services.AddTransient<RegisterViewModel>();
@@ -32,6 +33,8 @@ namespace App
             builder.Services.AddTransient<CollectionItemsViewModel>();
             builder.Services.AddTransient<CreateCollectionItemViewModel>();
             builder.Services.AddTransient<CollectionRolesViewModel>();
+            builder.Services.AddTransient<CollectionItemDetailsViewModel>();
+            builder.Services.AddTransient<ImageViewerViewModel>();
 
 #if DEBUG
             builder.Logging.AddDebug();
