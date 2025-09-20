@@ -89,7 +89,14 @@ public partial class CollectionItemsViewModel : ObservableObject
 
             foreach (var ci in page)
             {
-                ci.ObverseImageUrl = await _imageService.GetLocalPathAsync(ci.ObverseImageUrl) ?? null;
+                var obverseImageTask = _imageService.GetLocalPathAsync(ci.ObverseImageUrl);
+                var reverseImageTask = _imageService.GetLocalPathAsync(ci.ReverseImageUrl);
+
+                await Task.WhenAll(obverseImageTask, reverseImageTask);
+
+                ci.ObverseImageUrl = obverseImageTask.Result ?? null;
+                ci.ReverseImageUrl = reverseImageTask.Result ?? null;
+
                 Items.Add(ci);
                 lastId = ci.Id;
             }
