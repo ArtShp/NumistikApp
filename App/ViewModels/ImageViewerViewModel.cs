@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using App.Helpers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -65,7 +66,7 @@ public partial class ImageViewerViewModel : ObservableObject
         await Share.Default.RequestAsync(new ShareFileRequest
         {
             Title = "Share image",
-            File = new ShareFile(path, GetContentType(path))
+            File = new ShareFile(path, FileMimeHelper.GetContentType(path))
         });
     }
 
@@ -82,17 +83,6 @@ public partial class ImageViewerViewModel : ObservableObject
 #else
         await Clipboard.Default.SetTextAsync(path);
 #endif
-    }
-
-    private static string GetContentType(string path)
-    {
-        var ext = Path.GetExtension(path)?.ToLowerInvariant();
-        return ext switch
-        {
-            ".jpg" or ".jpeg" => "image/jpeg",
-            ".png" => "image/png",
-            _ => "application/octet-stream"
-        };
     }
 
     private void RaiseAll()
