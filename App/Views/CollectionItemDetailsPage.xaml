@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:App.ViewModels"
+             x:Class="App.Views.CollectionItemDetailsPage"
+             x:DataType="viewModels:CollectionItemDetailsViewModel"
+             Title="Item details">
+    <ScrollView>
+        <Grid Padding="16" RowSpacing="12" ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto">
+            <!-- Images -->
+            <Border Grid.Row="0" Grid.Column="0"
+                    Stroke="{AppThemeBinding Light=#DDD, Dark=#333}"
+                    StrokeThickness="1"
+                    Padding="0"
+                    HeightRequest="240">
+                <Image Source="{Binding Item.ObverseImageUrl}"
+                       Aspect="AspectFit">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding OpenImageCommand}" CommandParameter="{Binding Item.ObverseImageUrl}" />
+                    </Image.GestureRecognizers>
+                </Image>
+            </Border>
+
+            <Border Grid.Row="0" Grid.Column="1"
+                    Stroke="{AppThemeBinding Light=#DDD, Dark=#333}"
+                    StrokeThickness="1"
+                    Padding="0"
+                    HeightRequest="240">
+                <Image Source="{Binding Item.ReverseImageUrl}"
+                       Aspect="AspectFit">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding OpenImageCommand}" CommandParameter="{Binding Item.ReverseImageUrl}" />
+                    </Image.GestureRecognizers>
+                </Image>
+            </Border>
+
+            <!-- Value & Additional info -->
+            <Label Grid.Row="1" Grid.ColumnSpan="2"
+                   Text="{Binding Item.ValueCurrencyInfo}"
+                   FontSize="22"
+                   FontAttributes="Bold" />
+
+            <!-- Secondary info -->
+            <Label Grid.Row="2" Grid.ColumnSpan="2"
+                   Text="{Binding Item.SecondaryInfo}"
+                   FontSize="14"
+                   TextColor="{AppThemeBinding Light=Gray, Dark=LightGray}" />
+
+            <!-- Serial number -->
+            <Label Grid.Row="3" Grid.ColumnSpan="2"
+                   Text="{Binding Item.SerialNumber, StringFormat='SN: {0}'}"
+                   FontSize="14"
+                   TextColor="{AppThemeBinding Light=Gray, Dark=LightGray}" />
+
+            <!-- Description -->
+            <Label Grid.Row="4" Grid.ColumnSpan="2"
+                   Text="{Binding Item.Description}"
+                   FontSize="16" />
+
+        </Grid>
+    </ScrollView>
+</ContentPage>
