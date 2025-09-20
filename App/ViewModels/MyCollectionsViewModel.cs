@@ -55,7 +55,7 @@ public partial class MyCollectionsViewModel : ObservableObject
     {
         _collectionService = collectionService;
 
-        LoadMoreCommand = new AsyncRelayCommand(LoadMoreAsync, () => HasMore && !IsLoading);
+        LoadMoreCommand = new AsyncRelayCommand(LoadMoreAsync, () => !IsLoading);
         RefreshCommand = new AsyncRelayCommand(RefreshAsync);
         OpenSelectedCommand = new AsyncRelayCommand(OpenSelectedAsync);
         OpenCommand = new AsyncRelayCommand<MyCollectionDto?>(OpenAsync);
@@ -96,7 +96,7 @@ public partial class MyCollectionsViewModel : ObservableObject
 
     private async Task LoadMoreAsync()
     {
-        if (!HasMore || IsLoading) return;
+        if (IsLoading) return;
 
         IsLoading = true;
         try
@@ -113,17 +113,23 @@ public partial class MyCollectionsViewModel : ObservableObject
             if (!page.Any() || last is null)
             {
                 HasMore = false;
-                return;
             }
-
-            _lastSeenId = last.Id;
-            _lastSeenName = last.Name;
-            HasMore = true;
+            else
+            {
+                _lastSeenId = last.Id;
+                _lastSeenName = last.Name;
+                HasMore = true;
+            }
         }
         finally
         {
             IsLoading = false;
             (LoadMoreCommand as AsyncRelayCommand)?.NotifyCanExecuteChanged();
+        }
+
+        if (!HasMore)
+        {
+            await Shell.Current.DisplayAlert("Nothing loaded", "No more collections to load.", "OK");
         }
     }
 

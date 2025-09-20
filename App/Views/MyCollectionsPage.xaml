@@ -86,7 +86,6 @@
                                 IdleText="Load more"
                                 LoadingText="Loading..."
                                 IsLoading="{Binding IsLoading}"
-                                IsEnabled="{Binding HasMore}"
                                 Command="{Binding LoadMoreCommand}" />
     </Grid>
 </ContentPage>
