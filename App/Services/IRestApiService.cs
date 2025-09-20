@@ -34,6 +34,12 @@ public interface IRestApiService
         TRequest? requestBody,
         IEnumerable<(string Name, string FileName, string ContentType, Stream Content)> files
     ) where TRequest : class;
+
+    Task<bool> SendMultipartRestApiRequest<TRequest>(
+        RestApiEndpointNoContent<TRequest> endpoint,
+        TRequest? requestBody,
+        IEnumerable<(string Name, string FileName, string ContentType, Stream Content)> files
+    ) where TRequest : class;
 }
 
 public abstract class RestApiEndpoint(HttpMethod httpMethod, string endpoint, bool requiresAuth)
