@@ -61,6 +61,47 @@ internal class CollectionItemService(IRestApiService restApiService, ILookupServ
         return previews;
     }
 
+    public async Task<CollectionItem?> GetCollectionItemAsync(Guid collectionId, int itemId)
+    {
+        var endpoint = RestApiEndpoints.GetCollectionItem(collectionId, itemId);
+
+        var item = await _restApiService.SendRestApiRequest(endpoint);
+        if (item is null) return null;
+
+        var typeTask = _lookupService.GetTypeNameAsync(item.TypeId);
+        var countryTask = _lookupService.GetCountryNameAsync(item.CountryId);
+        var statusTask = _lookupService.GetStatusNameAsync(item.CollectionStatusId);
+        var qualityTask = item.QualityId.HasValue ? _lookupService.GetQualityNameAsync(item.QualityId.Value) : Task.FromResult<string?>(null);
+        var specialStatusTask = item.SpecialStatusId.HasValue ? _lookupService.GetSpecialStatusNameAsync(item.SpecialStatusId.Value) : Task.FromResult<string?>(null);
+
+        await Task.WhenAll(typeTask, countryTask, statusTask, qualityTask, specialStatusTask);
+
+        return new CollectionItem
+        {
+            Id = item.Id,
+            CollectionId = item.CollectionId,
+            Value = item.Value,
+            Currency = item.Currency,
+            AdditionalInfo = item.AdditionalInfo,
+            SerialNumber = item.SerialNumber,
+            Description = item.Description,
+            ObverseImageUrl = item.ObverseImageUrl,
+            ReverseImageUrl = item.ReverseImageUrl,
+
+            TypeId = item.TypeId,
+            CountryId = item.CountryId,
+            StatusId = item.CollectionStatusId,
+            QualityId = item.QualityId,
+            SpecialStatusId = item.SpecialStatusId,
+
+            TypeName = typeTask.Result,
+            CountryName = countryTask.Result,
+            StatusName = statusTask.Result,
+            QualityName = qualityTask.Result,
+            SpecialStatusName = specialStatusTask.Result
+        };
+    }
+
     public async Task<int?> CreateCollectionItemAsync(CollectionItemCreateRequest request)
     {
         var endpoint = RestApiEndpoints.CreateCollectionItem;
