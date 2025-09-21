@@ -14,8 +14,21 @@
         <ToolbarItem Text="Add" Command="{Binding AddItemCommand}" />
     </ContentPage.ToolbarItems>
 
-    <Grid RowDefinitions="*,Auto" Padding="16">
-        <CollectionView Grid.Row="0"
+    <Grid RowDefinitions="Auto,*,Auto" Padding="16">
+        
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,8">
+            <Picker Grid.Column="0"
+                    Title="Country filter"
+                    ItemsSource="{Binding Countries}"
+                    ItemDisplayBinding="{Binding Name}"
+                    SelectedItem="{Binding SelectedCountry}" />
+            <Button Grid.Column="1"
+                    Text="Clear"
+                    Margin="8,0,0,0"
+                    Command="{Binding ClearFiltersCommand}" />
+        </Grid>
+
+        <CollectionView Grid.Row="1"
                         ItemsSource="{Binding Items}"
                         ItemSizingStrategy="MeasureAllItems"
                         ItemsUpdatingScrollMode="KeepScrollOffset"
@@ -129,7 +142,7 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <controls:LoadingButton Grid.Row="1"
+        <controls:LoadingButton Grid.Row="2"
                                 IdleText="Load more"
                                 LoadingText="Loading..."
                                 IsLoading="{Binding IsLoading}"

@@ -15,13 +15,21 @@ public partial class CollectionItemsViewModel : ObservableObject
 {
     private readonly ICollectionItemService _itemsService;
     private readonly IImageService _imageService;
+    private readonly ILookupService _lookupService;
 
+    // All loaded items (unfiltered)
+    private readonly List<CollectionItem> _allItems = [];
+
+    // Filtered items
     public ObservableCollection<CollectionItem> Items { get; init; } = [];
+
+    public ObservableCollection<LookupItem> Countries { get; } = [];
 
     private Guid _collectionGuid;
     private int? _lastSeenId;
     private bool _isLoading;
     private bool _hasMore = true;
+    private LookupItem? _selectedCountry;
 
     public string? CollectionId
     {
@@ -46,17 +54,31 @@ public partial class CollectionItemsViewModel : ObservableObject
         set => SetProperty(ref _hasMore, value);
     }
 
+    public LookupItem? SelectedCountry
+    {
+        get => _selectedCountry;
+        set
+        {
+            if (SetProperty(ref _selectedCountry, value))
+            {
+                ApplyFilter();
+            }
+        }
+    }
+
     public ICommand RefreshCommand { get; init; }
     public ICommand LoadMoreCommand { get; init; }
     public ICommand AddItemCommand { get; init; }
     public ICommand DeleteItemCommand { get; init; }
     public ICommand OpenItemCommand { get; init; }
     public ICommand UpdateItemCommand { get; init; }
+    public ICommand ClearFiltersCommand { get; init; }
 
-    public CollectionItemsViewModel(ICollectionItemService itemsService, IImageService imageService)
+    public CollectionItemsViewModel(ICollectionItemService itemsService, IImageService imageService, ILookupService lookupService)
     {
         _itemsService = itemsService;
         _imageService = imageService;
+        _lookupService = lookupService;
 
         RefreshCommand = new AsyncRelayCommand(RefreshAsync);
         LoadMoreCommand = new AsyncRelayCommand(LoadMoreAsync, () => !IsLoading);
@@ -64,6 +86,7 @@ public partial class CollectionItemsViewModel : ObservableObject
         DeleteItemCommand = new AsyncRelayCommand<CollectionItem>(DeleteItemAsync);
         OpenItemCommand = new AsyncRelayCommand<CollectionItem>(OpenItemAsync);
         UpdateItemCommand = new AsyncRelayCommand<CollectionItem>(OpenUpdateItemAsync);
+        ClearFiltersCommand = new RelayCommand(() => SelectedCountry = null);
 
         // Listen for item updates coming from the Update page
         WeakReferenceMessenger.Default.Register<CollectionItemUpdatedMessage>(this, (_, message) =>
@@ -74,7 +97,17 @@ public partial class CollectionItemsViewModel : ObservableObject
 
     public async Task InitializeAsync()
     {
-        if (Items.Count == 0)
+        if (Countries.Count == 0)
+        {
+            var countries = await _lookupService.GetCountriesAsync();
+
+            foreach (var country in countries)
+            {
+                Countries.Add(country);
+            }
+        }
+
+        if (Items.Count == 0 && _allItems.Count == 0)
         {
             await RefreshAsync();
         }
@@ -82,6 +115,7 @@ public partial class CollectionItemsViewModel : ObservableObject
 
     private async Task RefreshAsync()
     {
+        _allItems.Clear();
         Items.Clear();
         _lastSeenId = null;
         HasMore = true;
@@ -109,7 +143,13 @@ public partial class CollectionItemsViewModel : ObservableObject
                 ci.ObverseImageUrl = obverseImageTask.Result ?? null;
                 ci.ReverseImageUrl = reverseImageTask.Result ?? null;
 
-                Items.Add(ci);
+                _allItems.Add(ci);
+
+                if (PassesFilter(ci))
+                {
+                    Items.Add(ci);
+                }
+
                 lastId = ci.Id;
             }
 
@@ -132,6 +172,27 @@ public partial class CollectionItemsViewModel : ObservableObject
         if (!HasMore)
         {
             await Shell.Current.DisplayAlert("Nothing loaded", "No more items to load.", "OK");
+        }
+    }
+
+    private bool PassesFilter(CollectionItem ci)
+    {
+        if (SelectedCountry is not null && ci.CountryId != SelectedCountry.Id)
+            return false;
+
+        return true;
+    }
+
+    private void ApplyFilter()
+    {
+        Items.Clear();
+
+        foreach (var ci in _allItems)
+        {
+            if (PassesFilter(ci))
+            {
+                Items.Add(ci);
+            }
         }
     }
 
@@ -180,6 +241,7 @@ public partial class CollectionItemsViewModel : ObservableObject
             return;
         }
 
+        _allItems.Remove(item);
         Items.Remove(item);
     }
 
@@ -188,14 +250,15 @@ public partial class CollectionItemsViewModel : ObservableObject
         updated.ObverseImageUrl = await _imageService.GetLocalPathAsync(updated.ObverseImageUrl);
         updated.ReverseImageUrl = await _imageService.GetLocalPathAsync(updated.ReverseImageUrl);
 
-        // Replace the item in the collection to trigger UI update
-        for (int i = 0; i < Items.Count; i++)
+        for (int i = 0; i < _allItems.Count; i++)
         {
-            if (Items[i].Id == updated.Id)
+            if (_allItems[i].Id == updated.Id)
             {
-                Items[i] = updated;
+                _allItems[i] = updated;
                 break;
             }
         }
+
+        ApplyFilter();
     }
 }
