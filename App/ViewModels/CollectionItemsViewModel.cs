@@ -5,6 +5,8 @@ using App.Services;
 using App.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using App.Messages;
 
 namespace App.ViewModels;
 
@@ -62,6 +64,12 @@ public partial class CollectionItemsViewModel : ObservableObject
         DeleteItemCommand = new AsyncRelayCommand<CollectionItem>(DeleteItemAsync);
         OpenItemCommand = new AsyncRelayCommand<CollectionItem>(OpenItemAsync);
         UpdateItemCommand = new AsyncRelayCommand<CollectionItem>(OpenUpdateItemAsync);
+
+        // Listen for item updates coming from the Update page
+        WeakReferenceMessenger.Default.Register<CollectionItemUpdatedMessage>(this, (recipient, message) =>
+        {
+            MainThread.BeginInvokeOnMainThread(async () => await OnItemUpdatedAsync(message.Value));
+        });
     }
 
     public async Task InitializeAsync()
@@ -173,5 +181,21 @@ public partial class CollectionItemsViewModel : ObservableObject
         }
 
         Items.Remove(item);
+    }
+
+    private async Task OnItemUpdatedAsync(CollectionItem updated)
+    {
+        updated.ObverseImageUrl = await _imageService.GetLocalPathAsync(updated.ObverseImageUrl);
+        updated.ReverseImageUrl = await _imageService.GetLocalPathAsync(updated.ReverseImageUrl);
+
+        // Replace the item in the collection to trigger UI update
+        for (int i = 0; i < Items.Count; i++)
+        {
+            if (Items[i].Id == updated.Id)
+            {
+                Items[i] = updated;
+                break;
+            }
+        }
     }
 }

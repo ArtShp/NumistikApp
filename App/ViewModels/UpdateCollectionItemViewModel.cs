@@ -4,6 +4,8 @@ using App.Models;
 using App.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using App.Messages;
 
 namespace App.ViewModels;
 
@@ -297,6 +299,35 @@ public partial class UpdateCollectionItemViewModel : ObservableObject
                 await ShowAlert("Error", "Failed to update item.");
                 return;
             }
+
+            // Build an updated item and notify the list page
+            var updated = new CollectionItem
+            {
+                Id = Item.Id,
+                CollectionId = Item.CollectionId,
+                Value = Value,
+                Currency = Currency,
+                AdditionalInfo = AdditionalInfo,
+                SerialNumber = SerialNumber,
+                Description = Description,
+
+                ObverseImageUrl = ObversePreviewPath ?? Item.ObverseImageUrl,
+                ReverseImageUrl = ReversePreviewPath ?? Item.ReverseImageUrl,
+
+                TypeId = SelectedType.Id,
+                CountryId = SelectedCountry.Id,
+                StatusId = SelectedStatus.Id,
+                QualityId = SelectedQuality is { Id: > 0 } ? SelectedQuality.Id : null,
+                SpecialStatusId = SelectedSpecialStatus is { Id: > 0 } ? SelectedSpecialStatus.Id : null,
+
+                TypeName = SelectedType.Name,
+                CountryName = SelectedCountry.Name,
+                StatusName = SelectedStatus.Name,
+                QualityName = (SelectedQuality is { Id: > 0 }) ? SelectedQuality.Name : null,
+                SpecialStatusName = (SelectedSpecialStatus is { Id: > 0 }) ? SelectedSpecialStatus.Name : null
+            };
+
+            WeakReferenceMessenger.Default.Send(new CollectionItemUpdatedMessage(updated));
 
             await Shell.Current.GoToAsync("..");
         }
