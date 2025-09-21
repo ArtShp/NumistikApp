@@ -66,7 +66,7 @@ public partial class CollectionItemsViewModel : ObservableObject
         UpdateItemCommand = new AsyncRelayCommand<CollectionItem>(OpenUpdateItemAsync);
 
         // Listen for item updates coming from the Update page
-        WeakReferenceMessenger.Default.Register<CollectionItemUpdatedMessage>(this, (recipient, message) =>
+        WeakReferenceMessenger.Default.Register<CollectionItemUpdatedMessage>(this, (_, message) =>
         {
             MainThread.BeginInvokeOnMainThread(async () => await OnItemUpdatedAsync(message.Value));
         });
