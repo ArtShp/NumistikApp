@@ -114,6 +114,16 @@
                                 x:DataType="{x:Null}"
                                 Command="{Binding Source={x:Reference CollectionItemsPageRoot}, Path=BindingContext.OpenItemCommand}"
                                 CommandParameter="{Binding .}" />
+
+                        <!-- Update button -->
+                        <Button Grid.Column="2" Grid.Row="2"
+                                Text="Update"
+                                FontSize="12"
+                                HeightRequest="28"
+                                CornerRadius="6"
+                                x:DataType="{x:Null}"
+                                Command="{Binding Source={x:Reference CollectionItemsPageRoot}, Path=BindingContext.UpdateItemCommand}"
+                                CommandParameter="{Binding .}" />
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>

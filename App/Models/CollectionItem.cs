@@ -12,6 +12,12 @@ public class CollectionItem
     public string? ObverseImageUrl { get; set; }
     public string? ReverseImageUrl { get; set; }
 
+    public int TypeId { get; set; }
+    public int CountryId { get; set; }
+    public int StatusId { get; set; }
+    public int? QualityId { get; set; }
+    public int? SpecialStatusId { get; set; }
+
     public string? TypeName { get; set; }
     public string? CountryName { get; set; }
     public string? StatusName { get; set; }

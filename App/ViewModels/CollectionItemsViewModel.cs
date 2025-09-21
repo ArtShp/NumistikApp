@@ -5,6 +5,8 @@ using App.Services;
 using App.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using App.Messages;
 
 namespace App.ViewModels;
 
@@ -49,6 +51,7 @@ public partial class CollectionItemsViewModel : ObservableObject
     public ICommand AddItemCommand { get; init; }
     public ICommand DeleteItemCommand { get; init; }
     public ICommand OpenItemCommand { get; init; }
+    public ICommand UpdateItemCommand { get; init; }
 
     public CollectionItemsViewModel(ICollectionItemService itemsService, IImageService imageService)
     {
@@ -60,6 +63,13 @@ public partial class CollectionItemsViewModel : ObservableObject
         AddItemCommand = new AsyncRelayCommand(OpenCreateItemAsync);
         DeleteItemCommand = new AsyncRelayCommand<CollectionItem>(DeleteItemAsync);
         OpenItemCommand = new AsyncRelayCommand<CollectionItem>(OpenItemAsync);
+        UpdateItemCommand = new AsyncRelayCommand<CollectionItem>(OpenUpdateItemAsync);
+
+        // Listen for item updates coming from the Update page
+        WeakReferenceMessenger.Default.Register<CollectionItemUpdatedMessage>(this, (_, message) =>
+        {
+            MainThread.BeginInvokeOnMainThread(async () => await OnItemUpdatedAsync(message.Value));
+        });
     }
 
     public async Task InitializeAsync()
@@ -145,6 +155,16 @@ public partial class CollectionItemsViewModel : ObservableObject
         });
     }
 
+    private async Task OpenUpdateItemAsync(CollectionItem? item)
+    {
+        if (item is null) return;
+
+        await Shell.Current.GoToAsync(nameof(UpdateCollectionItemPage), new Dictionary<string, object>
+        {
+            ["item"] = item
+        });
+    }
+
     private async Task DeleteItemAsync(CollectionItem? item)
     {
         if (item is null) return;
@@ -161,5 +181,21 @@ public partial class CollectionItemsViewModel : ObservableObject
         }
 
         Items.Remove(item);
+    }
+
+    private async Task OnItemUpdatedAsync(CollectionItem updated)
+    {
+        updated.ObverseImageUrl = await _imageService.GetLocalPathAsync(updated.ObverseImageUrl);
+        updated.ReverseImageUrl = await _imageService.GetLocalPathAsync(updated.ReverseImageUrl);
+
+        // Replace the item in the collection to trigger UI update
+        for (int i = 0; i < Items.Count; i++)
+        {
+            if (Items[i].Id == updated.Id)
+            {
+                Items[i] = updated;
+                break;
+            }
+        }
     }
 }
