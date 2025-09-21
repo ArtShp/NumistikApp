@@ -270,6 +270,10 @@ public partial class UpdateCollectionItemViewModel : ObservableObject
             return;
         }
 
+        // Ask user for confirmation before updating
+        var confirm = await Shell.Current.DisplayAlert("Confirm update", "Save changes for this item?", "Update", "Cancel");
+        if (!confirm) return;
+
         IsSubmitting = true;
         (SaveCommand as RelayCommand)?.NotifyCanExecuteChanged();
         try
