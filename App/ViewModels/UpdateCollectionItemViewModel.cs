@@ -304,32 +304,13 @@ public partial class UpdateCollectionItemViewModel : ObservableObject
                 return;
             }
 
-            // Build an updated item and notify the list page
-            var updated = new CollectionItem
+            var updated = await _itemService.GetCollectionItemAsync(Item.CollectionId, Item.Id);
+
+            if (updated is null)
             {
-                Id = Item.Id,
-                CollectionId = Item.CollectionId,
-                Value = Value,
-                Currency = Currency,
-                AdditionalInfo = AdditionalInfo,
-                SerialNumber = SerialNumber,
-                Description = Description,
-
-                ObverseImageUrl = ObversePreviewPath ?? Item.ObverseImageUrl,
-                ReverseImageUrl = ReversePreviewPath ?? Item.ReverseImageUrl,
-
-                TypeId = SelectedType.Id,
-                CountryId = SelectedCountry.Id,
-                StatusId = SelectedStatus.Id,
-                QualityId = SelectedQuality is { Id: > 0 } ? SelectedQuality.Id : null,
-                SpecialStatusId = SelectedSpecialStatus is { Id: > 0 } ? SelectedSpecialStatus.Id : null,
-
-                TypeName = SelectedType.Name,
-                CountryName = SelectedCountry.Name,
-                StatusName = SelectedStatus.Name,
-                QualityName = (SelectedQuality is { Id: > 0 }) ? SelectedQuality.Name : null,
-                SpecialStatusName = (SelectedSpecialStatus is { Id: > 0 }) ? SelectedSpecialStatus.Name : null
-            };
+                await ShowAlert("Error", "Failed to load updated item.");
+                return;
+            }
 
             WeakReferenceMessenger.Default.Send(new CollectionItemUpdatedMessage(updated));
 
