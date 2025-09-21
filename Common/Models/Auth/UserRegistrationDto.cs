@@ -1,5 +1,5 @@
-﻿using Shared.Models.Extensions;
-using Shared.Models.Common;
+﻿using Shared.Models.Common;
+using Shared.Models.Extensions;
 
 namespace Shared.Models.Auth;
 

@@ -95,7 +95,7 @@ public class CollectionItemController(CollectionItemService collectionItemServic
         if (!success)
             return BadRequest("Error updating collection item.");
 
-        return Ok(); 
+        return Ok();
     }
 
     [HttpDelete("{collectionId:Guid}/{itemId:int}")]

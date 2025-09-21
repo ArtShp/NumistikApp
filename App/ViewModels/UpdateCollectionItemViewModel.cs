@@ -1,11 +1,11 @@
-using System.Collections.ObjectModel;
-using System.Windows.Input;
+using App.Messages;
 using App.Models;
 using App.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using App.Messages;
+using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 namespace App.ViewModels;
 

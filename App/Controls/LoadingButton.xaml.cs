@@ -15,7 +15,7 @@ public partial class LoadingButton : ContentView
 
     public bool IsLoading
     {
-        get => (bool) GetValue(IsLoadingProperty);
+        get => (bool)GetValue(IsLoadingProperty);
         set => SetValue(IsLoadingProperty, value);
     }
 
@@ -24,7 +24,7 @@ public partial class LoadingButton : ContentView
 
     public string IdleText
     {
-        get => (string) GetValue(IdleTextProperty);
+        get => (string)GetValue(IdleTextProperty);
         set => SetValue(IdleTextProperty, value);
     }
 
@@ -33,7 +33,7 @@ public partial class LoadingButton : ContentView
 
     public string LoadingText
     {
-        get => (string) GetValue(LoadingTextProperty);
+        get => (string)GetValue(LoadingTextProperty);
         set => SetValue(LoadingTextProperty, value);
     }
 
@@ -42,7 +42,7 @@ public partial class LoadingButton : ContentView
 
     public ICommand? Command
     {
-        get => (ICommand?) GetValue(CommandProperty);
+        get => (ICommand?)GetValue(CommandProperty);
         set => SetValue(CommandProperty, value);
     }
 
@@ -51,7 +51,7 @@ public partial class LoadingButton : ContentView
 
     public bool DisableWhenLoading
     {
-        get => (bool) GetValue(DisableWhenLoadingProperty);
+        get => (bool)GetValue(DisableWhenLoadingProperty);
         set => SetValue(DisableWhenLoadingProperty, value);
     }
 
@@ -67,7 +67,7 @@ public partial class LoadingButton : ContentView
 
     private static void OnAnyPropertyChanged(BindableObject bindable, object oldValue, object newValue)
     {
-        ((LoadingButton) bindable).UpdateVisualState();
+        ((LoadingButton)bindable).UpdateVisualState();
     }
 
     private void UpdateVisualState()

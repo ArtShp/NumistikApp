@@ -1,12 +1,12 @@
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Windows.Input;
 using App.Models;
 using App.Services;
 using App.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Shared.Models.Collection;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Windows.Input;
 
 namespace App.ViewModels;
 

@@ -1,15 +1,15 @@
-﻿using System.Text;
-using CsvHelper;
+﻿using CsvHelper;
 using CsvHelper.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Server.Entities;
 using System.Globalization;
+using System.Text;
 
 namespace Server.Data;
 
 public static class DataSeeder
 {
-    private static readonly CsvConfiguration csvConfiguration = new (CultureInfo.InvariantCulture)
+    private static readonly CsvConfiguration csvConfiguration = new(CultureInfo.InvariantCulture)
     {
         MissingFieldFound = null,
         HeaderValidated = null,
@@ -36,7 +36,8 @@ public static class DataSeeder
 
         int maxId = 0;
 
-        data.AddRange(csv.GetRecords<T>().Select(x => {
+        data.AddRange(csv.GetRecords<T>().Select(x =>
+        {
             ++maxId; return x;
         }));
 

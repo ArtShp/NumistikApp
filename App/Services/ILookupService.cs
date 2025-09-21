@@ -1,8 +1,8 @@
 using App.Models;
-using Shared.Models.CollectionItemType;
-using Shared.Models.CollectionItemStatus;
 using Shared.Models.CollectionItemQuality;
 using Shared.Models.CollectionItemSpecialStatus;
+using Shared.Models.CollectionItemStatus;
+using Shared.Models.CollectionItemType;
 using Shared.Models.Country;
 
 namespace App.Services;

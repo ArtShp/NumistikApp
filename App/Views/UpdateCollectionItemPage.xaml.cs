@@ -13,6 +13,6 @@ public partial class UpdateCollectionItemPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        await ((UpdateCollectionItemViewModel) BindingContext).InitializeAsync();
+        await ((UpdateCollectionItemViewModel)BindingContext).InitializeAsync();
     }
 }

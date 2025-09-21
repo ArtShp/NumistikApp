@@ -64,7 +64,7 @@ internal class ImageService(IRestApiService restApiService) : IImageService
         }
         catch
         {
-            
+
         }
 
         return Task.CompletedTask;

@@ -44,7 +44,7 @@ public class CountryService(MyDbContext context)
 
     public async Task<CountryCreationDto.Response?> CreateCountryAsync(CountryCreationDto.Request request)
     {
-        var foundCountry = await context.Countries.FirstOrDefaultAsync(c => 
+        var foundCountry = await context.Countries.FirstOrDefaultAsync(c =>
             c.Name == request.Name
         );
 
@@ -81,7 +81,7 @@ public class CountryService(MyDbContext context)
         {
             var continent = await context.Continents.FindAsync(request.ContinentId.Value);
             if (continent is null) return false;
-            
+
             foundCountry.Continent = continent;
         }
 

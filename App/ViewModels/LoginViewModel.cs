@@ -1,8 +1,8 @@
-﻿using System.Windows.Input;
-using App.Models;
+﻿using App.Models;
 using App.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System.Windows.Input;
 
 namespace App.ViewModels;
 
@@ -62,7 +62,7 @@ public partial class LoginViewModel : ObservableObject
     public ICommand RegisterCommand { get; init; }
     public ICommand ToggleSettingsCommand { get; init; }
     public ICommand SaveServerUrlCommand { get; init; }
-    
+
     public LoginViewModel(ILoginService loginService)
     {
         _loginService = loginService;

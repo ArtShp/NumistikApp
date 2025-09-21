@@ -16,7 +16,7 @@ public class AllowedImageFormatAttribute : ValidationAttribute
         if (value is null)
             return ValidationResult.Success!;
 
-        IFormFile? file = (IFormFile) value;
+        IFormFile? file = (IFormFile)value;
 
         if (file is null)
             return new ValidationResult("The provided value is not a valid file.");

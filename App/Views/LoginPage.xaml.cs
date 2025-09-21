@@ -13,6 +13,6 @@ public partial class LoginPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        await ((LoginViewModel) BindingContext).TryReLogin();
+        await ((LoginViewModel)BindingContext).TryReLogin();
     }
 }

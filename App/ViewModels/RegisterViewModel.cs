@@ -1,9 +1,9 @@
-﻿using System.Windows.Input;
+﻿using App.Models;
+using App.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using App.Services;
-using App.Models;
 using Shared.Models.Auth;
+using System.Windows.Input;
 
 namespace App.ViewModels;
 

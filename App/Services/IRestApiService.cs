@@ -5,7 +5,7 @@ namespace App.Services;
 public interface IRestApiService
 {
     Task<bool> Authorize(UserLoginDto.Request requestBody);
-    
+
     Task<bool> ReAuthorize(RefreshTokenDto.Request requestBody);
 
     void Logout();
@@ -50,18 +50,22 @@ public abstract class RestApiEndpoint(HttpMethod httpMethod, string endpoint, bo
 }
 
 public class RestApiEndpointNoContent(HttpMethod httpMethod, string endpoint, bool requiresAuth) :
-    RestApiEndpoint(httpMethod, endpoint, requiresAuth) {}
+    RestApiEndpoint(httpMethod, endpoint, requiresAuth)
+{ }
 
 public class RestApiEndpointNoContent<TRequest>(HttpMethod httpMethod, string endpoint, bool requiresAuth) :
-    RestApiEndpoint(httpMethod, endpoint, requiresAuth) where TRequest : class {}
+    RestApiEndpoint(httpMethod, endpoint, requiresAuth) where TRequest : class
+{ }
 
-public class RestApiEndpoint<TResponse>(HttpMethod httpMethod, string endpoint, bool requiresAuth) : 
-    RestApiEndpoint(httpMethod, endpoint, requiresAuth) {}
+public class RestApiEndpoint<TResponse>(HttpMethod httpMethod, string endpoint, bool requiresAuth) :
+    RestApiEndpoint(httpMethod, endpoint, requiresAuth)
+{ }
 
-public class RestApiEndpoint<TRequest, TResponse>(HttpMethod httpMethod, string endpoint, bool requiresAuth) : 
-    RestApiEndpoint(httpMethod, endpoint, requiresAuth) where TRequest : class {}
+public class RestApiEndpoint<TRequest, TResponse>(HttpMethod httpMethod, string endpoint, bool requiresAuth) :
+    RestApiEndpoint(httpMethod, endpoint, requiresAuth) where TRequest : class
+{ }
 
 internal partial class RestApiEndpoints
 {
-    
+
 }

@@ -9,7 +9,7 @@ namespace App.Services;
 
 internal class RestApiService : IRestApiService
 {
-    private static Uri BaseUri => new (new (AppSettings.ServerUrl), "api/");
+    private static Uri BaseUri => new(new(AppSettings.ServerUrl), "api/");
 
     private readonly HttpClient _client;
     private readonly JsonSerializerOptions _serializerOptions;

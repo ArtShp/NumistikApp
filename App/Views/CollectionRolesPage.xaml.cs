@@ -1,5 +1,5 @@
-﻿using App.ViewModels;
-using App.Models;
+﻿using App.Models;
+using App.ViewModels;
 using Shared.Models.Common;
 
 namespace App.Views;
@@ -15,7 +15,7 @@ public partial class CollectionRolesPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        await ((CollectionRolesViewModel) BindingContext).InitializeAsync();
+        await ((CollectionRolesViewModel)BindingContext).InitializeAsync();
     }
 
     private async void OnUpdateClicked(object sender, EventArgs e)
@@ -29,7 +29,7 @@ public partial class CollectionRolesPage : ContentPage
             return;
         }
 
-        var viewModel = (CollectionRolesViewModel) BindingContext;
+        var viewModel = (CollectionRolesViewModel)BindingContext;
 
         var myRole = viewModel.Members.FirstOrDefault(m => m.IsSelf)?.Role;
         if (myRole is null)
@@ -99,7 +99,7 @@ public partial class CollectionRolesPage : ContentPage
 
     private async void OnAssignClicked(object sender, EventArgs e)
     {
-        var viewModel = (CollectionRolesViewModel) BindingContext;
+        var viewModel = (CollectionRolesViewModel)BindingContext;
 
         var myRole = viewModel.Members.FirstOrDefault(m => m.IsSelf)?.Role;
         if (myRole is null)

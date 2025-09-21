@@ -1,5 +1,5 @@
-using System.Collections.Concurrent;
 using App.Models;
+using System.Collections.Concurrent;
 
 namespace App.Services;
 
@@ -23,8 +23,8 @@ internal class LookupService(IRestApiService restApiService) : ILookupService
     {
         var idProp = dto.GetType().GetProperty("Id");
         var nameProp = dto.GetType().GetProperty("Name");
-        var id = (int) (idProp?.GetValue(dto) ?? 0);
-        var name = (string?) nameProp?.GetValue(dto) ?? string.Empty;
+        var id = (int)(idProp?.GetValue(dto) ?? 0);
+        var name = (string?)nameProp?.GetValue(dto) ?? string.Empty;
 
         return (id, name);
     }

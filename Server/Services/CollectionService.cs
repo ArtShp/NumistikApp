@@ -26,7 +26,7 @@ public class CollectionService(MyDbContext context)
                 Description = collection.Description,
                 CollectionRole = context.UserCollections
                     .Where(uc => uc.UserId == userId && uc.CollectionId == collection.Id)
-                    .Select(uc => (CollectionRole?) uc.Role)
+                    .Select(uc => (CollectionRole?)uc.Role)
                     .FirstOrDefault()
             })
             .ToListAsync();
