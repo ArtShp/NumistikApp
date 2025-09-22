@@ -38,22 +38,22 @@
                     <Grid Padding="8"
                           ColumnSpacing="12"
                           RowSpacing="6"
-                          ColumnDefinitions="420,*,Auto"
+                          ColumnDefinitions="Auto,*,Auto"
                           RowDefinitions="Auto,Auto,Auto,Auto">
 
-                        <!-- Fixed-width column for alignment. Fit image by height for sharpness -->
+                        <!-- Fixed-size image frame, clip contents and don't stretch with text rows -->
                         <Border Grid.RowSpan="4" Grid.Column="0"
                                 Stroke="{AppThemeBinding Light=#DDD, Dark=#333}"
                                 StrokeThickness="1"
                                 Padding="0"
                                 WidthRequest="420"
-                                HeightRequest="240">
+                                HeightRequest="240"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Start">
                             <Image Source="{Binding ObverseImageUrl}"
                                    Aspect="AspectFit"
-                                   WidthRequest="420"
-                                   HeightRequest="240"
-                                   HorizontalOptions="Start"
-                                   VerticalOptions="Fill">
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center">
                                 <!-- Hide image when no url -->
                                 <Image.Triggers>
                                     <DataTrigger TargetType="Image" Binding="{Binding ObverseImageUrl}" Value="{x:Null}">
