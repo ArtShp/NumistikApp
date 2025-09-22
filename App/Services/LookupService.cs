@@ -19,22 +19,13 @@ internal class LookupService(IRestApiService restApiService) : ILookupService
     private readonly ConcurrentDictionary<int, string> _qualityNameCache = new();
     private readonly ConcurrentDictionary<int, string> _specialStatusNameCache = new();
 
-    private static (int, string) Extract(object dto)
-    {
-        var idProp = dto.GetType().GetProperty("Id");
-        var nameProp = dto.GetType().GetProperty("Name");
-        var id = (int)(idProp?.GetValue(dto) ?? 0);
-        var name = (string?)nameProp?.GetValue(dto) ?? string.Empty;
-
-        return (id, name);
-    }
-
-    private static (int, string)? TryExtract(object? dto)
+    private static (int Id, string Name)? Extract(object? dto)
     {
         if (dto is null) return null;
 
-        var idProp = dto.GetType().GetProperty("Id");
-        var nameProp = dto.GetType().GetProperty("Name");
+        var type = dto.GetType();
+        var idProp = type.GetProperty("Id");
+        var nameProp = type.GetProperty("Name");
         if (idProp is null || nameProp is null) return null;
 
         var idObj = idProp.GetValue(dto);
@@ -132,8 +123,11 @@ internal class LookupService(IRestApiService restApiService) : ILookupService
 
             foreach (var dto in page)
             {
-                var (id, name) = Extract(dto!);
+                var extracted = Extract(dto);
+                if (extracted is not { } e)
+                    continue;
 
+                var (id, name) = e;
                 cache.Add(new LookupItem { Id = id, Name = name });
 
                 cacheWriter?.Invoke(id, name);
@@ -153,12 +147,12 @@ internal class LookupService(IRestApiService restApiService) : ILookupService
         if (cache.TryGetValue(id, out var cached)) return cached;
 
         var dto = await _restService.SendRestApiRequest(endpointFactory(id));
-        var extracted = TryExtract(dto);
+        var extracted = Extract(dto);
 
         if (extracted is { } e)
         {
-            cache.TryAdd(e.Item1, e.Item2);
-            return e.Item2;
+            cache.TryAdd(e.Id, e.Name);
+            return e.Name;
         }
 
         return null;
