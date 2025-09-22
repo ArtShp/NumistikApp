@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewModels="clr-namespace:App.ViewModels"
              x:Class="App.Views.RegisterPage"
+             x:DataType="viewModels:RegisterViewModel"
              Title="Register">
 
     <ScrollView>

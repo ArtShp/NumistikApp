@@ -169,11 +169,11 @@ public partial class CreateCollectionItemViewModel : ObservableObject
         InsertNoneOption(Qualities);
 
         // Preselect defaults
-        SelectedType ??= Types.FirstOrDefault();
-        SelectedCountry ??= Countries.FirstOrDefault();
-        SelectedStatus ??= Statuses.FirstOrDefault();
-        SelectedSpecialStatus ??= SpecialStatuses.FirstOrDefault();
-        SelectedQuality ??= Qualities.FirstOrDefault();
+        SelectedType = Types.FirstOrDefault();
+        SelectedCountry = Countries.FirstOrDefault();
+        SelectedStatus = Statuses.FirstOrDefault();
+        SelectedSpecialStatus = SpecialStatuses.FirstOrDefault();
+        SelectedQuality = Qualities.FirstOrDefault();
     }
 
     private static void Replace(ObservableCollection<LookupItem> target, IReadOnlyList<LookupItem> source)

@@ -18,6 +18,7 @@ internal class ImageViewerService(IServiceProvider services) : IImageViewerServi
 
         var page = new ImageViewerPage(viewModel);
 
+        // On WinUI open in new window, otherwise modal
         if (DeviceInfo.Current.Platform == DevicePlatform.WinUI)
         {
             var window = new ImageViewerWindow(page);

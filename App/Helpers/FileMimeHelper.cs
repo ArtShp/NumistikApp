@@ -19,6 +19,6 @@ public static class FileMimeHelper
     {
         ".jpg" or ".jpeg" => "image/jpeg",
         ".png" => "image/png",
-        _ => "application/octet-stream"
+        _ => "application/octet-stream" // fallback
     };
 }

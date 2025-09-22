@@ -76,6 +76,7 @@ internal class RestApiService : IRestApiService
         if (!IsTokenExpired && _authToken is not null)
             return true;
 
+        // Ensure only one refresh operation at a time
         await _refreshSemaphore.WaitAsync();
         try
         {

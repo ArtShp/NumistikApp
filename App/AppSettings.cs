@@ -7,7 +7,7 @@ internal static class AppSettings
     private const string RefreshTokenExpiryKey = "RefreshTokenExpiry";
     private const string UsernameKey = "Username";
 
-    private const string DefaultServerUrl = "https://localhost:7163";
+    private const string DefaultServerUrl = "https://localhost:5000";
 
     public static string ServerUrl
     {

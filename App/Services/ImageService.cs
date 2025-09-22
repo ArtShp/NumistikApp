@@ -55,7 +55,7 @@ internal class ImageService(IRestApiService restApiService) : IImageService
                 }
 
                 var info = new FileInfo(file);
-                var age = DateTime.UtcNow - (info.LastWriteTimeUtc);
+                var age = DateTime.UtcNow - info.LastWriteTimeUtc;
                 if (age >= maxAge.Value)
                 {
                     File.Delete(file);
