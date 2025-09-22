@@ -10,7 +10,7 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Refresh" Command="{Binding RefreshCommand}" />
-        <ToolbarItem Text="Assign" Clicked="OnAssignClicked" />
+        <ToolbarItem Text="Assign" Command="{Binding AssignCommand}" />
     </ContentPage.ToolbarItems>
 
     <Grid Padding="16">
@@ -42,7 +42,8 @@
 
                         <Button Grid.Column="2"
                                 Text="Update"
-                                Clicked="OnUpdateClicked">
+                                Command="{Binding Source={x:Reference CollectionRolesPageRoot}, Path=BindingContext.UpdateCommand}"
+                                CommandParameter="{Binding .}">
                             <Button.Triggers>
                                 <DataTrigger TargetType="Button" Binding="{Binding IsSelf}" Value="True">
                                     <Setter Property="IsEnabled" Value="False" />

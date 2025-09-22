@@ -1,4 +1,4 @@
-using App.Models;
+﻿using App.Models;
 using App.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -36,12 +36,16 @@ public partial class CollectionRolesViewModel : ObservableObject
     }
 
     public ICommand RefreshCommand { get; init; }
+    public ICommand AssignCommand { get; init; }
+    public ICommand UpdateCommand { get; init; }
 
     public CollectionRolesViewModel(ICollectionService collectionService)
     {
         _collectionService = collectionService;
 
         RefreshCommand = new AsyncRelayCommand(RefreshAsync);
+        AssignCommand = new AsyncRelayCommand(AssignAsync);
+        UpdateCommand = new AsyncRelayCommand<CollectionMemberDto>(UpdateAsync);
     }
 
     public async Task InitializeAsync()
@@ -113,6 +117,155 @@ public partial class CollectionRolesViewModel : ObservableObject
         finally
         {
             IsLoading = false;
+        }
+    }
+
+    private async Task UpdateAsync(CollectionMemberDto? member)
+    {
+        if (member is null) return;
+
+        if (member.IsSelf)
+        {
+            await Shell.Current.DisplayAlert("Not allowed", "You can't change your own role.", "OK");
+            return;
+        }
+
+        var myRole = Members.FirstOrDefault(m => m.IsSelf)?.Role;
+        if (myRole is null)
+        {
+            await Shell.Current.DisplayAlert("Not allowed", "Your role is not known yet. Please refresh and try again.", "OK");
+            return;
+        }
+
+        if (member.Role >= myRole.Value)
+        {
+            await Shell.Current.DisplayAlert("Not allowed", "You can't change the role of a user with equal or higher role than yours.", "OK");
+            return;
+        }
+
+        var roles = Roles
+            .Where(r => r < myRole.Value)
+            .ToList();
+
+        if (roles.Count == 0)
+        {
+            await Shell.Current.DisplayAlert("Not allowed", "No roles available to assign.", "OK");
+            return;
+        }
+
+        var roleOptions = roles
+            .Select(role => new
+            {
+                Display = role == member.Role ? $"✓ {role} (current)" : role.ToString(),
+                Value = role
+            })
+            .ToList();
+
+        var selectedText = await Shell.Current.DisplayActionSheet(
+            $"Update role for {member.Username}",
+            "Cancel",
+            null,
+            roleOptions.Select(o => o.Display).ToArray()
+        );
+
+        if (string.IsNullOrWhiteSpace(selectedText) || selectedText == "Cancel")
+            return;
+
+        var selected = roleOptions.FirstOrDefault(o => o.Display == selectedText);
+        if (selected is null) return;
+
+        var newRole = selected.Value;
+        if (newRole == member.Role) return;
+
+        var oldRole = member.Role;
+
+        var confirm = await Shell.Current.DisplayAlert(
+            "Confirm role change",
+            $"Are you sure you want to change {member.Username}'s role from {oldRole} to {newRole}?",
+            "Change",
+            "Cancel"
+        );
+        if (!confirm) return;
+
+        var ok = await UpdateRoleAsync(member, newRole);
+
+        if (ok)
+        {
+            member.Role = newRole;
+        }
+    }
+
+    private async Task AssignAsync()
+    {
+        var myRole = Members.FirstOrDefault(m => m.IsSelf)?.Role;
+        if (myRole is null)
+        {
+            await Shell.Current.DisplayAlert("Not allowed", "Your role is not known yet. Please refresh and try again.", "OK");
+            return;
+        }
+
+        var allowedRoles = Roles
+            .Where(r => r < myRole.Value)
+            .ToList();
+
+        if (allowedRoles.Count == 0)
+        {
+            await Shell.Current.DisplayAlert("Not allowed", "No roles available to assign.", "OK");
+            return;
+        }
+
+        var username = await Shell.Current.DisplayPromptAsync(
+            "Assign role",
+            "Enter the username to assign a role to:",
+            "Continue",
+            "Cancel",
+            keyboard: Keyboard.Text);
+
+        if (string.IsNullOrWhiteSpace(username)) return;
+        username = username.Trim();
+
+        if (Members.Any(m => string.Equals(m.Username, username)))
+        {
+            var overwrite = await Shell.Current.DisplayAlert(
+                "User already a member",
+                "User already exists in this collection. Do you want to change their role instead?",
+                "Yes",
+                "No");
+            if (!overwrite) return;
+
+            var existing = Members.First(m => string.Equals(m.Username, username));
+            await UpdateAsync(existing);
+            return;
+        }
+
+        var roleOptions = allowedRoles
+            .Select(r => r.ToString())
+            .ToArray();
+
+        var selectedRoleText = await Shell.Current.DisplayActionSheet(
+            $"Select role for {username}",
+            "Cancel",
+            null,
+            roleOptions);
+
+        if (string.IsNullOrWhiteSpace(selectedRoleText) || selectedRoleText == "Cancel")
+            return;
+
+        if (!Enum.TryParse(selectedRoleText, out CollectionRole selectedRole))
+            return;
+
+        var confirm = await Shell.Current.DisplayAlert(
+            "Confirm assignment",
+            $"Assign role {selectedRole} to user '{username}'?",
+            "Assign",
+            "Cancel");
+
+        if (!confirm) return;
+
+        var okAssign = await AssignRoleAsync(username, selectedRole);
+        if (okAssign)
+        {
+            await Shell.Current.DisplayAlert("Success", $"Role {selectedRole} assigned to {username}.", "OK");
         }
     }
 }
