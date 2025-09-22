@@ -43,9 +43,11 @@ public static class DataSeeder
 
         context.SaveChanges();
 
+#pragma warning disable EF1002 // Risk of vulnerability to SQL injection.
         context.Database.ExecuteSqlRaw(
             $"SELECT setval(pg_get_serial_sequence('\"{filename}\"', 'Id'), {maxId}, true)"
         );
+#pragma warning restore EF1002 // Risk of vulnerability to SQL injection.
 
         context.SaveChanges();
     }
