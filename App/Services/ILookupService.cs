@@ -24,33 +24,33 @@ public interface ILookupService
 
 internal partial class RestApiEndpoints
 {
-    public static RestApiEndpoint<List<CollectionItemTypeDto.Response>> GetCollectionItemTypes
+    public static RestApiEndpoint<Null, List<CollectionItemTypeDto.Response>> GetCollectionItemTypes
         => new(HttpMethod.Get, "CollectionItemType", true);
 
-    public static RestApiEndpoint<CollectionItemTypeDto.Response> GetCollectionItemType(int id)
+    public static RestApiEndpoint<Null, CollectionItemTypeDto.Response> GetCollectionItemType(int id)
         => new(HttpMethod.Get, $"CollectionItemType/{id}", true);
 
-    public static RestApiEndpoint<List<CollectionItemStatusDto.Response>> GetCollectionItemStatuses
+    public static RestApiEndpoint<Null, List<CollectionItemStatusDto.Response>> GetCollectionItemStatuses
         => new(HttpMethod.Get, "CollectionItemStatus", true);
 
-    public static RestApiEndpoint<CollectionItemStatusDto.Response> GetCollectionItemStatus(int id)
+    public static RestApiEndpoint<Null, CollectionItemStatusDto.Response> GetCollectionItemStatus(int id)
         => new(HttpMethod.Get, $"CollectionItemStatus/{id}", true);
 
-    public static RestApiEndpoint<List<CollectionItemQualityDto.Response>> GetCollectionItemQualities
+    public static RestApiEndpoint<Null, List<CollectionItemQualityDto.Response>> GetCollectionItemQualities
         => new(HttpMethod.Get, "CollectionItemQuality", true);
 
-    public static RestApiEndpoint<CollectionItemQualityDto.Response> GetCollectionItemQuality(int id)
+    public static RestApiEndpoint<Null, CollectionItemQualityDto.Response> GetCollectionItemQuality(int id)
         => new(HttpMethod.Get, $"CollectionItemQuality/{id}", true);
 
-    public static RestApiEndpoint<List<CollectionItemSpecialStatusDto.Response>> GetCollectionItemSpecialStatuses
+    public static RestApiEndpoint<Null, List<CollectionItemSpecialStatusDto.Response>> GetCollectionItemSpecialStatuses
         => new(HttpMethod.Get, "CollectionItemSpecialStatus", true);
 
-    public static RestApiEndpoint<CollectionItemSpecialStatusDto.Response> GetCollectionItemSpecialStatus(int id)
+    public static RestApiEndpoint<Null, CollectionItemSpecialStatusDto.Response> GetCollectionItemSpecialStatus(int id)
         => new(HttpMethod.Get, $"CollectionItemSpecialStatus/{id}", true);
 
-    public static RestApiEndpoint<List<CountryDto.Response>> GetCountries
+    public static RestApiEndpoint<Null, List<CountryDto.Response>> GetCountries
         => new(HttpMethod.Get, "Country", true);
 
-    public static RestApiEndpoint<CountryDto.Response> GetCountry(int id)
+    public static RestApiEndpoint<Null, CountryDto.Response> GetCountry(int id)
         => new(HttpMethod.Get, $"Country/{id}", true);
 }

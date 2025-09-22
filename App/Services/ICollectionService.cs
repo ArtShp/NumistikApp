@@ -21,18 +21,18 @@ public interface ICollectionService
 
 internal partial class RestApiEndpoints
 {
-    public static readonly RestApiEndpoint<List<CollectionDto.Response>>
+    public static readonly RestApiEndpoint<Null, List<CollectionDto.Response>>
         GetMyCollections = new(HttpMethod.Get, "Collection/my", true);
 
     public static readonly RestApiEndpoint<CollectionCreationDto.Request, CollectionCreationDto.Response>
         CreateCollection = new(HttpMethod.Post, "Collection/create", true);
 
-    public static RestApiEndpoint<CollectionMembersDto.Response> GetCollectionMembers(Guid collectionId)
+    public static RestApiEndpoint<Null, CollectionMembersDto.Response> GetCollectionMembers(Guid collectionId)
         => new(HttpMethod.Get, $"Collection/{collectionId}/members", true);
 
-    public static readonly RestApiEndpointNoContent<CollectionUpdateRoleDto.Request>
+    public static readonly RestApiEndpoint<CollectionUpdateRoleDto.Request, Null>
         UpdateCollectionRole = new(HttpMethod.Post, "Collection/role", true);
 
-    public static RestApiEndpoint<List<CollectionRole>> GetAssignableRoles(Guid collectionId)
+    public static RestApiEndpoint<Null, List<CollectionRole>> GetAssignableRoles(Guid collectionId)
         => new(HttpMethod.Get, $"Collection/{collectionId}/assignable-roles", true);
 }

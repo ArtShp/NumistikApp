@@ -84,6 +84,6 @@ internal class ImageService(IRestApiService restApiService) : IImageService
 
 internal static partial class RestApiEndpoints
 {
-    public static RestApiEndpoint<bool> GetImage(string filename) =>
+    public static RestApiEndpoint<Null, Null> GetImage(string filename) =>
         new(HttpMethod.Get, $"CollectionItem/image/{filename}", true);
 }

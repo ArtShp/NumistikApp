@@ -14,7 +14,7 @@ internal class CollectionItemService(IRestApiService restApiService, ILookupServ
         var endpoint = RestApiEndpoints.GetCollectionItems(collectionId);
         var query = new Dictionary<string, string?> { ["lastSeenId"] = lastSeenId?.ToString() };
 
-        var result = await _restApiService.SendRestApiRequest(endpoint, query);
+        var result = await _restApiService.SendRestApiRequest(endpoint, null, query);
 
         if (result is null) return [];
 

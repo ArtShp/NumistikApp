@@ -16,7 +16,7 @@ internal class CollectionService(IRestApiService restApiService) : ICollectionSe
             ["lastSeenName"] = lastSeenName
         };
 
-        var result = await _restApiService.SendRestApiRequest(RestApiEndpoints.GetMyCollections, query);
+        var result = await _restApiService.SendRestApiRequest(RestApiEndpoints.GetMyCollections, null, query);
 
         if (result is null) return [];
 

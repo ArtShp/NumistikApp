@@ -52,7 +52,7 @@ internal class RestApiService : IRestApiService
 
     public async Task<bool> Authorize(UserLoginDto.Request requestBody)
     {
-        RefreshTokenDto.Response? result = await SendInternalRestApiRequest(RestApiEndpoints.Login, requestBody);
+        RefreshTokenDto.Response? result = await SendRestApiRequest(RestApiEndpoints.Login, requestBody);
 
         if (result != null)
         {
@@ -86,7 +86,7 @@ internal class RestApiService : IRestApiService
             if (!IsTokenExpired && _authToken is not null)
                 return true;
 
-            RefreshTokenDto.Response? result = await SendInternalRestApiRequest(RestApiEndpoints.ReLogin, requestBody);
+            RefreshTokenDto.Response? result = await SendRestApiRequest(RestApiEndpoints.ReLogin, requestBody);
 
             if (result != null)
             {
@@ -106,237 +106,35 @@ internal class RestApiService : IRestApiService
         }
     }
 
-    public async Task<TResponse?> SendRestApiRequest<TResponse>(RestApiEndpoint<TResponse> endpoint, IDictionary<string, string?>? query = null)
+    public async Task<TResponse?> SendRestApiRequest<TRequest, TResponse>(
+        RestApiEndpoint<TRequest, TResponse> endpoint,
+        TRequest? requestBody = null,
+        IDictionary<string, string?>? query = null
+    ) where TRequest : class
     {
-        if (endpoint.RequiresAuth && IsTokenExpired)
-        {
-            bool authorized = await ReAuthorize(new RefreshTokenDto.Request
-            {
-                Username = AppSettings.Username,
-                RefreshToken = AppSettings.RefreshToken
-            });
+        var (ok, content) = await SendAsync(endpoint, requestBody, query);
 
-            if (!authorized)
-            {
-                return default;
-            }
-        }
-
-        return await SendInternalRestApiRequest(endpoint, query);
-    }
-
-    public async Task<TResponse?> SendRestApiRequest<TRequest, TResponse>(RestApiEndpoint<TRequest, TResponse> endpoint, TRequest? requestBody = null,
-        IDictionary<string, string?>? query = null) where TRequest : class
-    {
-        if (endpoint.RequiresAuth && IsTokenExpired)
-        {
-            bool authorized = await ReAuthorize(new RefreshTokenDto.Request
-            {
-                Username = AppSettings.Username,
-                RefreshToken = AppSettings.RefreshToken
-            });
-
-            if (!authorized)
-            {
-                return default;
-            }
-        }
-
-        return await SendInternalRestApiRequest(endpoint, requestBody, query);
-    }
-
-    public async Task<bool> SendRestApiRequest(RestApiEndpointNoContent endpoint, IDictionary<string, string?>? query = null)
-    {
-        var uriBuilder = new UriBuilder(new Uri(BaseUri, endpoint.Endpoint));
-
-        if (query is not null && query.Count > 0)
-        {
-            var q = HttpUtility.ParseQueryString(uriBuilder.Query);
-
-            foreach (var kv in query)
-            {
-                if (!string.IsNullOrWhiteSpace(kv.Value))
-                {
-                    q[kv.Key] = kv.Value;
-                }
-            }
-
-            uriBuilder.Query = q.ToString();
-        }
-
-        Uri uri = uriBuilder.Uri;
-
-        bool result = false;
-        try
-        {
-            HttpRequestMessage requestMessage = GenerateRequestMessage(endpoint.HttpMethod, uri);
-
-            HttpResponseMessage response = await _client.SendAsync(requestMessage);
-
-            result = response.IsSuccessStatusCode;
-        }
-        catch (Exception)
-        {
-
-        }
-
-        return result;
-    }
-
-    public async Task<bool> SendRestApiRequest<TRequest>(RestApiEndpointNoContent<TRequest> endpoint, TRequest? requestBody = null,
-        IDictionary<string, string?>? query = null) where TRequest : class
-    {
-        if (endpoint.RequiresAuth && IsTokenExpired)
-        {
-            bool authorized = await ReAuthorize(new RefreshTokenDto.Request
-            {
-                Username = AppSettings.Username,
-                RefreshToken = AppSettings.RefreshToken
-            });
-
-            if (!authorized)
-            {
-                return false;
-            }
-        }
-
-        var uriBuilder = new UriBuilder(new Uri(BaseUri, endpoint.Endpoint));
-
-        if (query is not null && query.Count > 0)
-        {
-            var q = HttpUtility.ParseQueryString(uriBuilder.Query);
-
-            foreach (var kv in query)
-            {
-                if (!string.IsNullOrWhiteSpace(kv.Value))
-                {
-                    q[kv.Key] = kv.Value;
-                }
-            }
-
-            uriBuilder.Query = q.ToString();
-        }
-
-        Uri uri = uriBuilder.Uri;
+        if (!ok || string.IsNullOrWhiteSpace(content))
+            return default;
 
         try
         {
-            HttpRequestMessage requestMessage;
-            if (requestBody is not null)
-            {
-                string json = JsonSerializer.Serialize(requestBody, _serializerOptions);
-                var requestContent = new StringContent(json, Encoding.UTF8, "application/json");
-
-                requestMessage = GenerateRequestMessage(endpoint.HttpMethod, uri, requestContent);
-            }
-            else
-            {
-                requestMessage = GenerateRequestMessage(endpoint.HttpMethod, uri);
-            }
-
-            HttpResponseMessage response = await _client.SendAsync(requestMessage);
-            return response.IsSuccessStatusCode;
+            return JsonSerializer.Deserialize<TResponse>(content, _serializerOptions);
         }
         catch
         {
-            return false;
+            return default;
         }
     }
 
-    private async Task<TResponse?> SendInternalRestApiRequest<TResponse>(RestApiEndpoint<TResponse> endpoint, IDictionary<string, string?>? query = null)
+    public async Task<bool> SendRestApiRequest<TRequest>(
+        RestApiEndpoint<TRequest, Null> endpoint,
+        TRequest? requestBody = null,
+        IDictionary<string, string?>? query = null
+    ) where TRequest : class
     {
-        var uriBuilder = new UriBuilder(new Uri(BaseUri, endpoint.Endpoint));
-
-        if (query is not null && query.Count > 0)
-        {
-            var q = HttpUtility.ParseQueryString(uriBuilder.Query);
-
-            foreach (var kv in query)
-            {
-                if (!string.IsNullOrWhiteSpace(kv.Value))
-                {
-                    q[kv.Key] = kv.Value;
-                }
-            }
-
-            uriBuilder.Query = q.ToString();
-        }
-
-        Uri uri = uriBuilder.Uri;
-
-        TResponse? result = default;
-        try
-        {
-            HttpRequestMessage requestMessage = GenerateRequestMessage(endpoint.HttpMethod, uri);
-
-            HttpResponseMessage response = await _client.SendAsync(requestMessage);
-
-            if (response.IsSuccessStatusCode)
-            {
-                string content = await response.Content.ReadAsStringAsync();
-                result = JsonSerializer.Deserialize<TResponse>(content, _serializerOptions);
-            }
-        }
-        catch (Exception)
-        {
-
-        }
-
-        return result;
-    }
-
-    private async Task<TResponse?> SendInternalRestApiRequest<TRequest, TResponse>(RestApiEndpoint<TRequest, TResponse> endpoint, TRequest? requestBody = null,
-        IDictionary<string, string?>? query = null) where TRequest : class
-    {
-        var uriBuilder = new UriBuilder(new Uri(BaseUri, endpoint.Endpoint));
-
-        if (query is not null && query.Count > 0)
-        {
-            var q = HttpUtility.ParseQueryString(uriBuilder.Query);
-
-            foreach (var kv in query)
-            {
-                if (!string.IsNullOrWhiteSpace(kv.Value))
-                {
-                    q[kv.Key] = kv.Value;
-                }
-            }
-
-            uriBuilder.Query = q.ToString();
-        }
-
-        Uri uri = uriBuilder.Uri;
-
-        TResponse? result = default;
-        try
-        {
-            HttpRequestMessage requestMessage;
-            if (requestBody is not null)
-            {
-                string json = JsonSerializer.Serialize(requestBody, _serializerOptions);
-                var requestContent = new StringContent(json, Encoding.UTF8, "application/json");
-
-                requestMessage = GenerateRequestMessage(endpoint.HttpMethod, uri, requestContent);
-            }
-            else
-            {
-                requestMessage = GenerateRequestMessage(endpoint.HttpMethod, uri);
-            }
-
-            HttpResponseMessage response = await _client.SendAsync(requestMessage);
-
-            if (response.IsSuccessStatusCode)
-            {
-                string content = await response.Content.ReadAsStringAsync();
-                result = JsonSerializer.Deserialize<TResponse>(content, _serializerOptions);
-            }
-        }
-        catch (Exception)
-        {
-
-        }
-
-        return result;
+        var (ok, _) = await SendAsync(endpoint, requestBody, query);
+        return ok;
     }
 
     public async Task<TResponse?> SendMultipartRestApiRequest<TRequest, TResponse>(
@@ -345,65 +143,20 @@ internal class RestApiService : IRestApiService
         IEnumerable<(string Name, string FileName, string ContentType, Stream Content)> files
     ) where TRequest : class
     {
-        if (endpoint.RequiresAuth && IsTokenExpired)
-        {
-            bool authorized = await ReAuthorize(new RefreshTokenDto.Request
-            {
-                Username = AppSettings.Username,
-                RefreshToken = AppSettings.RefreshToken
-            });
+        using var form = BuildMultipartContent(requestBody, files);
 
-            if (!authorized)
-            {
-                return default;
-            }
-        }
+        var (ok, content) = await SendAsync(endpoint, requestBody, null, overrideContent: form);
 
-        Uri uri = new(BaseUri, endpoint.Endpoint);
+        if (!ok || string.IsNullOrWhiteSpace(content))
+            return default;
 
-        TResponse? result = default;
         try
         {
-            using var form = new MultipartFormDataContent();
-
-            if (requestBody is not null)
-            {
-                string json = JsonSerializer.Serialize(requestBody, _serializerOptions);
-                var fields = JsonSerializer.Deserialize<Dictionary<string, object?>>(json, _serializerOptions);
-
-                if (fields is not null)
-                {
-                    foreach (var kv in fields)
-                    {
-                        var value = kv.Value?.ToString();
-                        if (!string.IsNullOrWhiteSpace(value))
-                        {
-                            form.Add(new StringContent(value), kv.Key);
-                        }
-                    }
-                }
-            }
-
-            foreach (var (Name, FileName, ContentType, Content) in files)
-            {
-                var streamContent = new StreamContent(Content);
-                streamContent.Headers.ContentType = new MediaTypeHeaderValue(ContentType);
-
-                form.Add(streamContent, Name, FileName);
-            }
-
-            using var request = GenerateRequestMessage(endpoint.HttpMethod, uri, form);
-            using var response = await _client.SendAsync(request);
-
-            if (response.IsSuccessStatusCode)
-            {
-                string content = await response.Content.ReadAsStringAsync();
-                result = JsonSerializer.Deserialize<TResponse>(content, _serializerOptions);
-            }
+            return JsonSerializer.Deserialize<TResponse>(content, _serializerOptions);
         }
         catch
         {
-
+            return default;
         }
         finally
         {
@@ -412,66 +165,20 @@ internal class RestApiService : IRestApiService
                 try { Content.Dispose(); } catch { }
             }
         }
-
-        return result;
     }
 
     public async Task<bool> SendMultipartRestApiRequest<TRequest>(
-        RestApiEndpointNoContent<TRequest> endpoint,
+        RestApiEndpoint<TRequest, Null> endpoint,
         TRequest? requestBody,
         IEnumerable<(string Name, string FileName, string ContentType, Stream Content)> files
     ) where TRequest : class
     {
-        if (endpoint.RequiresAuth && IsTokenExpired)
-        {
-            bool authorized = await ReAuthorize(new RefreshTokenDto.Request
-            {
-                Username = AppSettings.Username,
-                RefreshToken = AppSettings.RefreshToken
-            });
-
-            if (!authorized)
-            {
-                return false;
-            }
-        }
-
-        Uri uri = new(BaseUri, endpoint.Endpoint);
-
         try
         {
-            using var form = new MultipartFormDataContent();
+            using var form = BuildMultipartContent(requestBody, files);
+            var (ok, content) = await SendAsync(endpoint, requestBody, null, overrideContent: form);
 
-            if (requestBody is not null)
-            {
-                string json = JsonSerializer.Serialize(requestBody, _serializerOptions);
-                var fields = JsonSerializer.Deserialize<Dictionary<string, object?>>(json, _serializerOptions);
-
-                if (fields is not null)
-                {
-                    foreach (var kv in fields)
-                    {
-                        var value = kv.Value?.ToString();
-                        if (!string.IsNullOrWhiteSpace(value))
-                        {
-                            form.Add(new StringContent(value), kv.Key);
-                        }
-                    }
-                }
-            }
-
-            foreach (var (Name, FileName, ContentType, Content) in files)
-            {
-                var streamContent = new StreamContent(Content);
-                streamContent.Headers.ContentType = new MediaTypeHeaderValue(ContentType);
-
-                form.Add(streamContent, Name, FileName);
-            }
-
-            using var request = GenerateRequestMessage(HttpMethod.Post, uri, form);
-            using var response = await _client.SendAsync(request);
-
-            return response.IsSuccessStatusCode;
+            return ok;
         }
         catch
         {
@@ -486,21 +193,10 @@ internal class RestApiService : IRestApiService
         }
     }
 
-    public async Task<bool> DownloadToFileAsync(RestApiEndpoint<bool> endpoint, string filepath)
+    public async Task<bool> DownloadToFileAsync(RestApiEndpoint<Null, Null> endpoint, string filepath)
     {
-        if (IsTokenExpired)
-        {
-            bool authorized = await ReAuthorize(new RefreshTokenDto.Request
-            {
-                Username = AppSettings.Username,
-                RefreshToken = AppSettings.RefreshToken
-            });
-
-            if (!authorized)
-            {
-                return false;
-            }
-        }
+        if (!await EnsureAuthAsync(endpoint.RequiresAuth))
+            return false;
 
         Uri uri = new(BaseUri, endpoint.Endpoint);
 
@@ -534,6 +230,124 @@ internal class RestApiService : IRestApiService
         {
             return false;
         }
+    }
+
+    private async Task<(bool ok, string? content)> SendAsync<TRequest, TResponse>(
+        RestApiEndpoint<TRequest, TResponse> endpoint,
+        TRequest? requestBody = null,
+        IDictionary<string, string?>? query = null,
+        HttpContent? overrideContent = null
+    ) where TRequest : class
+    {
+        if (!await EnsureAuthAsync(endpoint.RequiresAuth))
+            return (false, null);
+
+        var uri = BuildUri(endpoint.Endpoint, query);
+
+        try
+        {
+            HttpContent? content = overrideContent ?? BuildJsonContentIfAny(requestBody);
+
+            using var request = GenerateRequestMessage(endpoint.HttpMethod, uri, content);
+            using var response = await _client.SendAsync(request);
+
+            if (!response.IsSuccessStatusCode)
+                return (false, null);
+
+            string? text = null;
+            if (typeof(TResponse) != typeof(Null))
+            {
+                text = await response.Content.ReadAsStringAsync();
+            }
+
+            return (true, text);
+        }
+        catch
+        {
+            return (false, null);
+        }
+    }
+
+    private async Task<bool> EnsureAuthAsync(bool requiresAuth)
+    {
+        if (!requiresAuth)
+            return true;
+
+        if (!IsTokenExpired && _authToken is not null)
+            return true;
+
+        return await ReAuthorize(new RefreshTokenDto.Request
+        {
+            Username = AppSettings.Username,
+            RefreshToken = AppSettings.RefreshToken
+        });
+    }
+
+    private static Uri BuildUri(string endpoint, IDictionary<string, string?>? query)
+    {
+        var uriBuilder = new UriBuilder(new Uri(BaseUri, endpoint));
+
+        if (query is not null && query.Count > 0)
+        {
+            var q = HttpUtility.ParseQueryString(uriBuilder.Query);
+
+            foreach (var kv in query)
+            {
+                if (!string.IsNullOrWhiteSpace(kv.Value))
+                {
+                    q[kv.Key] = kv.Value;
+                }
+            }
+
+            uriBuilder.Query = q.ToString();
+        }
+
+        return uriBuilder.Uri;
+    }
+
+    private StringContent? BuildJsonContentIfAny<TRequest>(TRequest? requestBody) where TRequest : class
+    {
+        if (requestBody is null || typeof(TRequest) == typeof(Null))
+            return null;
+
+        string json = JsonSerializer.Serialize(requestBody, _serializerOptions);
+        return new StringContent(json, Encoding.UTF8, "application/json");
+    }
+
+    private MultipartFormDataContent BuildMultipartContent<TRequest>(
+        TRequest? requestBody,
+        IEnumerable<(string Name, string FileName, string ContentType, Stream Content)> files
+    ) where TRequest : class
+    {
+        var form = new MultipartFormDataContent();
+
+        if (requestBody is not null && typeof(TRequest) != typeof(Null))
+        {
+            string json = JsonSerializer.Serialize(requestBody, _serializerOptions);
+            var fields = JsonSerializer.Deserialize<Dictionary<string, object?>>(json, _serializerOptions);
+
+            if (fields is not null)
+            {
+                foreach (var kv in fields)
+                {
+                    var value = kv.Value?.ToString();
+                    if (!string.IsNullOrWhiteSpace(value))
+                    {
+                        form.Add(new StringContent(value), kv.Key);
+                    }
+                }
+            }
+        }
+
+        foreach (var (Name, FileName, ContentType, Content) in files)
+        {
+            var streamContent = new StreamContent(Content);
+            streamContent.Headers.ContentType = new MediaTypeHeaderValue(ContentType);
+
+            form.Add(streamContent, Name, FileName);
+        }
+
+        return form;
     }
 
     private HttpRequestMessage GenerateRequestMessage(HttpMethod httpMethod, Uri uri, HttpContent? content = null)

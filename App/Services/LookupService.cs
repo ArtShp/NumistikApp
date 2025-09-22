@@ -99,7 +99,7 @@ internal class LookupService(IRestApiService restApiService) : ILookupService
 
     private async Task<IReadOnlyList<LookupItem>> GetListAsync<TCursor, TDto>(
         List<LookupItem>? cache,
-        RestApiEndpoint<List<TDto>> endpoint,
+        RestApiEndpoint<Null, List<TDto>> endpoint,
         string cursorQueryKey,
         Func<int, string, TCursor?> cursorSelector,
         Action<int, string>? cacheWriter = null) where TDto : class
@@ -113,7 +113,7 @@ internal class LookupService(IRestApiService restApiService) : ILookupService
 
         for (int iter = 0; iter < maxPages; ++iter)
         {
-            var page = await _restService.SendRestApiRequest(endpoint, new Dictionary<string, string?>
+            var page = await _restService.SendRestApiRequest(endpoint, null, new Dictionary<string, string?>
             {
                 [cursorQueryKey] = lastCursor?.ToString()
             });
@@ -141,7 +141,7 @@ internal class LookupService(IRestApiService restApiService) : ILookupService
     private async Task<string?> GetNameAsync<TResponse>(
         int id,
         ConcurrentDictionary<int, string> cache,
-        Func<int, RestApiEndpoint<TResponse>> endpointFactory)
+        Func<int, RestApiEndpoint<Null, TResponse>> endpointFactory)
     {
         if (id <= 0) return null;
         if (cache.TryGetValue(id, out var cached)) return cached;
