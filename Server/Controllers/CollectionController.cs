@@ -1,0 +1,160 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using Server.Entities;
+using Server.Services;
+using Shared.Models.Collection;
+using Shared.Models.Common;
+
+namespace Server.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class CollectionController(CollectionService collectionService) : MyControllerBase
+{
+    [HttpGet("all")]
+    [AuthorizeOnlyAdmins]
+    public async Task<ActionResult<List<CollectionDto.Response>>> GetAllCollections([FromQuery] Guid? lastSeenId)
+    {
+        // Get the user's id from claims
+        Guid? authenticatedUserId = GetAuthorizedUserId();
+
+        if (authenticatedUserId is null)
+            return Unauthorized("User is not authenticated.");
+
+        var collections = await collectionService
+            .GetAllCollectionsAsync(authenticatedUserId.Value, lastSeenId, DefaultPageSize);
+
+        return Ok(collections);
+    }
+
+    [HttpGet("my")]
+    [AuthorizeAllUsers]
+    public async Task<ActionResult<List<CollectionDto.Response>>> GetMyCollections([FromQuery] Guid? lastSeenId, [FromQuery] string? lastSeenName)
+    {
+        // Get the user's id from claims
+        Guid? authenticatedUserId = GetAuthorizedUserId();
+
+        if (authenticatedUserId is null)
+            return Unauthorized("User is not authenticated.");
+
+        var collections = await collectionService.GetMyCollectionsAsync(authenticatedUserId.Value, lastSeenId, lastSeenName, DefaultPageSize);
+
+        return Ok(collections);
+    }
+
+    [HttpGet("{collectionId}")]
+    [AuthorizeAllUsers]
+    public async Task<ActionResult<CollectionDto.Response?>> GetCollection(Guid collectionId)
+    {
+        // Get the user's id from claims
+        Guid? authenticatedUserId = GetAuthorizedUserId();
+
+        if (authenticatedUserId is null)
+            return Unauthorized("User is not authenticated.");
+
+        // Get the user's role from claims
+        UserAppRole? authenticatedUserRole = GetAuthorizedUserRole();
+
+        if (authenticatedUserRole is null)
+            return Unauthorized("User role is not recognized.");
+
+        var collection = await collectionService.GetCollectionAsync(authenticatedUserId.Value, authenticatedUserRole.Value, collectionId);
+
+        if (collection is null)
+            return NotFound("Collection not found.");
+
+        return Ok(collection);
+    }
+
+    [HttpPost("create")]
+    [AuthorizeAllUsers]
+    public async Task<ActionResult<CollectionCreationDto.Response?>> CreateCollection(CollectionCreationDto.Request request)
+    {
+        // Get the user's id from claims
+        Guid? authenticatedUserId = GetAuthorizedUserId();
+
+        if (authenticatedUserId is null)
+            return Unauthorized("User is not authenticated.");
+
+        var collection = await collectionService.CreateCollectionAsync(authenticatedUserId.Value, request);
+
+        if (collection is null)
+            return BadRequest("Error creating collection.");
+
+        return StatusCode(201, collection);
+    }
+
+    [HttpPost("update")]
+    [AuthorizeAllUsers]
+    public async Task<ActionResult<bool>> UpdateCollection(CollectionUpdateDto.Request request)
+    {
+        // Get the user's id from claims
+        Guid? authenticatedUserId = GetAuthorizedUserId();
+
+        if (authenticatedUserId is null)
+            return Unauthorized("User is not authenticated.");
+
+        var success = await collectionService.UpdateCollectionAsync(authenticatedUserId.Value, request);
+
+        if (!success)
+            return BadRequest("Error updating collection.");
+
+        return Ok();
+    }
+
+    [HttpPost("role")]
+    [AuthorizeAllUsers]
+    public async Task<ActionResult<CollectionDto.Response>> UpdateCollectionRole(CollectionUpdateRoleDto.Request request)
+    {
+        // Get the user's id from claims
+        Guid? authenticatedUserId = GetAuthorizedUserId();
+
+        if (authenticatedUserId is null)
+            return Unauthorized("User is not authenticated.");
+
+        bool success = await collectionService.UpdateCollectionRoleAsync(authenticatedUserId.Value, request);
+
+        if (!success)
+            return NotFound("Collection not found.");
+
+        return Ok();
+    }
+
+    [HttpGet("{collectionId:Guid}/members")]
+    [AuthorizeAllUsers]
+    public async Task<ActionResult<CollectionMembersDto.Response>> GetCollectionMembers(Guid collectionId)
+    {
+        // Get the user's id from claims
+        Guid? authenticatedUserId = GetAuthorizedUserId();
+
+        if (authenticatedUserId is null)
+            return Unauthorized("User is not authenticated.");
+
+        // Get the user's role from claims
+        UserAppRole? authenticatedUserRole = GetAuthorizedUserRole();
+
+        if (authenticatedUserRole is null)
+            return Unauthorized("User role is not recognized.");
+
+        var result = await collectionService.GetCollectionMembersAsync(authenticatedUserId.Value, authenticatedUserRole.Value, collectionId);
+
+        if (result is null)
+            return NotFound("Collection not found.");
+
+        return Ok(result);
+    }
+
+    [HttpGet("{collectionId:Guid}/assignable-roles")]
+    [AuthorizeAllUsers]
+    public async Task<ActionResult<List<CollectionRole>>> GetAssignableRoles(Guid collectionId)
+    {
+        // Get the user's id from claims
+        Guid? authenticatedUserId = GetAuthorizedUserId();
+
+        if (authenticatedUserId is null)
+            return Unauthorized("User is not authenticated.");
+
+        var roles = await collectionService.GetAssignableRolesAsync(authenticatedUserId.Value, collectionId);
+
+        return Ok(roles);
+    }
+}

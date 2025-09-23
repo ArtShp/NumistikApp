@@ -3,12 +3,44 @@
     x:Class="App.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:App"
+    xmlns:views="clr-namespace:App.Views"
+    Shell.FlyoutBehavior="Disabled"
     Title="App">
 
     <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+        Title="Login Page"
+        ContentTemplate="{DataTemplate views:LoginPage}"
+        Route="LoginPage" />
+
+    <ShellContent
+        Title="Register Page"
+        ContentTemplate="{DataTemplate views:RegisterPage}"
+        Route="RegisterPage" />
+
+    <TabBar Title="Main" Route="MainTabs">
+        <Tab Title="Home" Route="MainHome">
+            <ShellContent Title="Home"
+                          ContentTemplate="{DataTemplate views:MainPage}"
+                          Route="MainPage" />
+        </Tab>
+        <Tab Title="My collections" Route="MyCollectionsTab">
+            <ShellContent Title="My collections"
+                          ContentTemplate="{DataTemplate views:MyCollectionsPage}"
+                          Route="MyCollectionsPage" />
+        </Tab>
+    </TabBar>
+
+    <TabBar Title="Admin" Route="AdminTabs">
+        <Tab Title="Dashboard" Route="AdminDashboard">
+            <ShellContent Title="Dashboard"
+                          ContentTemplate="{DataTemplate views:AdminPage}"
+                          Route="AdminPage" />
+        </Tab>
+        <Tab Title="Users" Route="AdminUsers">
+            <ShellContent Title="Users"
+                          ContentTemplate="{DataTemplate views:AdminUsersPage}"
+                          Route="AdminUsersPage" />
+        </Tab>
+    </TabBar>
 
 </Shell>

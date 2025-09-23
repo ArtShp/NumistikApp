@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using App.Services;
+using App.ViewModels;
+using Microsoft.Extensions.Logging;
 
 namespace App
 {
@@ -15,8 +17,28 @@ namespace App
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
+            builder.Services.AddSingleton<IRestApiService, RestApiService>();
+            builder.Services.AddSingleton<ILoginService, LoginService>();
+            builder.Services.AddSingleton<ICollectionService, CollectionService>();
+            builder.Services.AddSingleton<ICollectionItemService, CollectionItemService>();
+            builder.Services.AddSingleton<IImageService, ImageService>();
+            builder.Services.AddSingleton<ILookupService, LookupService>();
+            builder.Services.AddSingleton<IImageViewerService, ImageViewerService>();
+
+            builder.Services.AddTransient<LoginViewModel>();
+            builder.Services.AddTransient<RegisterViewModel>();
+            builder.Services.AddTransient<MainViewModel>();
+            builder.Services.AddTransient<AdminViewModel>();
+            builder.Services.AddTransient<MyCollectionsViewModel>();
+            builder.Services.AddTransient<CollectionItemsViewModel>();
+            builder.Services.AddTransient<CreateCollectionItemViewModel>();
+            builder.Services.AddTransient<CollectionRolesViewModel>();
+            builder.Services.AddTransient<CollectionItemDetailsViewModel>();
+            builder.Services.AddTransient<ImageViewerViewModel>();
+            builder.Services.AddTransient<UpdateCollectionItemViewModel>();
+
 #if DEBUG
-    		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
 
             return builder.Build();

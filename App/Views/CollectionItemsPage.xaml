@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:App.ViewModels"
+             xmlns:models="clr-namespace:App.Models"
+             xmlns:controls="clr-namespace:App.Controls"
+             x:Class="App.Views.CollectionItemsPage"
+             x:DataType="viewModels:CollectionItemsViewModel"
+             x:Name="CollectionItemsPageRoot"
+             Title="Collection items">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Refresh" Command="{Binding RefreshCommand}" />
+        <ToolbarItem Text="Add" Command="{Binding AddItemCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <Grid RowDefinitions="Auto,*,Auto" Padding="16">
+        
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,8">
+            <Picker Grid.Column="0"
+                    Title="Country filter"
+                    ItemsSource="{Binding Countries}"
+                    ItemDisplayBinding="{Binding Name}"
+                    SelectedItem="{Binding SelectedCountry}" />
+            <Button Grid.Column="1"
+                    Text="Clear"
+                    Margin="8,0,0,0"
+                    Command="{Binding ClearFiltersCommand}" />
+        </Grid>
+
+        <CollectionView Grid.Row="1"
+                        ItemsSource="{Binding Items}"
+                        ItemSizingStrategy="MeasureAllItems"
+                        ItemsUpdatingScrollMode="KeepScrollOffset"
+                        Margin="0,0,0,8">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:CollectionItem">
+                    <Grid Padding="8"
+                          ColumnSpacing="12"
+                          RowSpacing="6"
+                          ColumnDefinitions="Auto,*,Auto"
+                          RowDefinitions="Auto,Auto,Auto,Auto">
+
+                        <!-- Fixed-size image frame, clip contents and don't stretch with text rows -->
+                        <Border Grid.RowSpan="4" Grid.Column="0"
+                                Stroke="{AppThemeBinding Light=#DDD, Dark=#333}"
+                                StrokeThickness="1"
+                                Padding="0"
+                                WidthRequest="420"
+                                HeightRequest="240"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Start">
+                            <Image Source="{Binding ObverseImageUrl}"
+                                   Aspect="AspectFit"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center">
+                                <!-- Hide image when no url -->
+                                <Image.Triggers>
+                                    <DataTrigger TargetType="Image" Binding="{Binding ObverseImageUrl}" Value="{x:Null}">
+                                        <Setter Property="IsVisible" Value="False" />
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="Image" Binding="{Binding ObverseImageUrl}" Value="">
+                                        <Setter Property="IsVisible" Value="False" />
+                                    </DataTrigger>
+                                </Image.Triggers>
+                            </Image>
+                            <!-- Hide border stroke when no image, but keep reserved space -->
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border" Binding="{Binding ObverseImageUrl}" Value="{x:Null}">
+                                    <Setter Property="StrokeThickness" Value="0" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Border" Binding="{Binding ObverseImageUrl}" Value="">
+                                    <Setter Property="StrokeThickness" Value="0" />
+                                </DataTrigger>
+                            </Border.Triggers>
+                        </Border>
+
+                        <!-- Value + Currency + AdditionalInfo -->
+                        <Label Grid.Column="1" Grid.Row="0"
+                               Text="{Binding ValueCurrencyInfo}"
+                               FontAttributes="Bold"
+                               FontSize="20"
+                               MaxLines="1"
+                               LineBreakMode="TailTruncation" />
+
+                        <!-- Secondary info: Type · Country · Status · Quality · Special Status -->
+                        <Label Grid.Column="1" Grid.Row="1"
+                               Text="{Binding SecondaryInfo}"
+                               FontSize="13"
+                               MaxLines="1"
+                               LineBreakMode="TailTruncation"
+                               TextColor="{AppThemeBinding Light=Gray, Dark=LightGray}" />
+
+                        <!-- Serial Number -->
+                        <Label Grid.Column="1" Grid.Row="2"
+                               Text="{Binding SerialNumber, StringFormat='SN: {0}'}"
+                               FontSize="13"
+                               MaxLines="1"
+                               LineBreakMode="TailTruncation"
+                               TextColor="{AppThemeBinding Light=Gray, Dark=LightGray}" />
+
+                        <!-- Description -->
+                        <Label Grid.Column="1" Grid.Row="3"
+                               Text="{Binding Description}"
+                               FontSize="14"
+                               MaxLines="4"
+                               LineBreakMode="WordWrap" />
+
+                        <!-- Delete button -->
+                        <Button Grid.Column="2" Grid.Row="0"
+                                Text="Delete"
+                                FontSize="12"
+                                HeightRequest="28"
+                                BackgroundColor="{AppThemeBinding Light=#c62828, Dark=#b71c1c}"
+                                TextColor="White"
+                                CornerRadius="6"
+                                x:DataType="{x:Null}"
+                                Command="{Binding Source={x:Reference CollectionItemsPageRoot}, Path=BindingContext.DeleteItemCommand}"
+                                CommandParameter="{Binding .}" />
+
+                        <!-- Open button -->
+                        <Button Grid.Column="2" Grid.Row="1"
+                                Text="Open"
+                                FontSize="12"
+                                HeightRequest="28"
+                                CornerRadius="6"
+                                x:DataType="{x:Null}"
+                                Command="{Binding Source={x:Reference CollectionItemsPageRoot}, Path=BindingContext.OpenItemCommand}"
+                                CommandParameter="{Binding .}" />
+
+                        <!-- Update button -->
+                        <Button Grid.Column="2" Grid.Row="2"
+                                Text="Update"
+                                FontSize="12"
+                                HeightRequest="28"
+                                CornerRadius="6"
+                                x:DataType="{x:Null}"
+                                Command="{Binding Source={x:Reference CollectionItemsPageRoot}, Path=BindingContext.UpdateItemCommand}"
+                                CommandParameter="{Binding .}" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <controls:LoadingButton Grid.Row="2"
+                                IdleText="Load more"
+                                LoadingText="Loading..."
+                                IsLoading="{Binding IsLoading}"
+                                Command="{Binding LoadMoreCommand}" />
+    </Grid>
+</ContentPage>

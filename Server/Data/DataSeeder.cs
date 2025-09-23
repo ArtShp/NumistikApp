@@ -1,0 +1,54 @@
+﻿using CsvHelper;
+using CsvHelper.Configuration;
+using Microsoft.EntityFrameworkCore;
+using Server.Entities;
+using System.Globalization;
+using System.Text;
+
+namespace Server.Data;
+
+public static class DataSeeder
+{
+    private static readonly CsvConfiguration csvConfiguration = new(CultureInfo.InvariantCulture)
+    {
+        MissingFieldFound = null,
+        HeaderValidated = null,
+    };
+
+    public static void SeedAll(MyDbContext dbContext)
+    {
+        SeedItems(dbContext, dbContext.Continents, "Continents");
+        SeedItems(dbContext, dbContext.CollectionItemTypes, "CollectionItemTypes");
+        SeedItems(dbContext, dbContext.CollectionItemStatuses, "CollectionItemStatuses");
+        SeedItems(dbContext, dbContext.CollectionItemQualities, "CollectionItemQualities");
+        SeedItems(dbContext, dbContext.CollectionItemSpecialStatuses, "CollectionItemSpecialStatuses");
+        SeedItems(dbContext, dbContext.Countries, "Countries");
+    }
+
+    private static void SeedItems<T>(DbContext context, DbSet<T> data, string filename) where T : class, IHasIntId
+    {
+        if (data.Any()) return;
+
+        var path = Path.Combine("Data", "Seeds", $"{filename}_seed.csv");
+
+        using var reader = new StreamReader(path, new UTF8Encoding(false), true);
+        using var csv = new CsvReader(reader, csvConfiguration);
+
+        int maxId = 0;
+
+        data.AddRange(csv.GetRecords<T>().Select(x =>
+        {
+            ++maxId; return x;
+        }));
+
+        context.SaveChanges();
+
+#pragma warning disable EF1002 // Risk of vulnerability to SQL injection.
+        context.Database.ExecuteSqlRaw(
+            $"SELECT setval(pg_get_serial_sequence('\"{filename}\"', 'Id'), {maxId}, true)"
+        );
+#pragma warning restore EF1002 // Risk of vulnerability to SQL injection.
+
+        context.SaveChanges();
+    }
+}

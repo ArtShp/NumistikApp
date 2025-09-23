@@ -1,0 +1,229 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Server.Data;
+using Server.Entities;
+using Shared.Models.Collection;
+using Shared.Models.Common;
+
+namespace Server.Services;
+
+public class CollectionService(MyDbContext context)
+{
+    public async Task<List<CollectionDto.Response>?> GetAllCollectionsAsync(Guid userId, Guid? lastSeenId, int pageSize)
+    {
+        IQueryable<Collection> query = context.Collections
+            .OrderBy(c => c.Id);
+
+        if (lastSeenId.HasValue)
+        {
+            query = query.Where(c => c.Id > lastSeenId.Value);
+        }
+
+        return await query.Take(pageSize)
+            .Select(collection => new CollectionDto.Response
+            {
+                Id = collection.Id,
+                Name = collection.Name,
+                Description = collection.Description,
+                CollectionRole = context.UserCollections
+                    .Where(uc => uc.UserId == userId && uc.CollectionId == collection.Id)
+                    .Select(uc => (CollectionRole?)uc.Role)
+                    .FirstOrDefault()
+            })
+            .ToListAsync();
+    }
+
+    public async Task<List<CollectionDto.Response>> GetMyCollectionsAsync(Guid userId, Guid? lastSeenId, string? lastSeenName, int pageSize)
+    {
+        IQueryable<UserCollection> query = context.UserCollections
+            .Include(uc => uc.Collection)
+            .Where(uc => uc.UserId == userId)
+            .OrderBy(uc => uc.Collection.Name)
+            .ThenBy(uc => uc.Collection.Id);
+
+        if (!string.IsNullOrEmpty(lastSeenName) && lastSeenId.HasValue)
+        {
+            query = query.Where(i =>
+                string.Compare(i.Collection.Name, lastSeenName) > 0 ||
+                (i.Collection.Name == lastSeenName && i.Collection.Id > lastSeenId.Value));
+        }
+
+        return await query.Take(pageSize)
+            .Select(uc => new CollectionDto.Response
+            {
+                Id = uc.Collection.Id,
+                Name = uc.Collection.Name,
+                Description = uc.Collection.Description,
+                CollectionRole = uc.Role
+            })
+            .ToListAsync();
+    }
+
+    public async Task<CollectionDto.Response?> GetCollectionAsync(Guid userId, UserAppRole userAppRole, Guid collectionId)
+    {
+        var collection = await context.Collections
+            .FindAsync(collectionId);
+
+        if (collection is null) return null;
+
+        var userCollection = await context.UserCollections
+            .FirstOrDefaultAsync(uc => uc.UserId == userId && uc.CollectionId == collectionId);
+
+        if (userCollection is null && userAppRole < UserAppRole.Admin) return null;
+
+        return new CollectionDto.Response
+        {
+            Id = collection.Id,
+            Name = collection.Name,
+            Description = collection.Description,
+            CollectionRole = userCollection?.Role
+        };
+    }
+
+    public async Task<CollectionCreationDto.Response?> CreateCollectionAsync(Guid userId, CollectionCreationDto.Request request)
+    {
+        var collection = new Collection
+        {
+            Name = request.Name,
+            Description = request.Description
+        };
+
+        context.Collections.Add(collection);
+        await context.SaveChangesAsync();
+
+        var userCollection = new UserCollection
+        {
+            UserId = userId,
+            CollectionId = collection.Id,
+            Role = CollectionRole.Owner
+        };
+
+        context.UserCollections.Add(userCollection);
+        await context.SaveChangesAsync();
+
+        return new CollectionCreationDto.Response
+        {
+            Id = collection.Id
+        };
+    }
+
+    public async Task<bool> UpdateCollectionAsync(Guid userId, CollectionUpdateDto.Request request)
+    {
+        var userCollection = await context.UserCollections
+            .FirstOrDefaultAsync(uc => uc.UserId == userId && uc.CollectionId == request.Id);
+
+        if (userCollection is null || userCollection.Role < CollectionRole.Admin) return false;
+
+        var foundCollection = await context.Collections.FindAsync(request.Id);
+
+        if (foundCollection is null) return false;
+
+        if (request.Name is not null)
+        {
+            foundCollection.Name = request.Name;
+        }
+
+        foundCollection.Description = request.Description;
+
+        context.Collections.Update(foundCollection);
+        await context.SaveChangesAsync();
+
+        return true;
+    }
+
+    public async Task<bool> UpdateCollectionRoleAsync(Guid userId, CollectionUpdateRoleDto.Request request)
+    {
+        var userCollection = await context.UserCollections
+            .FirstOrDefaultAsync(uc => uc.UserId == userId && uc.CollectionId == request.CollectionId);
+
+        if (userCollection is null) return false;
+
+        if (userCollection.Role <= request.Role || userCollection.Role < CollectionRole.Admin)
+            return false;
+
+        var targetUserCollection = await context.UserCollections
+            .FirstOrDefaultAsync(uc => uc.UserId == request.UserId && uc.CollectionId == request.CollectionId);
+
+        if (targetUserCollection is null)
+        {
+            Guid? requestUserId = request.UserId;
+            if (requestUserId is null)
+            {
+                if (string.IsNullOrEmpty(request.Username)) return false;
+
+                var user = await context.Users
+                    .FirstOrDefaultAsync(u => u.Username == request.Username);
+
+                if (user is null) return false;
+
+                requestUserId = user.Id;
+            }
+
+            // assign
+            targetUserCollection = new UserCollection
+            {
+                UserId = requestUserId.Value,
+                CollectionId = request.CollectionId,
+                Role = request.Role
+            };
+            context.UserCollections.Add(targetUserCollection);
+
+            await context.SaveChangesAsync();
+        }
+        else if (targetUserCollection.Role != request.Role)
+        {
+            // update
+            targetUserCollection.Role = request.Role;
+            context.UserCollections.Update(targetUserCollection);
+
+            await context.SaveChangesAsync();
+        }
+        // no update needed
+
+        return true;
+    }
+
+    public async Task<CollectionMembersDto.Response?> GetCollectionMembersAsync(Guid requesterUserId, UserAppRole requesterAppRole, Guid collectionId)
+    {
+        var collection = await context.Collections.FindAsync(collectionId);
+        if (collection is null) return null;
+
+        // Must be member or app admin to view
+        var userCollection = await context.UserCollections
+            .FirstOrDefaultAsync(uc => uc.UserId == requesterUserId && uc.CollectionId == collectionId);
+
+        if (userCollection is null && requesterAppRole < UserAppRole.Admin)
+            return null;
+
+        var members = await context.UserCollections
+            .Include(uc => uc.User)
+            .Where(uc => uc.CollectionId == collectionId)
+            .OrderByDescending(uc => uc.Role)
+            .Select(uc => new CollectionMembersDto.Member
+            {
+                UserId = uc.UserId,
+                Username = uc.User.Username,
+                Role = uc.Role
+            })
+            .ToListAsync();
+
+        return new CollectionMembersDto.Response
+        {
+            CollectionId = collectionId,
+            Members = members
+        };
+    }
+
+    public async Task<List<CollectionRole>> GetAssignableRolesAsync(Guid requesterUserId, Guid collectionId)
+    {
+        var userCollection = await context.UserCollections
+            .FirstOrDefaultAsync(uc => uc.UserId == requesterUserId && uc.CollectionId == collectionId);
+
+        if (userCollection is null || userCollection.Role < CollectionRole.Admin)
+            return [];
+
+        return Enum.GetValues<CollectionRole>()
+            .Where(r => r < userCollection.Role)
+            .OrderBy(r => r)
+            .ToList();
+    }
+}

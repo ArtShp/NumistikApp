@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:App.ViewModels"
+             x:Class="App.Views.ImageViewerPage"
+             x:DataType="viewModels:ImageViewerViewModel"
+             BackgroundColor="Black"
+             Title="Image">
+    <Grid>
+        <Grid x:Name="Canvas"
+              BackgroundColor="Black">
+
+            <!-- Bind image source to VM -->
+            <Image x:Name="ZoomImage"
+                   Aspect="AspectFit"
+                   Source="{Binding CurrentImage}" />
+
+            <!-- Navigation arrows bound to VM -->
+            <Button Text="&#x2039;"
+                    FontSize="36"
+                    BackgroundColor="#66000000"
+                    TextColor="White"
+                    BorderWidth="0"
+                    CornerRadius="4"
+                    WidthRequest="56"
+                    HeightRequest="96"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Start"
+                    Margin="8"
+                    IsVisible="{Binding HasMany}"
+                    IsEnabled="{Binding HasPrev}"
+                    Command="{Binding PrevCommand}" />
+
+            <Button Text="&#x203A;"
+                    FontSize="36"
+                    BackgroundColor="#66000000"
+                    TextColor="White"
+                    BorderWidth="0"
+                    CornerRadius="4"
+                    WidthRequest="56"
+                    HeightRequest="96"
+                    VerticalOptions="Center"
+                    HorizontalOptions="End"
+                    Margin="8"
+                    IsVisible="{Binding HasMany}"
+                    IsEnabled="{Binding HasNext}"
+                    Command="{Binding NextCommand}" />
+
+            <!-- Actions: Share / Copy -->
+            <Border VerticalOptions="Start"
+                    HorizontalOptions="End"
+                    Margin="12"
+                    Padding="6"
+                    BackgroundColor="#66000000"
+                    StrokeThickness="0">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="6" />
+                </Border.StrokeShape>
+
+                <Grid ColumnDefinitions="Auto,8,Auto">
+                    <Button Text="Share"
+                            FontSize="14"
+                            HeightRequest="36"
+                            Command="{Binding ShareCommand}" />
+                    <BoxView Grid.Column="1" WidthRequest="8" Opacity="0" />
+                    <Button Grid.Column="2"
+                            Text="Copy"
+                            FontSize="14"
+                            HeightRequest="36"
+                            Command="{Binding CopyCommand}" />
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</ContentPage>
